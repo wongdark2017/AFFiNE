@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { affineFetch } from '../../fetch-utils';
+import { t } from '../../i18n';
 import { useRevalidateServerConfig, useServerConfig } from '../common';
 import { CreateAdmin } from './create-admin';
 
@@ -28,10 +29,10 @@ const Welcome = () => {
       style={{ minHeight: '300px' }}
     >
       <h1 className="text-5xl font-extrabold max-lg:text-3xl max-lg:font-bold">
-        Welcome to AFFiNE
+        {t('Welcome to AFFiNE')}
       </h1>
       <p className="mt-5 font-semibold text-xl max-lg:px-4 max-lg:text-lg">
-        Configure your Self Host AFFiNE with a few simple settings.
+        {t('Configure your Self Host AFFiNE with a few simple settings.')}
       </p>
     </div>
   );
@@ -44,10 +45,10 @@ const SettingsDone = () => {
       style={{ minHeight: '300px' }}
     >
       <h1 className="text-5xl font-extrabold max-lg:text-3xl max-lg:font-bold">
-        All Settings Done
+        {t('All Settings Done')}
       </h1>
       <p className="mt-5 font-semibold text-xl max-lg:px-4 max-lg:text-lg">
-        AFFiNE is ready to use.
+        {t('AFFiNE is ready to use.')}
       </p>
     </div>
   );
@@ -110,12 +111,12 @@ export const Form = () => {
 
       if (!createResponse.ok) {
         const errorData = await createResponse.json();
-        throw new Error(errorData.message || 'Failed to create admin');
+        throw new Error(errorData.message || t('Failed to create admin'));
       }
 
       await createResponse.json();
       await refreshServerConfig();
-      toast.success('Admin account created successfully.');
+      toast.success(t('Admin account created successfully.'));
     } catch (err) {
       toast.error((err as Error).message);
       console.error(err);
@@ -171,7 +172,7 @@ export const Form = () => {
       if (serverConfig.initialized === true) {
         return navigate('/admin', { replace: true });
       }
-      toast.error('Goto Admin Panel failed, please try again.');
+      toast.error(t('Goto Admin Panel failed, please try again.'));
       return;
     }
     api?.scrollPrev();
@@ -205,11 +206,11 @@ export const Form = () => {
       <div>
         {current > 1 && (
           <Button className="mr-3" onClick={onPrevious} variant="outline">
-            {current === count ? 'Goto Admin Panel' : 'Back'}
+            {current === count ? t('Goto Admin Panel') : t('Back')}
           </Button>
         )}
         <Button onClick={onNext} disabled={disableContinue}>
-          {current === count ? 'Open AFFiNE' : 'Continue'}
+          {current === count ? t('Open AFFiNE') : t('Continue')}
         </Button>
       </div>
 

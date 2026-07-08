@@ -2,6 +2,7 @@ import type { FeatureType } from '@affine/graphql';
 import { AdminWorkspaceSort } from '@affine/graphql';
 import { useState } from 'react';
 
+import { t } from '../../i18n';
 import { Header } from '../header';
 import { useColumns } from './components/columns';
 import { DataTable } from './components/data-table';
@@ -28,7 +29,7 @@ export function WorkspacePage() {
 
   return (
     <div className="h-dvh flex-1 flex-col flex">
-      <Header title="Workspaces" />
+      <Header title={t('Workspaces')} />
 
       <DataTable
         data={workspaces}

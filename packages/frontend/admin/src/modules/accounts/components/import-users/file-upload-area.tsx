@@ -11,6 +11,8 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
+import { t } from '../../../../i18n';
+
 interface FileUploadAreaProps {
   onFileSelected: (file: File) => Promise<void>;
 }
@@ -49,7 +51,7 @@ export const FileUploadArea = forwardRef<
   const validateAndProcessFile = useAsyncCallback(
     async (file: File) => {
       if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-        toast.error('Please upload a CSV file');
+        toast.error(t('Please upload a CSV file'));
         return;
       }
       await onFileSelected(file);
@@ -103,11 +105,11 @@ export const FileUploadArea = forwardRef<
         />
         <div className="text-xs font-medium text-muted-foreground">
           {isDragging
-            ? 'Release mouse to upload file'
-            : 'Upload your CSV file or drag it here'}
+            ? t('Release mouse to upload file')
+            : t('Upload your CSV file or drag it here')}
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          {isDragging ? 'Preparing to upload...' : ''}
+          {isDragging ? t('Preparing to upload...') : ''}
         </p>
       </div>
       <input

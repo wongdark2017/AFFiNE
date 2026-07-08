@@ -1,5 +1,6 @@
 import type { FC, RefObject } from 'react';
 
+import { t } from '../../../../i18n';
 import type { ParsedUser } from '../../utils/csv-utils';
 import { UserTable } from '../user-table';
 import { CsvFormatGuidance } from './csv-format-guidance';
@@ -21,8 +22,10 @@ export const ImportPreviewContent: FC<ImportPreviewContentProps> = ({
     <div className="grid gap-3">
       {!isImported && (
         <p className="text-sm text-muted-foreground">
-          {parsedUsers.length} users detected from the CSV file. Please confirm
-          the user list below and import.
+          {t(
+            '{count} users detected from the CSV file. Please confirm the user list below and import.',
+            { count: parsedUsers.length }
+          )}
         </p>
       )}
       <UserTable users={parsedUsers} />
@@ -50,8 +53,9 @@ export const ImportInitialContent: FC<ImportInitialContentProps> = ({
   return (
     <div className="grid gap-3">
       <p className="text-sm text-muted-foreground">
-        You need to import the accounts by importing a CSV file in the correct
-        format. Please download the CSV template.
+        {t(
+          'You need to import the accounts by importing a CSV file in the correct format. Please download the CSV template.'
+        )}
       </p>
       <CsvFormatGuidance passwordLimits={passwordLimits} />
       <FileUploadArea ref={fileUploadRef} onFileSelected={onFileSelected} />
@@ -67,7 +71,12 @@ interface ImportErrorContentProps {
  * Component for displaying import errors
  */
 export const ImportErrorContent: FC<ImportErrorContentProps> = ({
-  message = 'You need to import the accounts by importing a CSV file in the correct format. Please download the CSV template.',
+  message,
 }) => {
-  return message;
+  return (
+    message ??
+    t(
+      'You need to import the accounts by importing a CSV file in the correct format. Please download the CSV template.'
+    )
+  );
 };

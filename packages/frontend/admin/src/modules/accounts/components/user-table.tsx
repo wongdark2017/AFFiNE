@@ -1,3 +1,4 @@
+import { t } from '../../../i18n';
 import { ImportStatus, type ParsedUser } from '../utils/csv-utils';
 
 interface UserTableProps {
@@ -14,16 +15,16 @@ export const UserTable: React.FC<UserTableProps> = ({ users }) => {
         <thead className="sticky top-0 bg-muted/40">
           <tr>
             <th className="border-b border-border px-4 py-2 text-left text-xs font-medium tracking-wider text-muted-foreground">
-              Name
+              {t('Name')}
             </th>
             <th className="border-b border-border px-4 py-2 text-left text-xs font-medium tracking-wider text-muted-foreground">
-              Email
+              {t('Email')}
             </th>
             <th className="border-b border-border px-4 py-2 text-left text-xs font-medium tracking-wider text-muted-foreground">
-              Password
+              {t('Password')}
             </th>
             <th className="border-b border-border px-4 py-2 text-left text-xs font-medium tracking-wider text-muted-foreground">
-              Status
+              {t('Status')}
             </th>
           </tr>
         </thead>
@@ -64,27 +65,33 @@ export const UserTable: React.FC<UserTableProps> = ({ users }) => {
                 {user.importStatus === ImportStatus.Success ? (
                   <span className="text-foreground">
                     <span className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--affine-v2-status-success)]" />
-                    Success
+                    {t('Success')}
                   </span>
                 ) : user.importStatus === ImportStatus.Failed ? (
-                  <span className="text-destructive" title={user.importError}>
+                  <span
+                    className="text-destructive"
+                    title={user.importError && t(user.importError)}
+                  >
                     <span className="mr-2 inline-block h-2 w-2 rounded-full bg-destructive" />
-                    Failed ({user.importError})
+                    {t('Failed')} ({user.importError && t(user.importError)})
                   </span>
                 ) : user.importStatus === ImportStatus.Processing ? (
                   <span className="text-primary">
                     <span className="mr-2 inline-block h-2 w-2 rounded-full bg-primary" />
-                    Processing...
+                    {t('Processing...')}
                   </span>
                 ) : user.valid === false ? (
-                  <span className="text-destructive" title={user.error}>
+                  <span
+                    className="text-destructive"
+                    title={user.error && t(user.error)}
+                  >
                     <span className="mr-2 inline-block h-2 w-2 rounded-full bg-destructive" />
-                    Invalid ({user.error})
+                    {t('Invalid')} ({user.error && t(user.error)})
                   </span>
                 ) : (
                   <span className="text-foreground">
                     <span className="mr-2 inline-block h-2 w-2 rounded-full bg-foreground" />
-                    Valid
+                    {t('Valid')}
                   </span>
                 )}
               </td>

@@ -21,6 +21,7 @@ import {
 } from 'react';
 
 import { Checkbox } from '../../../components/ui/checkbox';
+import { t } from '../../../i18n';
 import type { UserType } from '../schema';
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
@@ -103,7 +104,7 @@ export const useColumns = ({
 
               table.toggleAllPageRowsSelected(!!value);
             }}
-            aria-label="Select all"
+            aria-label={t('Select all')}
             className="translate-y-[2px]"
           />
         ),
@@ -121,7 +122,7 @@ export const useColumns = ({
               }
               row.toggleSelected(!!value);
             }}
-            aria-label="Select row"
+            aria-label={t('Select row')}
             className="translate-y-[2px]"
           />
         ),
@@ -137,7 +138,7 @@ export const useColumns = ({
           <DataTableColumnHeader
             className="text-xs"
             column={column}
-            title="Name"
+            title={t('Name')}
           />
         ),
         cell: ({ row }) => (
@@ -153,12 +154,12 @@ export const useColumns = ({
                 <span>{row.original.name}</span>
                 {row.original.features.includes(FeatureType.Admin) && (
                   <span className="ml-2 inline-flex h-5 items-center rounded-md border border-border/60 bg-chip-blue px-2 py-0.5 text-xxs font-medium text-chip-text">
-                    Admin
+                    {t('Admin')}
                   </span>
                 )}
                 {row.original.disabled && (
                   <span className="ml-2 inline-flex h-5 items-center rounded-md border border-border/60 bg-chip-white px-2 py-0.5 text-xxs font-medium">
-                    Disabled
+                    {t('Disabled')}
                   </span>
                 )}
               </div>
@@ -177,7 +178,7 @@ export const useColumns = ({
           <DataTableColumnHeader
             className="text-xs max-md:hidden"
             column={column}
-            title="User Detail"
+            title={t('User Detail')}
           />
         ),
         cell: ({ row: { original: user } }) => (
@@ -193,8 +194,8 @@ export const useColumns = ({
                   IconFalse={
                     <UnlockIcon fontSize={16} className="text-destructive" />
                   }
-                  textTrue="Password Set"
-                  textFalse="No Password"
+                  textTrue={t('Password Set')}
+                  textFalse={t('No Password')}
                 />
                 <StatusItem
                   condition={user.emailVerified}
@@ -210,8 +211,8 @@ export const useColumns = ({
                       className="text-destructive"
                     />
                   }
-                  textTrue="Email Verified"
-                  textFalse="Email Not Verified"
+                  textTrue={t('Email Verified')}
+                  textFalse={t('Email Not Verified')}
                 />
               </div>
               <div className="flex flex-wrap gap-2 items-center">
@@ -225,7 +226,9 @@ export const useColumns = ({
                     </span>
                   ))
                 ) : (
-                  <span className="text-muted-foreground">No features</span>
+                  <span className="text-muted-foreground">
+                    {t('No features')}
+                  </span>
                 )}
               </div>
             </div>
@@ -241,7 +244,7 @@ export const useColumns = ({
           <DataTableColumnHeader
             className="text-xs"
             column={column}
-            title="Actions"
+            title={t('Actions')}
           />
         ),
         cell: ({ row: { original: user } }) => (

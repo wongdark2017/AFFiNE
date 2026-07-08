@@ -4,6 +4,8 @@ import { Label } from '@affine/admin/components/ui/label';
 import { Separator } from '@affine/admin/components/ui/separator';
 import { useState } from 'react';
 
+import { t } from '../../i18n';
+
 export function Keys() {
   const [openAIKey, setOpenAIKey] = useState('');
   const [falAIKey, setFalAIKey] = useState('');
@@ -12,12 +14,12 @@ export function Keys() {
   return (
     <div className="flex flex-col h-full gap-3 py-5 px-6 w-full">
       <div className="flex items-center">
-        <span className="text-xl font-semibold">Keys</span>
+        <span className="text-xl font-semibold">{t('Keys')}</span>
       </div>
       <div className="flex-grow overflow-y-auto space-y-[10px]">
         <div className="flex flex-col rounded-md border py-4 gap-4">
           <div className="px-5 space-y-3">
-            <Label className="text-sm font-medium">OpenAI Key</Label>
+            <Label className="text-sm font-medium">{t('OpenAI Key')}</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="text"
@@ -26,12 +28,12 @@ export function Keys() {
                 placeholder="sk-xxxxxxxxxxxxx-xxxxxxxxxxxxxx"
                 onChange={e => setOpenAIKey(e.target.value)}
               />
-              <Button disabled>Save</Button>
+              <Button disabled>{t('Save')}</Button>
             </div>
           </div>
           <Separator />
           <div className="px-5 space-y-3">
-            <Label className="text-sm font-medium">Fal.AI Key</Label>
+            <Label className="text-sm font-medium">{t('Fal.AI Key')}</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="email"
@@ -40,12 +42,12 @@ export function Keys() {
                 placeholder="00000000-0000-0000-00000000:xxxxxxxxxxxxxxxxx"
                 onChange={e => setFalAIKey(e.target.value)}
               />
-              <Button disabled>Save</Button>
+              <Button disabled>{t('Save')}</Button>
             </div>
           </div>
           <Separator />
           <div className="px-5 space-y-3">
-            <Label className="text-sm font-medium">Unsplash Key</Label>
+            <Label className="text-sm font-medium">{t('Unsplash Key')}</Label>
             <div className="flex items-center gap-2">
               <Input
                 type="password"
@@ -54,13 +56,14 @@ export function Keys() {
                 placeholder="00000000-0000-0000-00000000:xxxxxxxxxxxxxxxxx"
                 onChange={e => setUnsplashKey(e.target.value)}
               />
-              <Button disabled>Save</Button>
+              <Button disabled>{t('Save')}</Button>
             </div>
           </div>
           <Separator />
           <div className="px-5 space-y-3 text-sm font-normal text-muted-foreground">
-            Custom API keys may not perform as expected. AFFiNE does not
-            guarantee results when using custom API keys.
+            {t(
+              'Custom API keys may not perform as expected. AFFiNE does not guarantee results when using custom API keys.'
+            )}
           </div>
         </div>
       </div>

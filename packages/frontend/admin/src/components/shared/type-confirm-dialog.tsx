@@ -10,6 +10,8 @@ import {
 import { Input } from '@affine/admin/components/ui/input';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 
+import { t } from '../../i18n';
+
 interface TypeConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,9 +32,9 @@ export const TypeConfirmDialog = ({
   title,
   description,
   targetText,
-  inputPlaceholder = 'Please type to confirm',
-  cancelText = 'Cancel',
-  confirmText = 'Confirm',
+  inputPlaceholder = t('Please type to confirm'),
+  cancelText = t('Cancel'),
+  confirmText = t('Confirm'),
   confirmButtonVariant = 'destructive',
   onConfirm,
   onClose,

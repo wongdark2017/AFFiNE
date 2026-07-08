@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { FeatureToggleList } from '../../../components/shared/feature-toggle-list';
+import { t } from '../../../i18n';
 import { useServerConfig } from '../../common';
 import { RightPanelHeader } from '../../header';
 import type { UserInput, UserType } from '../schema';
@@ -123,30 +124,30 @@ function UserForm({
       <div className="flex-grow space-y-3 overflow-y-auto p-4">
         <div className="flex flex-col rounded-xl border border-border bg-card shadow-sm">
           <InputItem
-            label="User name"
+            label={t('User name')}
             field="name"
             value={changes.name}
             onChange={setField}
-            placeholder="Enter user name"
+            placeholder={t('Enter user name')}
           />
           <Separator />
           <InputItem
-            label="Email"
+            label={t('Email')}
             field="email"
             value={changes.email}
             onChange={setField}
-            placeholder="Enter email address"
+            placeholder={t('Enter email address')}
           />
           {showOption && (
             <>
               <Separator />
               <InputItem
-                label="Password"
+                label={t('Password')}
                 field="password"
                 value={changes.password}
                 onChange={setField}
                 optional
-                placeholder="Enter password"
+                placeholder={t('Enter password')}
               />
             </>
           )}
@@ -195,7 +196,7 @@ function InputItem({
         {label}
         {optional && (
           <span className="ml-1 font-normal text-muted-foreground">
-            (optional)
+            {t('(optional)')}
           </span>
         )}
       </Label>
@@ -246,7 +247,9 @@ export function CreateUserForm({
         passwordLimits
       );
       if (!passwordValidation.valid || !emailValidation[0].valid) {
-        toast.error(passwordValidation.error || emailValidation[0].error);
+        toast.error(
+          t(passwordValidation.error || emailValidation[0].error || '')
+        );
         return;
       }
       create(user);
@@ -256,7 +259,7 @@ export function CreateUserForm({
 
   return (
     <UserForm
-      title="Create User"
+      title={t('Create User')}
       onClose={onComplete}
       onConfirm={handleCreateUser}
       onValidate={validateCreateUser}
@@ -302,7 +305,7 @@ export function UpdateUserForm({
 
   return (
     <UserForm
-      title="Update User"
+      title={t('Update User')}
       defaultValue={user}
       onClose={onComplete}
       onConfirm={onUpdateUser}
@@ -315,7 +318,7 @@ export function UpdateUserForm({
             variant="outline"
             onClick={onResetPassword}
           >
-            <span>Reset Password</span>
+            <span>{t('Reset Password')}</span>
             <ChevronRightIcon size={16} className="text-muted-foreground" />
           </Button>
           <Button
@@ -323,7 +326,7 @@ export function UpdateUserForm({
             variant="outline"
             onClick={onDeleteAccount}
           >
-            <span>Delete Account</span>
+            <span>{t('Delete Account')}</span>
             <ChevronRightIcon size={16} />
           </Button>
         </div>

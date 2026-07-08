@@ -17,6 +17,7 @@ import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 import { DiscardChanges } from '../../../components/shared/discard-changes';
+import { t } from '../../../i18n';
 import { useRightPanel } from '../../panel/context';
 import type { UserType } from '../schema';
 import { DeleteAccountDialog } from './delete-account';
@@ -67,11 +68,15 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
     navigator.clipboard
       .writeText(resetPasswordLink)
       .then(() => {
-        toast('Reset password link copied to clipboard');
+        toast(t('Reset password link copied to clipboard'));
         setResetPasswordDialogOpen(false);
       })
       .catch(e => {
-        toast.error('Failed to copy reset password link: ' + e.message);
+        toast.error(
+          t('Failed to copy reset password link: {message}', {
+            message: e.message,
+          })
+        );
       });
   }, [resetPasswordLink]);
 
@@ -172,7 +177,7 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
             size="icon"
           >
             <MoreHorizontalIcon fontSize={20} />
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{t('Open menu')}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[214px] p-1.5">
@@ -181,14 +186,14 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
             className="px-2 py-[6px] text-sm font-normal gap-2 cursor-pointer"
           >
             <EditIcon fontSize={20} />
-            Edit
+            {t('Edit')}
           </DropdownMenuItem>
           <DropdownMenuItem
             className="px-2 py-[6px] text-sm font-normal gap-2 cursor-pointer"
             onSelect={openResetPasswordDialog}
           >
             <LockIcon fontSize={20} />
-            {user.hasPassword ? 'Reset Password' : 'Setup Account'}
+            {user.hasPassword ? t('Reset Password') : t('Setup Account')}
           </DropdownMenuItem>
           {user.disabled && (
             <DropdownMenuItem
@@ -196,7 +201,7 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
               onSelect={openEnableDialog}
             >
               <AccountBanIcon fontSize={20} />
-              Enable Email
+              {t('Enable Email')}
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
@@ -206,7 +211,7 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
               onSelect={openDisableDialog}
             >
               <AccountBanIcon fontSize={20} />
-              Disable & Delete data
+              {t('Disable & Delete data')}
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
@@ -214,7 +219,7 @@ export function DataTableRowActions({ user }: DataTableRowActionsProps) {
             onSelect={openDeleteDialog}
           >
             <DeleteIcon fontSize={20} />
-            Delete
+            {t('Delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

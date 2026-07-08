@@ -20,6 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '../components/ui/sheet';
+import { t } from '../i18n';
 import { Logo } from './accounts/components/logo';
 import { useMediaQuery } from './common';
 import { Nav } from './nav/nav';
@@ -208,7 +209,7 @@ export const LeftPanel = ({
         <SheetHeader className="hidden">
           <SheetTitle>AFFiNE</SheetTitle>
           <SheetDescription>
-            Admin panel for managing accounts, AI, config, and settings
+            {t('Admin panel for managing accounts, AI, config, and settings')}
           </SheetDescription>
         </SheetHeader>
         <SheetContent
@@ -294,9 +295,9 @@ export const RightPanel = ({
     return (
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetHeader className="hidden">
-          <SheetTitle>Right Panel</SheetTitle>
+          <SheetTitle>{t('Right Panel')}</SheetTitle>
           <SheetDescription>
-            For displaying additional information
+            {t('For displaying additional information')}
           </SheetDescription>
         </SheetHeader>
         <SheetContent

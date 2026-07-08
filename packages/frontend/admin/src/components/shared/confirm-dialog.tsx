@@ -9,6 +9,8 @@ import {
 } from '@affine/admin/components/ui/dialog';
 import type { ReactNode } from 'react';
 
+import { t } from '../../i18n';
+
 interface ConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -26,8 +28,8 @@ export const ConfirmDialog = ({
   onOpenChange,
   title,
   description,
-  cancelText = 'Cancel',
-  confirmText = 'Confirm',
+  cancelText = t('Cancel'),
+  confirmText = t('Confirm'),
   confirmButtonVariant = 'default',
   onConfirm,
   onClose,

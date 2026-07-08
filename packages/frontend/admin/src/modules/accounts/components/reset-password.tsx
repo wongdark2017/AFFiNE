@@ -10,6 +10,8 @@ import {
 import { Input } from '@affine/admin/components/ui/input';
 import { CopyIcon } from 'lucide-react';
 
+import { t } from '../../../i18n';
+
 export const ResetPasswordDialog = ({
   link,
   open,
@@ -25,10 +27,13 @@ export const ResetPasswordDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:w-[460px]">
         <DialogHeader>
-          <DialogTitle className="leading-7">Account Recovery Link</DialogTitle>
+          <DialogTitle className="leading-7">
+            {t('Account Recovery Link')}
+          </DialogTitle>
           <DialogDescription className="leading-6">
-            Please send this recovery link to the user and instruct them to
-            complete it.
+            {t(
+              'Please send this recovery link to the user and instruct them to complete it.'
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="mt-4">
@@ -36,12 +41,12 @@ export const ResetPasswordDialog = ({
             <Input
               type="text"
               value={link}
-              placeholder="Please type email to confirm"
+              placeholder={t('Please type email to confirm')}
               className="placeholder:opacity-50 text-ellipsis overflow-hidden whitespace-nowrap"
               readOnly
             />
             <Button type="button" onClick={onCopy} className="space-x-[10px]">
-              <CopyIcon size={20} /> <span>Copy and Close</span>
+              <CopyIcon size={20} /> <span>{t('Copy and Close')}</span>
             </Button>
           </div>
         </DialogFooter>

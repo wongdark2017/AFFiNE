@@ -19,6 +19,7 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import { t } from '../../../i18n';
 import type { UserInput, UserType } from '../schema';
 
 export interface ExportField {
@@ -60,9 +61,13 @@ export const useCreateUser = () => {
           features,
         });
         await revalidate(listUsersQuery);
-        toast('Account updated successfully');
+        toast(t('Account updated successfully'));
       } catch (e) {
-        toast.error('Failed to update account: ' + (e as Error).message);
+        toast.error(
+          t('Failed to update account: {message}', {
+            message: (e as Error).message,
+          })
+        );
       }
     },
     [createAccount, revalidate, updateAccountFeatures]
@@ -106,9 +111,13 @@ export const useUpdateUser = () => {
           features,
         });
         await revalidate(listUsersQuery);
-        toast('Account updated successfully');
+        toast(t('Account updated successfully'));
       } catch (e) {
-        toast.error('Failed to update account: ' + (e as Error).message);
+        toast.error(
+          t('Failed to update account: {message}', {
+            message: (e as Error).message,
+          })
+        );
       }
     },
     [revalidate, updateAccount, updateAccountFeatures]
@@ -135,7 +144,9 @@ export const useResetUserPassword = () => {
           callback?.();
         })
         .catch(e => {
-          toast.error('Failed to reset password: ' + e.message);
+          toast.error(
+            t('Failed to reset password: {message}', { message: e.message })
+          );
         });
     },
     [resetPassword]
@@ -161,11 +172,13 @@ export const useDeleteUser = () => {
       await deleteUserById({ id })
         .then(async () => {
           await revalidate(listUsersQuery);
-          toast('User deleted successfully');
+          toast(t('User deleted successfully'));
           callback?.();
         })
         .catch(e => {
-          toast.error('Failed to delete user: ' + e.message);
+          toast.error(
+            t('Failed to delete user: {message}', { message: e.message })
+          );
         });
     },
     [deleteUserById, revalidate]
@@ -186,11 +199,15 @@ export const useEnableUser = () => {
       await enableUserById({ id })
         .then(async ({ enableUser }) => {
           await revalidate(listUsersQuery);
-          toast(`User ${enableUser.email} enabled successfully`);
+          toast(
+            t('User {email} enabled successfully', { email: enableUser.email })
+          );
           callback?.();
         })
         .catch(e => {
-          toast.error('Failed to enable user: ' + e.message);
+          toast.error(
+            t('Failed to enable user: {message}', { message: e.message })
+          );
         });
     },
     [enableUserById, revalidate]
@@ -210,11 +227,15 @@ export const useDisableUser = () => {
       await disableUserById({ id })
         .then(async ({ banUser }) => {
           await revalidate(listUsersQuery);
-          toast(`User ${banUser.email} disabled successfully`);
+          toast(
+            t('User {email} disabled successfully', { email: banUser.email })
+          );
           callback?.();
         })
         .catch(e => {
-          toast.error('Failed to disable user: ' + e.message);
+          toast.error(
+            t('Failed to disable user: {message}', { message: e.message })
+          );
         });
     },
     [disableUserById, revalidate]
@@ -240,7 +261,9 @@ export const useImportUsers = () => {
           callback?.(importUsers);
         })
         .catch(e => {
-          toast.error('Failed to import users: ' + e.message);
+          toast.error(
+            t('Failed to import users: {message}', { message: e.message })
+          );
         });
     },
     [importUsers, revalidate]
@@ -257,7 +280,7 @@ export const useExportUsers = () => {
         .map(field => field.id);
 
       if (selectedFields.length === 0) {
-        alert('Please select at least one field to export');
+        alert(t('Please select at least one field to export'));
         return;
       }
 
