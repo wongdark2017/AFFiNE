@@ -9,6 +9,7 @@ import { ScrollArea } from '@affine/admin/components/ui/scroll-area';
 import { get } from 'lodash-es';
 import { useCallback, useState } from 'react';
 
+import { getLocale, t, translateConfigDesc } from '../../i18n';
 import { Header } from '../header';
 import {
   ALL_CONFIG_DESCRIPTORS,
@@ -33,7 +34,7 @@ export function SettingsPage() {
 
   return (
     <div className="flex h-dvh flex-1 flex-col bg-background">
-      <Header title="Settings" />
+      <Header title={t('Settings')} />
       <AdminPanel
         expandedModules={expandedModules}
         onExpandedModulesChange={setExpandedModules}
@@ -160,9 +161,12 @@ const AdminPanel = ({
               >
                 <AccordionTrigger className="hover:no-underline py-4">
                   <div className="flex flex-col items-start text-left gap-1">
-                    <div className="text-base font-semibold">{name}</div>
+                    <div className="text-base font-semibold">{t(name)}</div>
                     <div className="text-xs text-muted-foreground">
-                      Manage {name.toLowerCase()} settings
+                      {t('Manage {name} settings', {
+                        name:
+                          getLocale() === 'zh' ? t(name) : name.toLowerCase(),
+                      })}
                     </div>
                   </div>
                 </AccordionTrigger>
@@ -179,7 +183,10 @@ const AdminPanel = ({
                           ALL_CONFIG_DESCRIPTORS[module][field];
                         props = {
                           field: `${module}/${field}`,
-                          desc: descriptor.desc,
+                          desc: translateConfigDesc(
+                            `${module}/${field}`,
+                            descriptor.desc
+                          ),
                           type: descriptor.type,
                           options: [],
                           defaultValue: get(sourceConfig, field),
@@ -188,9 +195,13 @@ const AdminPanel = ({
                       } else {
                         const descriptor =
                           ALL_CONFIG_DESCRIPTORS[module][field.key];
+                        const fieldPath = `${module}/${field.key}${field.sub ? `/${field.sub}` : ''}`;
                         props = {
-                          field: `${module}/${field.key}${field.sub ? `/${field.sub}` : ''}`,
-                          desc: field.desc ?? descriptor.desc,
+                          field: fieldPath,
+                          desc: translateConfigDesc(
+                            fieldPath,
+                            field.desc ?? descriptor.desc
+                          ),
                           type: field.type ?? descriptor.type,
                           // @ts-expect-error for enum type
                           options: field.options,
@@ -230,7 +241,7 @@ const AdminPanel = ({
                           }}
                           disabled={saving}
                         >
-                          Cancel
+                          {t('Cancel')}
                         </Button>
                       ) : null}
                       <Button
@@ -243,7 +254,7 @@ const AdminPanel = ({
                         }}
                         disabled={!dirty || saving || hasValidationError}
                       >
-                        {saving ? 'Saving...' : 'Save'}
+                        {saving ? t('Saving...') : t('Save')}
                       </Button>
                     </div>
                   </div>
