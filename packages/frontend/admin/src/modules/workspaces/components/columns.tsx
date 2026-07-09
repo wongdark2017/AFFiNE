@@ -45,7 +45,7 @@ export const useColumns = () => {
                       key={feature}
                       className="rounded-md border border-border/60 bg-chip-white px-2 py-0.5"
                     >
-                      {feature}
+                      {t(feature)}
                     </span>
                   ))
                 ) : (

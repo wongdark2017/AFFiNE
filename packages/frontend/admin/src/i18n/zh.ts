@@ -361,4 +361,12 @@ export const UI_ZH: Record<string, string> = {
   '{hours}h at minute bucket': '{hours} 小时，按分钟聚合',
   '{window} at day bucket in UTC': '{window}，按天聚合（UTC）',
   '{window} at hour bucket in UTC': '{window}，按小时聚合（UTC）',
+  // FeatureType enum values (rendered as chips/toggles)
+  FreePlan: '免费版',
+  LifetimeProPlan: '终身专业版',
+  ProPlan: '专业版',
+  QuotaExceededReadonlyWorkspace: '超出配额只读工作区',
+  TeamPlan: '团队版',
+  UnlimitedCopilot: '无限 AI 用量',
+  UnlimitedWorkspace: '无限工作区',
 };

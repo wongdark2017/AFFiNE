@@ -83,7 +83,7 @@ export const FeatureFilterPopover = ({
                 }
                 disabled={disabled}
               />
-              <span className="text-sm truncate">{feature}</span>
+              <span className="text-sm truncate">{t(feature)}</span>
             </label>
           ))}
         </div>

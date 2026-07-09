@@ -66,12 +66,15 @@ export const FeatureToggleList = ({
                   checked={selected.includes(feature)}
                   onCheckedChange={checked => handleToggle(feature, !!checked)}
                 />
-                <span className="truncate">{feature}</span>
+                <span className="truncate">{t(feature)}</span>
               </>
             ) : (
               <>
-                <span className="overflow-hidden text-ellipsis" title={feature}>
-                  {feature}
+                <span
+                  className="overflow-hidden text-ellipsis"
+                  title={t(feature)}
+                >
+                  {t(feature)}
                 </span>
                 <Control
                   checked={selected.includes(feature)}
