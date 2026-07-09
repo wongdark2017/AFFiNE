@@ -1,25 +1,25 @@
-## AFFiNE Release Process
+## AFFiNE 发布流程
 
-> In order to make a stable/beta release, you need to get authorization from the AFFiNE test team.
+> 要做 stable/beta 发布，需获得 AFFiNE 测试团队授权。
 
-## Who Can Make a Release?
+## 谁可以发布？
 
-The AFFiNE core team grants release authorization and enforces the following requirements:
+AFFiNE 核心团队授予发布授权，并要求：
 
-- Commit access to the AFFiNE repository.
-- Access to GitHub Actions.
+- 对本 AFFiNE 仓库有 commit 权限。
+- 能访问 GitHub Actions。
 
-## How to Make a Release
+## 如何发布
 
-Before releasing, ensure you have the latest version of the `canary` branch and review the [SemVer](https://semver.org) specification to understand versioning.
+发布前确保已是最新 `canary` 分支，并阅读 [SemVer](https://semver.org) 以理解版本规则。
 
-### 1. Update the Version in `package.json`
+### 1. 更新 `package.json` 中的版本
 
 ```shell
 ./scripts/set-version.sh 0.5.4-canary.5
 ```
 
-### 2. Commit Changes and Push to `canary`
+### 2. 提交变更并推送到 `canary`
 
 ```shell
 git add .
@@ -28,21 +28,21 @@ git commit -m "v0.5.4-canary.5"
 git push origin canary
 ```
 
-### 3. Create a Release Action
+### 3. 创建 Release Action
 
-Trigger a release action in the [Release Desktop App](https://github.com/toeverything/AFFiNE/actions/workflows/release-desktop-app.yml).
+在 [Release Desktop App](https://github.com/toeverything/AFFiNE/actions/workflows/release-desktop-app.yml) 触发发布 action。
 
 ![img.png](assets/release-action.png)
 
-Select the appropriate branch, complete the form, and click `Run workflow`.
+选择合适分支，填表，点击 `Run workflow`。
 
-### 4. Publish the Release
+### 4. 发布 Release
 
-Once the release action is complete, a draft release will appear on the [Releases page](https://github.com/toeverything/AFFiNE/releases).
+action 完成后，[Releases 页面](https://github.com/toeverything/AFFiNE/releases) 会出现 draft release。
 
-Edit the release notes if necessary, then publish the release.
+必要时编辑 release notes，然后发布。
 
-Ensure that:
+确保：
 
-- The release tag and title match the version in `package.json`.
-- The release targets the commit you just pushed.
+- release 标签与标题与 `package.json` 版本一致。
+- release 指向你刚推送的 commit。

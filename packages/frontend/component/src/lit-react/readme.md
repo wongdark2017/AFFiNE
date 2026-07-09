@@ -1,3 +1,3 @@
-# our custom @lit/react wrapper
+# 自定义 @lit/react 包装
 
-The official @lit/react createComponent has an issue with properties that accessed in `connectedCallback` lifecycle hook in lit.
+官方 @lit/react 的 createComponent 在 lit 的 `connectedCallback` 生命周期中访问属性时存在问题。

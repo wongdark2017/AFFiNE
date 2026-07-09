@@ -1,17 +1,17 @@
 # Routes
 
-## Usage
+## 用法
 
-### Path Factories
+### Path 工厂
 
 ```ts
 import { FACTORIES } from '@affine/routes';
 
 const path = FACTORIES.workspace.doc({ workspaceId: '123', docId: '456' });
-//                                     ^^^^ with typecheck
+//                                     ^^^^ 带类型检查
 ```
 
-### Register router
+### 注册路由
 
 ```tsx
 import { ROUTES } from '@affine/routes';
@@ -21,7 +21,7 @@ function Routes() {
 }
 ```
 
-### Path Parameter
+### 路径参数
 
 ```ts
 import { RouteParamsTypes } from '@affine/routes';

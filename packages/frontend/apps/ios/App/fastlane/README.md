@@ -1,16 +1,16 @@
-## fastlane documentation
+## fastlane 文档
 
-# Installation
+# 安装
 
-Make sure you have the latest version of the Xcode command line tools installed:
+请确保已安装最新版 Xcode 命令行工具：
 
 ```sh
 xcode-select --install
 ```
 
-For _fastlane_ installation instructions, see [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
+_fastlane_ 安装说明见 [Installing _fastlane_](https://docs.fastlane.tools/#installing-fastlane)
 
-# Available Actions
+# 可用 Actions
 
 ## iOS
 
@@ -20,12 +20,12 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios beta
 ```
 
-Push a new beta build to TestFlight
+向 TestFlight 推送新的 beta 构建
 
 ---
 
-This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
+本 README.md 由 _fastlane_ 自动生成，每次运行 [_fastlane_](https://fastlane.tools) 都会重新生成。
 
-More information about _fastlane_ can be found on [fastlane.tools](https://fastlane.tools).
+更多信息见 [fastlane.tools](https://fastlane.tools)。
 
-The documentation of _fastlane_ can be found on [docs.fastlane.tools](https://docs.fastlane.tools).
+文档见 [docs.fastlane.tools](https://docs.fastlane.tools)。

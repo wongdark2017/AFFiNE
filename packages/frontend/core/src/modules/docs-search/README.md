@@ -1,3 +1,3 @@
 # docs-search
 
-This module is responsible for subscribing to updates from the doc engine and writing the doc content into the indexer, providing search and aggregation capabilities.
+本模块负责订阅文档引擎更新，将文档内容写入索引器，并提供搜索与聚合能力。

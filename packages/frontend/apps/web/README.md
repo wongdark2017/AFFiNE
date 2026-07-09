@@ -1,3 +1,3 @@
 # web
 
-AFFiNE Desktop Edition Web app.
+AFFiNE 桌面版 Web 应用。

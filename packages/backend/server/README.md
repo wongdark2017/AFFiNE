@@ -1,23 +1,23 @@
-# Server
+# 服务端
 
-## Get started
+## 快速开始
 
-### Install dependencies
+### 安装依赖
 
 ```bash
 yarn
 ```
 
-### Build Native binding
+### 构建 Native 绑定
 
 ```bash
 yarn affine @affine/server-native build
 ```
 
-### Run server
+### 运行服务端
 
 ```bash
 yarn dev
 ```
 
-now you can access the server GraphQL endpoint at http://localhost:3000/graphql
+现在可在 http://localhost:3000/graphql 访问服务端 GraphQL 端点。

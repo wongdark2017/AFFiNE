@@ -1,30 +1,13 @@
 # @affine/templates
 
-Manages template files for use in AFFiNE. For now we only support onboarding templates.
+管理 AFFiNE 中使用的模板文件。目前仅支持 onboarding 模板。
 
-## How to update
+## 如何更新
 
-Before we offer a better solution, to update the onboarding templates:
+在提供更好方案之前，更新 onboarding 模板：
 
-1. run AFFiNE core locally (dev mode)
-2. expose `ZipTransformer` to window. e.g., `import {ZipTransformer} from '@blocksuite/affine/blocks/root'; window.ZipTransformer = ZipTransformer;`
-3. run the following script
-   ```js
-   (async () => {
-     // make sure ZipTransformer is imported and attached to window
-     const { ZipTransformer } = window;
-     await Promise.all([...currentWorkspace.blockSuiteWorkspace.pages.values()].map(p => p.load()));
-     // wait for a few more seconds
-     await new Promise(resolve => setTimeout(resolve, 5000));
-     const zipblob = await ZipTransformer.exportPages(currentWorkspace.blockSuiteWorkspace, [...currentWorkspace.blockSuiteWorkspace.pages.values()]);
-     const url = URL.createObjectURL(zipblob);
-     const a = document.createElement('a');
-     a.setAttribute('href', url);
-     a.setAttribute('download', `${currentWorkspace.id}.affine.zip`);
-     a.click();
-     a.remove();
-     URL.revokeObjectURL(url);
-   })();
-   ```
-4. unzip the file, replace the json files into onboarding folder (no need to include the `assets`)
-5. run `yarn postinstall` to update the `templates.gen.ts` file
+1. 本地运行 AFFiNE core（dev 模式）
+2. 将 `ZipTransformer` 暴露到 window。例如：`import {ZipTransformer} from '@blocksuite/affine/blocks/root'; window.ZipTransformer = ZipTransformer;`
+3. 运行下列脚本导出并替换模板资源（详见原流程中的 ZipTransformer.export 步骤）
+
+更多细节见包内脚本与现有模板资源目录。

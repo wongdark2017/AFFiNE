@@ -1,7 +1,7 @@
-Welcome to AFFiNE development reference.
+欢迎阅读 AFFiNE 开发参考。
 
-This document is intended for developers who want to contribute to AFFiNE. It contains information about the architecture of AFFiNE, how to build it, and how to contribute to it.
+本文面向希望为 AFFiNE 做贡献的开发者，包含架构、构建与贡献相关信息。
 
-### The Infrastructure of AFFiNE
+### AFFiNE 基础设施
 
-see {@link @toeverything/infra!}
+见 {@link @toeverything/infra!}

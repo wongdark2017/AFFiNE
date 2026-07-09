@@ -1,1 +1,1 @@
-A temporary crate to share the schema between AFFiNE native and `build.rs` in the AFFiNE native.
+用于在 AFFiNE native 与 AFFiNE native 的 `build.rs` 之间共享 schema 的临时 crate。
