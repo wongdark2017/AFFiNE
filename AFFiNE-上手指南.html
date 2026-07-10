@@ -1,0 +1,1246 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AFFiNE 项目上手指南</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --surface-2: #eef1f5;
+        --ink: #18212d;
+        --muted: #5b6675;
+        --faint: #8b95a5;
+        --line: #dde2e9;
+        --accent: #1e67e8;
+        --accent-ink: #14448f;
+        --accent-soft: #e8f0fe;
+        --violet: #7c5cd6;
+        --violet-soft: #f0ebfb;
+        --warn-bg: #fdf3e4;
+        --warn-line: #e8b25c;
+        --warn-ink: #7a4d08;
+        --code-bg: #101722;
+        --code-ink: #d5deea;
+        --code-comment: #6f8199;
+        --code-accent: #7fb3ff;
+        --shadow:
+          0 1px 2px rgba(24, 33, 45, 0.05), 0 4px 16px rgba(24, 33, 45, 0.05);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e1217;
+          --surface: #151b23;
+          --surface-2: #1b232e;
+          --ink: #e4e9f0;
+          --muted: #9aa5b4;
+          --faint: #6d7889;
+          --line: #29323f;
+          --accent: #6ba3ff;
+          --accent-ink: #a8c8ff;
+          --accent-soft: #16243c;
+          --violet: #a58bec;
+          --violet-soft: #251f38;
+          --warn-bg: #2b2113;
+          --warn-line: #8a6420;
+          --warn-ink: #e5b866;
+          --code-bg: #0a0f16;
+          --code-ink: #cdd7e4;
+          --code-comment: #62748a;
+          --code-accent: #7fb3ff;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #0e1217;
+        --surface: #151b23;
+        --surface-2: #1b232e;
+        --ink: #e4e9f0;
+        --muted: #9aa5b4;
+        --faint: #6d7889;
+        --line: #29323f;
+        --accent: #6ba3ff;
+        --accent-ink: #a8c8ff;
+        --accent-soft: #16243c;
+        --violet: #a58bec;
+        --violet-soft: #251f38;
+        --warn-bg: #2b2113;
+        --warn-line: #8a6420;
+        --warn-ink: #e5b866;
+        --code-bg: #0a0f16;
+        --code-ink: #cdd7e4;
+        --code-comment: #62748a;
+        --code-accent: #7fb3ff;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      :root[data-theme='light'] {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --surface-2: #eef1f5;
+        --ink: #18212d;
+        --muted: #5b6675;
+        --faint: #8b95a5;
+        --line: #dde2e9;
+        --accent: #1e67e8;
+        --accent-ink: #14448f;
+        --accent-soft: #e8f0fe;
+        --violet: #7c5cd6;
+        --violet-soft: #f0ebfb;
+        --warn-bg: #fdf3e4;
+        --warn-line: #e8b25c;
+        --warn-ink: #7a4d08;
+        --code-bg: #101722;
+        --code-ink: #d5deea;
+        --code-comment: #6f8199;
+        --code-accent: #7fb3ff;
+        --shadow:
+          0 1px 2px rgba(24, 33, 45, 0.05), 0 4px 16px rgba(24, 33, 45, 0.05);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+          'Microsoft YaHei', 'Noto Sans CJK SC', 'Segoe UI', sans-serif;
+        font-size: 15.5px;
+        line-height: 1.85;
+      }
+      code,
+      pre,
+      kbd {
+        font-family:
+          ui-monospace, SFMono-Regular, 'SF Mono', Menlo, 'Cascadia Code',
+          Consolas, 'Noto Sans Mono CJK SC', monospace;
+      }
+
+      .frame {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 28px 96px;
+      }
+
+      /* ---------- header ---------- */
+      header.masthead {
+        padding: 56px 0 36px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 40px;
+      }
+      .eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 600;
+        margin: 0 0 14px;
+      }
+      h1.doc-title {
+        margin: 0 0 14px;
+        font-size: clamp(30px, 4.5vw, 44px);
+        line-height: 1.25;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        text-wrap: balance;
+      }
+      .lede {
+        max-width: 62ch;
+        margin: 0 0 22px;
+        color: var(--muted);
+        font-size: 16.5px;
+      }
+      .lede strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        font-size: 12.5px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .chip b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .chip .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex: none;
+      }
+
+      /* ---------- layout ---------- */
+      .layout {
+        display: grid;
+        grid-template-columns: 216px minmax(0, 1fr);
+        gap: 56px;
+        align-items: start;
+      }
+      nav.toc {
+        position: sticky;
+        top: 28px;
+        font-size: 13.5px;
+        line-height: 1.5;
+      }
+      nav.toc .toc-label {
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--faint);
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      nav.toc ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-left: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+      }
+      nav.toc a {
+        display: block;
+        padding: 6px 0 6px 16px;
+        margin-left: -1px;
+        color: var(--muted);
+        text-decoration: none;
+        border-left: 2px solid transparent;
+      }
+      nav.toc a:hover {
+        color: var(--accent);
+        border-left-color: var(--line);
+      }
+      nav.toc a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 3px;
+      }
+      @media (max-width: 880px) {
+        .layout {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0;
+        }
+        nav.toc {
+          position: static;
+          margin-bottom: 32px;
+        }
+        nav.toc ol {
+          border-left: none;
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 4px 14px;
+        }
+        nav.toc a {
+          padding: 2px 0;
+          border-left: none;
+          margin-left: 0;
+        }
+      }
+
+      /* ---------- sections ---------- */
+      main {
+        min-width: 0;
+      }
+      section {
+        margin-bottom: 64px;
+        scroll-margin-top: 24px;
+      }
+      .sec-head {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin-bottom: 6px;
+      }
+      .sec-num {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        flex: none;
+      }
+      h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.4;
+        letter-spacing: 0.01em;
+        text-wrap: balance;
+      }
+      h3 {
+        margin: 32px 0 10px;
+        font-size: 17px;
+        font-weight: 650;
+      }
+      h3 code {
+        font-size: 0.92em;
+      }
+      section > p,
+      section li {
+        max-width: 74ch;
+      }
+      p {
+        margin: 12px 0;
+      }
+      a {
+        color: var(--accent);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 3px;
+      }
+
+      :not(pre) > code {
+        background: var(--violet-soft);
+        color: var(--violet);
+        padding: 0.13em 0.42em;
+        border-radius: 5px;
+        font-size: 0.86em;
+        overflow-wrap: anywhere;
+      }
+
+      /* ---------- code blocks ---------- */
+      .codeblock {
+        background: var(--code-bg);
+        border-radius: 10px;
+        margin: 16px 0;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .codeblock .cb-title {
+        padding: 8px 18px;
+        font-size: 11.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--code-comment);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .codeblock pre {
+        margin: 0;
+        padding: 16px 18px;
+        overflow-x: auto;
+        color: var(--code-ink);
+        font-size: 13px;
+        line-height: 1.75;
+      }
+      .codeblock .cm {
+        color: var(--code-comment);
+      }
+      .codeblock .hl {
+        color: var(--code-accent);
+      }
+
+      /* ---------- tables ---------- */
+      .table-wrap {
+        overflow-x: auto;
+        margin: 16px 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--faint);
+        font-weight: 600;
+        background: var(--surface-2);
+        white-space: nowrap;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      td:first-child {
+        white-space: nowrap;
+        font-weight: 550;
+      }
+      td code {
+        white-space: nowrap;
+      }
+
+      /* ---------- cards ---------- */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 22px 26px;
+        margin: 18px 0;
+        box-shadow: var(--shadow);
+      }
+      .card > h3:first-child {
+        margin-top: 0;
+      }
+      .card .card-tag {
+        display: inline-block;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 650;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border-radius: 5px;
+        padding: 2px 9px;
+        margin-bottom: 10px;
+      }
+      .card p:last-child,
+      .card ul:last-child,
+      .card .codeblock:last-child {
+        margin-bottom: 0;
+      }
+
+      /* ---------- steps ---------- */
+      ol.steps {
+        list-style: none;
+        counter-reset: step;
+        margin: 20px 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      ol.steps > li {
+        counter-increment: step;
+        position: relative;
+        padding: 0 0 22px 52px;
+        max-width: none;
+      }
+      ol.steps > li::before {
+        content: counter(step);
+        position: absolute;
+        left: 0;
+        top: 1px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+        font-weight: 650;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-variant-numeric: tabular-nums;
+      }
+      ol.steps > li:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 36px;
+        bottom: -2px;
+        width: 1px;
+        background: var(--line);
+      }
+      ol.steps .step-title {
+        font-weight: 650;
+      }
+      ol.steps p {
+        margin: 4px 0 0;
+        color: var(--muted);
+      }
+      ol.steps .codeblock {
+        margin: 10px 0 0;
+      }
+
+      /* ---------- flow (端到端) ---------- */
+      ol.flow {
+        list-style: none;
+        counter-reset: flow;
+        margin: 20px 0 0;
+        padding: 0;
+      }
+      ol.flow > li {
+        counter-increment: flow;
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px dashed var(--line);
+        max-width: none;
+      }
+      ol.flow > li:last-child {
+        border-bottom: none;
+      }
+      ol.flow > li::before {
+        content: counter(flow);
+        font-size: 13px;
+        font-weight: 650;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+        padding-top: 2px;
+      }
+      ol.flow .flow-file {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        color: var(--accent);
+        overflow-wrap: anywhere;
+      }
+      ol.flow p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* ---------- lists ---------- */
+      ul.tight {
+        margin: 12px 0;
+        padding-left: 20px;
+      }
+      ul.tight li {
+        margin: 7px 0;
+      }
+      ul.tight li::marker {
+        color: var(--accent);
+      }
+
+      /* ---------- callout ---------- */
+      .callout {
+        background: var(--warn-bg);
+        border: 1px solid var(--warn-line);
+        border-radius: 10px;
+        padding: 18px 22px;
+        margin: 18px 0;
+      }
+      .callout .co-title {
+        font-weight: 650;
+        color: var(--warn-ink);
+        margin-bottom: 8px;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+      }
+      .callout ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .callout li {
+        margin: 6px 0;
+        font-size: 14px;
+      }
+      .callout li::marker {
+        color: var(--warn-line);
+      }
+      .callout code {
+        background: rgba(0, 0, 0, 0.08);
+        color: inherit;
+      }
+      :root[data-theme='dark'] .callout code {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) .callout code {
+          background: rgba(255, 255, 255, 0.08);
+        }
+      }
+
+      /* ---------- repo tree ---------- */
+      .tree-note {
+        font-size: 13px;
+        color: var(--faint);
+        margin-top: 8px;
+      }
+      .codeblock pre .star {
+        color: #f2c14e;
+      }
+
+      footer.colophon {
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+        font-size: 13px;
+        color: var(--faint);
+        max-width: 74ch;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <header class="masthead">
+        <p class="eyebrow">Engineering Onboarding · toeverything/AFFiNE</p>
+        <h1 class="doc-title">AFFiNE 项目上手指南</h1>
+        <p class="lede">
+          AFFiNE 是一个开源的 <strong>Notion + Miro 融合体</strong>：文档（Page
+          模式）与无边界白板（Edgeless 模式）共用同一份数据，主打
+          local-first、实时协同与 AI Copilot。一套代码支撑
+          Web、Electron、iOS/Android
+          与自托管服务端。本指南基于对仓库的深度分析整理，覆盖架构、环境搭建与开发路径。
+        </p>
+        <div class="meta-row">
+          <span class="chip"><span class="dot"></span><b>v0.27.0</b></span>
+          <span class="chip">Node <b>22.x</b></span>
+          <span class="chip">Yarn <b>4.13</b></span>
+          <span class="chip">Rust <b>1.96</b></span>
+          <span class="chip">React <b>19</b> + Lit</span>
+          <span class="chip">NestJS <b>11</b> + Prisma <b>6</b></span>
+          <span class="chip">Yjs CRDT</span>
+          <span class="chip">Rspack</span>
+        </div>
+      </header>
+
+      <div class="layout">
+        <nav class="toc" aria-label="目录">
+          <div class="toc-label">目录</div>
+          <ol>
+            <li><a href="#stack">一 · 技术栈总览</a></li>
+            <li><a href="#map">二 · 仓库结构地图</a></li>
+            <li><a href="#setup">三 · 环境搭建</a></li>
+            <li><a href="#concepts">四 · 核心架构概念</a></li>
+            <li><a href="#trace">五 · 端到端代码追踪</a></li>
+            <li><a href="#commands">六 · 常用命令速查</a></li>
+            <li><a href="#tasks">七 · 常见开发任务落点</a></li>
+            <li><a href="#reading">八 · 推荐阅读顺序</a></li>
+            <li><a href="#pitfalls">九 · 易踩坑提醒</a></li>
+          </ol>
+        </nav>
+
+        <main>
+          <!-- ===================== 一、技术栈 ===================== -->
+          <section id="stack">
+            <div class="sec-head">
+              <span class="sec-num">一</span>
+              <h2>技术栈总览</h2>
+            </div>
+            <p>四大工程域各有一套栈，先建立整体印象再深入。</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>层</th>
+                    <th>技术</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>前端 UI</td>
+                    <td>
+                      React 19 + react-router v6 +
+                      vanilla-extract（<code>*.css.ts</code>）+ Radix UI
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>编辑器</td>
+                    <td>
+                      BlockSuite（自研，基于
+                      <b>Lit Web Components</b>，已并入本仓
+                      <code>blocksuite/</code>）
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>状态管理</td>
+                    <td>
+                      自研 <b>LiveData</b>（RxJS + Preact Signals，非
+                      Redux/Zustand）+ 自研 DI 框架
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>数据 / 协同</td>
+                    <td>
+                      <b>Yjs (CRDT)</b> + 自研 <b>nbstore</b> 存储同步引擎（跑在
+                      SharedWorker 里）
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>后端</td>
+                    <td>
+                      NestJS 11 + Apollo GraphQL（code-first）+ Prisma 6 +
+                      Socket.IO + BullMQ
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>基础设施</td>
+                    <td>
+                      PostgreSQL（pgvector）、Redis、对象存储（fs / S3 /
+                      R2）、Manticore / ES 全文检索
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>原生模块</td>
+                    <td>
+                      Rust 1.96（napi-rs 服务 Node / Electron；uniffi 服务 iOS /
+                      Android）
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>构建</td>
+                    <td>
+                      Yarn 4 workspaces + 自研 CLI
+                      <code>yarn affine</code>（clipanion）+ <b>Rspack</b> 打包
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>测试</td>
+                    <td>
+                      vitest（前端单测）、<b>ava</b>（后端单测）、Playwright
+                      1.58（E2E）
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ===================== 二、仓库地图 ===================== -->
+          <section id="map">
+            <div class="sec-head">
+              <span class="sec-num">二</span>
+              <h2>仓库结构地图</h2>
+            </div>
+            <p>
+              Monorepo
+              分四大区：<code>packages/frontend</code>、<code>packages/backend</code>、<code>packages/common</code>（共享层）与
+              <code>blocksuite</code>（编辑器框架）。标 ★
+              的目录是日常开发最常进入的地方。
+            </p>
+            <div class="codeblock">
+              <div class="cb-title">repository layout</div>
+              <pre>AFFiNE/
+├── packages/
+│   ├── frontend/
+│   │   ├── apps/            <span class="cm"># 应用壳：web / electron / electron-renderer / ios / android / mobile</span>
+│   │   ├── core/            <span class="star">★</span> <span class="cm"># 前端核心：70 个业务模块 + 页面 + 编辑器集成</span>
+│   │   ├── component/       <span class="cm"># 通用 UI 组件库（含 Lit↔React 桥）</span>
+│   │   ├── admin/           <span class="cm"># 自托管管理后台 SPA</span>
+│   │   ├── i18n/            <span class="cm"># 国际化（codegen）</span>
+│   │   ├── native/          <span class="cm"># Rust napi 模块（sqlite、nbstore、媒体采集）</span>
+│   │   └── routes/ templates/ track/ electron-api/ mobile-native/
+│   ├── backend/
+│   │   ├── server/          <span class="star">★</span> <span class="cm"># NestJS 主服务（GraphQL / WS / REST）</span>
+│   │   └── native/          <span class="cm"># Rust napi 模块（yjs 合并、LLM、权限、license）</span>
+│   └── common/
+│       ├── infra/           <span class="star">★</span> <span class="cm"># @toeverything/infra：DI 框架 + LiveData</span>
+│       ├── nbstore/         <span class="star">★</span> <span class="cm"># 客户端存储同步引擎（idb / sqlite / cloud 实现）</span>
+│       └── graphql/         <span class="cm"># GraphQL 客户端（codegen 自后端 schema.gql）</span>
+├── blocksuite/              <span class="star">★</span> <span class="cm"># 编辑器框架</span>
+│   ├── framework/           <span class="cm"># store（数据层）/ std（视图运行时）/ sync / global</span>
+│   ├── affine/              <span class="cm"># model（block 数据模型）/ blocks（21 种 block）/ widgets / gfx（白板）</span>
+│   └── playground/          <span class="cm"># 编辑器独立调试环境（Vite）</span>
+├── tools/cli/               <span class="cm"># `yarn affine` CLI（dev / build / bundle / init）+ Rspack 配置</span>
+├── tests/                   <span class="cm"># Playwright E2E（affine-local / cloud / desktop / mobile / blocksuite）</span>
+└── docs/                    <span class="cm"># BUILDING.md、developing-server.md 等开发文档</span></pre>
+            </div>
+          </section>
+
+          <!-- ===================== 三、环境搭建 ===================== -->
+          <section id="setup">
+            <div class="sec-head">
+              <span class="sec-num">三</span>
+              <h2>环境搭建（step by step）</h2>
+            </div>
+            <p>
+              <b>前置要求</b>：Node 22.x（<code>.nvmrc</code> = 22.23.0，<code
+                >fnm use</code
+              >
+              即可）、Yarn 4（<code>corepack enable</code>）、Rust 工具链（<code
+                >rust-toolchain.toml</code
+              >
+              固定 1.96.0）、Docker。
+            </p>
+            <ol class="steps">
+              <li>
+                <span class="step-title">安装依赖</span>
+                <p>
+                  postinstall 会自动跑 workspace codegen（<code
+                    >yarn affine init</code
+                  >）和 <code>prisma generate</code>。
+                </p>
+                <div class="codeblock"><pre>yarn install</pre></div>
+              </li>
+              <li>
+                <span class="step-title">构建 Rust 原生模块</span>
+                <p>首次编译较慢；macOS 注意使用系统 <code>strip</code>。</p>
+                <div class="codeblock">
+                  <pre>yarn affine @affine/native build          <span class="cm"># 前端用</span>
+yarn affine @affine/server-native build   <span class="cm"># 后端用</span></pre>
+                </div>
+              </li>
+              <li>
+                <span class="step-title">启动依赖服务</span>
+                <p>
+                  包含
+                  postgres（pgvector/pgvector:pg16）、redis、mailpit、manticore。
+                </p>
+                <div class="codeblock">
+                  <pre>
+cp ./.docker/dev/compose.yml.example ./.docker/dev/compose.yml
+cp ./.docker/dev/.env.example ./.docker/dev/.env
+docker compose -f ./.docker/dev/compose.yml up -d</pre
+                  >
+                </div>
+              </li>
+              <li>
+                <span class="step-title">配置后端环境变量</span>
+                <p>
+                  按需取消注释
+                  <code>DATABASE_URL</code
+                  >、<code>REDIS_SERVER_HOST</code>、<code>MAILER_*</code> 等。
+                </p>
+                <div class="codeblock">
+                  <pre>
+cp packages/backend/server/.env.example packages/backend/server/.env</pre
+                  >
+                </div>
+              </li>
+              <li>
+                <span class="step-title">初始化数据库</span>
+                <p>
+                  等价于 <code>prisma migrate dev</code> + 自定义数据迁移。<b
+                    >每次拉新代码有 migration 都要重跑。</b
+                  >
+                </p>
+                <div class="codeblock"><pre>yarn affine server init</pre></div>
+              </li>
+              <li>
+                <span class="step-title">启动后端</span>
+                <p>底层是 <code>nodemon ./src/index.ts</code>，支持热重载。</p>
+                <div class="codeblock"><pre>yarn affine server dev</pre></div>
+              </li>
+              <li>
+                <span class="step-title">启动前端</span>
+                <p>
+                  默认 <code>@affine/web</code>，跑在
+                  <code>localhost:8080</code>。
+                </p>
+                <div class="codeblock"><pre>yarn dev</pre></div>
+              </li>
+            </ol>
+            <div class="card">
+              <span class="card-tag">开发辅助</span>
+              <ul class="tight">
+                <li>
+                  <b>测试账号</b>（服务端启动自动创建）：<code
+                    >dev@affine.pro</code
+                  >
+                  / <code>dev</code>、<code>pro@affine.pro</code> /
+                  <code>pro</code>、<code>team@affine.pro</code> /
+                  <code>team</code>
+                </li>
+                <li>
+                  <b>Prisma Studio</b>（数据库 GUI，端口 5555）：<code
+                    >yarn affine server prisma studio</code
+                  >
+                </li>
+                <li><b>Swagger</b>：dev 模式下访问 <code>/api/docs</code></li>
+                <li>
+                  <b>只调编辑器</b>（无需后端）：<code
+                    >yarn workspace @blocksuite/playground dev</code
+                  >
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- ===================== 四、核心概念 ===================== -->
+          <section id="concepts">
+            <div class="sec-head">
+              <span class="sec-num">四</span>
+              <h2>必须理解的四个核心架构概念</h2>
+            </div>
+
+            <div class="card">
+              <span class="card-tag">概念 1 · 前端 DI</span>
+              <h3>Framework / Scope / Service / Entity / Store</h3>
+              <p>
+                <code>@toeverything/infra</code
+                >（<code>packages/common/infra/src/framework/</code>）提供一个链式注册的
+                DI 容器。<code>core/src/modules/</code> 下的 70
+                个业务模块全部遵循同一范式（以
+                <code>modules/doc/index.ts</code> 为例）：
+              </p>
+              <div class="codeblock">
+                <pre>framework
+  .scope(WorkspaceScope)                       <span class="cm">// 作用域：Workspace → Doc → Editor 层级化</span>
+  .service(DocsService, [DocsStore, ...])      <span class="cm">// Service：单例业务门面</span>
+  .store(DocsStore, [WorkspaceService])        <span class="cm">// Store：对接底层数据源（nbstore/yjs）</span>
+  .entity(DocRecord, [DocsStore])              <span class="cm">// Entity：可多实例的响应式领域对象</span></pre>
+              </div>
+              <p>
+                React 侧用 <code>&lt;FrameworkRoot&gt;</code> 挂载容器、<code
+                  >&lt;FrameworkScope scope={doc.scope}&gt;</code
+                >
+                注入子作用域、<code>useService(DocsService)</code> 取服务。<b
+                  >看懂一个模块，其余 69 个都是复制品。</b
+                >
+              </p>
+            </div>
+
+            <div class="card">
+              <span class="card-tag">概念 2 · 状态管理</span>
+              <h3>LiveData</h3>
+              <p>
+                源码在
+                <code>packages/common/infra/src/livedata/livedata.ts</code
+                >。本质是 RxJS BehaviorSubject + Preact signal
+                的组合，命名约定以 <code>$</code> 结尾（如
+                <code>editor.mode$</code>）。React 里用
+                <code>useLiveData(xxx$)</code> 订阅，也可直接
+                <code>.pipe()</code> 套 RxJS 算子。少量原子状态用 jotai。
+              </p>
+            </div>
+
+            <div class="card">
+              <span class="card-tag">概念 3 · 数据链路</span>
+              <h3>Yjs → nbstore → 后端</h3>
+              <ul class="tight">
+                <li>
+                  每篇文档是一个<b>子 Y.Doc</b>；block 树存在
+                  <code>Y.Map</code> 里，父子关系用 <code>sys:children</code> 的
+                  id 数组表达（非物理嵌套），文本是 <code>Y.Text</code>。
+                </li>
+                <li>
+                  <b>nbstore</b
+                  >（<code>packages/common/nbstore</code>）是客户端存储同步引擎，跑在
+                  <b>SharedWorker</b> 里（<code>apps/web/src/app.tsx</code> 创建
+                  worker 并以 <code>NbstoreProvider</code> 注入
+                  DI）。本地持久化：Web 用 IndexedDB、桌面用 SQLite（走 Rust
+                  native）；云端同步走 GraphQL + WebSocket。
+                </li>
+                <li>
+                  服务端对应物是 <code>PgWorkspaceDocStorageAdapter</code>（快照
+                  / 增量存 Postgres），文档同步走 Socket.IO 的
+                  <code>SyncGateway</code
+                  >（<code>packages/backend/server/src/core/sync/gateway.ts</code>），yjs
+                  更新合并下沉到 Rust（y-octo）。
+                </li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <span class="card-tag">概念 4 · 编辑器</span>
+              <h3>BlockSuite：schema/model（数据）与 view（Lit 组件）分离</h3>
+              <ul class="tight">
+                <li>
+                  <b>数据</b>：<code
+                    >defineBlockSchema({ flavour: 'affine:paragraph', props, ...
+                    })</code
+                  >
+                  + <code>BlockModel</code> 子类，全部在
+                  <code>blocksuite/affine/model/</code>，与 Yjs 双向响应式绑定。
+                </li>
+                <li>
+                  <b>视图</b>：Lit 组件（如 <code>affine-paragraph</code>），在
+                  <code>blocksuite/affine/blocks/&lt;name&gt;/</code>，通过
+                  <code>BlockViewExtension</code> 绑定 flavour。
+                </li>
+                <li>
+                  <b>运行时</b
+                  >：<code>BlockStdScope</code>（<code>framework/std</code>）持有
+                  store + extensions；Page 与 Edgeless
+                  模式共用同一份数据，只是加载不同 extension 集合。
+                </li>
+                <li>
+                  <b>前端接入点</b>：<code
+                    >packages/frontend/core/src/blocksuite/</code
+                  >
+                  —— <code>manager/view.ts</code> 是 AFFiNE
+                  向编辑器注入自有能力（AI、云、评论、peek-view…）的总装配处；Lit↔React
+                  桥在 <code>block-suite-editor/lit-adaper.tsx</code>。
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- ===================== 五、端到端追踪 ===================== -->
+          <section id="trace">
+            <div class="sec-head">
+              <span class="sec-num">五</span>
+              <h2>端到端代码追踪：打开一篇文档发生了什么</h2>
+            </div>
+            <p>
+              新人建议沿这条路径通读一遍，走完即可串起 DI、LiveData、nbstore 和
+              BlockSuite 四个概念。
+            </p>
+            <ol class="flow">
+              <li>
+                <div>
+                  <div class="flow-file">apps/web/src/index.tsx → app.tsx</div>
+                  <p>
+                    创建 <code>Framework</code>、注册全部模块、连接 nbstore
+                    SharedWorker、挂 <code>&lt;FrameworkRoot&gt;</code> +
+                    Router。
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="flow-file">core/src/desktop/router.tsx</div>
+                  <p>路由到 workspace 页。</p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="flow-file">
+                    core/src/desktop/pages/workspace/detail-page/detail-page-wrapper.tsx
+                  </div>
+                  <p>
+                    <code>DocsService.open(pageId)</code> 拿到
+                    <code>Doc</code>
+                    entity，<code>EditorsService.createEditor()</code>，注入
+                    <code>&lt;FrameworkScope&gt;</code>。
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="flow-file">
+                    detail-page.tsx → core/src/components/page-detail-editor.tsx
+                  </div>
+                  <p>
+                    渲染
+                    <code
+                      >&lt;BlockSuiteEditor
+                      page={editor.doc.blockSuiteDoc}&gt;</code
+                    >。
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="flow-file">
+                    core/src/blocksuite/block-suite-editor/lit-adaper.tsx +
+                    editors/page-editor.ts
+                  </div>
+                  <p>
+                    <code>usePatchSpecs</code> 组装 extensions →
+                    <code>new BlockStdScope({ store, extensions })</code> → Lit
+                    渲染 block 树。
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </section>
+
+          <!-- ===================== 六、命令速查 ===================== -->
+          <section id="commands">
+            <div class="sec-head">
+              <span class="sec-num">六</span>
+              <h2>常用命令速查</h2>
+            </div>
+            <div class="codeblock">
+              <div class="cb-title">cheatsheet</div>
+              <pre><span class="hl">yarn dev</span>                                  <span class="cm"># 前端 dev（= yarn affine dev，可 -p 指定包）</span>
+<span class="hl">yarn affine server dev</span>                    <span class="cm"># 后端 dev</span>
+yarn affine &lt;package&gt; &lt;script&gt;            <span class="cm"># 万能代理：跑任意包的任意 script</span>
+yarn affine init                          <span class="cm"># workspace codegen（增删包后必跑；postinstall 自动跑）</span>
+yarn typecheck                            <span class="cm"># tsc -b 全仓类型检查</span>
+yarn lint / yarn lint:fix                 <span class="cm"># oxlint + eslint + prettier</span>
+yarn test                                 <span class="cm"># vitest 前端单测</span>
+yarn workspace @affine/server test        <span class="cm"># 后端单测（ava）</span>
+yarn workspace @affine-test/affine-local e2e   <span class="cm"># 主 E2E（需先 npx playwright install）</span>
+yarn workspace @blocksuite/playground dev <span class="cm"># 编辑器 playground</span></pre>
+            </div>
+            <p>
+              <b>GraphQL 改动流程</b>：后端改 resolver → 生成
+              <code>src/schema.gql</code> →
+              <code>packages/common/graphql</code> 跑
+              codegen（<code>gql-gen</code>）生成前端类型。i18n 由
+              <code>@affine/i18n</code> 的 <code>build.ts</code> codegen。
+            </p>
+          </section>
+
+          <!-- ===================== 七、任务落点 ===================== -->
+          <section id="tasks">
+            <div class="sec-head">
+              <span class="sec-num">七</span>
+              <h2>常见开发任务落点</h2>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>任务</th>
+                    <th>落点</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>改 UI / 业务逻辑</td>
+                    <td>
+                      <code
+                        >packages/frontend/core/src/modules/&lt;模块&gt;</code
+                      >
+                      + <code>desktop/pages/</code>；通用组件在
+                      <code>packages/frontend/component</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>加一种新 block</td>
+                    <td>
+                      ① <code>blocksuite/affine/model/src/blocks/</code> 定义
+                      schema/model；② 新建
+                      <code>blocksuite/affine/blocks/&lt;name&gt;/</code>（Lit
+                      组件 + <code>view.ts</code> /
+                      <code>store.ts</code> extension）；③ 注册进总装配表
+                      <code
+                        >blocksuite/affine/all/src/extensions/{view,store}.ts</code
+                      >。参考范例：<code>divider</code>（最简）→
+                      <code>paragraph</code>（完整）
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>patch 编辑器行为</td>
+                    <td>
+                      （AFFiNE 侧）<code
+                        >packages/frontend/core/src/blocksuite/view-extensions/</code
+                      >
+                      + 注册进 <code>manager/view.ts</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>后端加 API</td>
+                    <td>
+                      <code>packages/backend/server/src/core/&lt;模块&gt;</code
+                      >（resolver / service）+
+                      <code>models/</code>（数据访问层）；可选插件在
+                      <code>src/plugins/</code>（copilot / payment / oauth…）
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>数据库变更</td>
+                    <td>
+                      改 <code>schema.prisma</code> +
+                      <code>prisma migrate dev</code>；数据迁移放
+                      <code>src/data/migrations/</code>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ===================== 八、阅读顺序 ===================== -->
+          <section id="reading">
+            <div class="sec-head">
+              <span class="sec-num">八</span>
+              <h2>推荐阅读顺序（第一周）</h2>
+            </div>
+            <ol class="steps">
+              <li>
+                <span class="step-title">把环境跑起来</span>
+                <p>
+                  <code>docs/BUILDING.md</code>、<code
+                    >docs/developing-server.md</code
+                  >
+                </p>
+              </li>
+              <li>
+                <span class="step-title">两大前端原语</span>
+                <p>
+                  <code>packages/common/infra/src/livedata/livedata.ts</code> 和
+                  <code>framework/core/framework.ts</code>
+                </p>
+              </li>
+              <li>
+                <span class="step-title">DI 注册范式样板</span>
+                <p><code>core/src/modules/doc/index.ts</code></p>
+              </li>
+              <li>
+                <span class="step-title">走一遍文档页端到端路径</span>
+                <p>即第五节的追踪路线。</p>
+              </li>
+              <li>
+                <span class="step-title">官方编辑器概念讲解</span>
+                <p>
+                  <code>blocksuite/docs-site/guide/</code> 下的
+                  <code>block-schema.md</code
+                  >、<code>block-view.md</code>、<code
+                    >data-synchronization.md</code
+                  >
+                </p>
+              </li>
+              <li>
+                <span class="step-title">一个完整 block 的全套实现</span>
+                <p><code>blocksuite/affine/blocks/paragraph/</code></p>
+              </li>
+              <li>
+                <span class="step-title">后端入口</span>
+                <p>
+                  从
+                  <code>packages/backend/server/src/app.module.ts</code>
+                  入手（按 <code>SERVER_FLAVOR</code> 条件装配模块）。
+                </p>
+              </li>
+            </ol>
+          </section>
+
+          <!-- ===================== 九、坑 ===================== -->
+          <section id="pitfalls">
+            <div class="sec-head">
+              <span class="sec-num">九</span>
+              <h2>易踩坑提醒</h2>
+            </div>
+            <div class="callout">
+              <div class="co-title">⚠ 上手前请记住这几条</div>
+              <ul>
+                <li>
+                  docs 部分内容过时（如 <code>BUILDING.md</code> 写的 Node
+                  20.x），<b>以代码为准</b>：Node 版本看
+                  <code>.nvmrc</code>（22.23.0）。
+                </li>
+                <li>
+                  Windows 需开启符号链接支持（开发者模式 +
+                  <code>git config --global core.symlinks true</code>）。
+                </li>
+                <li>
+                  每次拉代码后若有新 migration，要重跑
+                  <code>yarn affine server init</code>。
+                </li>
+                <li>
+                  <code>@affine/server</code> 单测用 <b>ava</b> 而非 vitest。
+                </li>
+                <li>
+                  改动 GraphQL schema 后前端类型不会自动更新，需重跑 codegen。
+                </li>
+              </ul>
+            </div>
+            <footer class="colophon">
+              本指南基于 AFFiNE 仓库 canary
+              分支（v0.27.0）的源码分析整理，生成于
+              2026-07-08。仓库结构与命令可能随版本演进，遇到不一致时以
+              <code>package.json</code> 与 <code>tools/cli</code> 源码为准。
+            </footer>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
