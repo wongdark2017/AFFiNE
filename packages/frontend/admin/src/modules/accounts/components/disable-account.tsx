@@ -1,4 +1,5 @@
 import { TypeConfirmDialog } from '../../../components/shared/type-confirm-dialog';
+import { t } from '../../../i18n';
 
 export const DisableAccountDialog = ({
   email,
@@ -17,17 +18,19 @@ export const DisableAccountDialog = ({
     <TypeConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Disable Account ?"
+      title={t('Disable Account ?')}
       description={
         <>
-          The data associated with <span className="font-bold">{email}</span>{' '}
-          will be deleted and cannot be used for logging in. This operation is
-          irreversible. Please proceed with caution.
+          {t('The data associated with')}{' '}
+          <span className="font-bold">{email}</span>{' '}
+          {t(
+            'will be deleted and cannot be used for logging in. This operation is irreversible. Please proceed with caution.'
+          )}
         </>
       }
       targetText={email}
-      inputPlaceholder="Please type email to confirm"
-      confirmText="Disable"
+      inputPlaceholder={t('Please type email to confirm')}
+      confirmText={t('Disable')}
       confirmButtonVariant="destructive"
       onConfirm={onDisable}
       onClose={onClose}

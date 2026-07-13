@@ -9,6 +9,8 @@ import {
   UploadCloudIcon,
 } from 'lucide-react';
 
+import { t } from '../../i18n';
+
 type Channel = 'stable' | 'canary' | 'beta' | 'internal';
 
 const appNames = {
@@ -23,22 +25,22 @@ const links = [
   {
     href: BUILD_CONFIG.githubUrl,
     icon: <GithubIcon size={20} />,
-    label: 'Star AFFiNE on GitHub',
+    label: t('Star AFFiNE on GitHub'),
   },
   {
     href: BUILD_CONFIG.githubUrl,
     icon: <MailWarningIcon size={20} />,
-    label: 'Report an Issue',
+    label: t('Report an Issue'),
   },
   {
     href: 'https://docs.affine.pro/docs/self-host-affine',
     icon: <AlbumIcon size={20} />,
-    label: 'Self-host Document',
+    label: t('Self-host Document'),
   },
   {
     href: 'https://affine.pro/pricing/?type=selfhost#table',
     icon: <UploadCloudIcon size={20} />,
-    label: 'Upgrade to Team',
+    label: t('Upgrade to Team'),
   },
 ];
 
@@ -46,7 +48,7 @@ export function AboutAFFiNE() {
   return (
     <div className="flex flex-col h-full gap-3 py-5 px-6 w-full">
       <div className="flex items-center">
-        <span className="text-xl font-semibold">About AFFiNE</span>
+        <span className="text-xl font-semibold">{t('About AFFiNE')}</span>
       </div>
       <div className="overflow-y-auto space-y-[10px]">
         <div className="flex flex-col rounded-md border">
@@ -75,8 +77,17 @@ export function AboutAFFiNE() {
         </div>
       </div>
       <div className="space-y-3 text-sm font-normal text-muted-foreground">
-        <div>{`App Version: ${appName} ${BUILD_CONFIG.appVersion}`}</div>
-        <div>{`Editor Version: ${BUILD_CONFIG.editorVersion}`}</div>
+        <div>
+          {t('App Version: {name} {version}', {
+            name: appName,
+            version: BUILD_CONFIG.appVersion,
+          })}
+        </div>
+        <div>
+          {t('Editor Version: {version}', {
+            version: BUILD_CONFIG.editorVersion,
+          })}
+        </div>
       </div>
     </div>
   );

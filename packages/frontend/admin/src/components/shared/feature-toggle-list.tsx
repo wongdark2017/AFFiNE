@@ -5,6 +5,7 @@ import { Switch } from '@affine/admin/components/ui/switch';
 import type { FeatureType } from '@affine/graphql';
 import { useCallback } from 'react';
 
+import { t } from '../../i18n';
 import { cn } from '../../utils';
 
 type FeatureToggleListProps = {
@@ -42,7 +43,7 @@ export const FeatureToggleList = ({
   if (!features.length) {
     return (
       <div className={cn(className, 'px-3 py-2 text-xs text-muted-foreground')}>
-        No configurable features.
+        {t('No configurable features.')}
       </div>
     );
   }
@@ -65,12 +66,15 @@ export const FeatureToggleList = ({
                   checked={selected.includes(feature)}
                   onCheckedChange={checked => handleToggle(feature, !!checked)}
                 />
-                <span className="truncate">{feature}</span>
+                <span className="truncate">{t(feature)}</span>
               </>
             ) : (
               <>
-                <span className="overflow-hidden text-ellipsis" title={feature}>
-                  {feature}
+                <span
+                  className="overflow-hidden text-ellipsis"
+                  title={t(feature)}
+                >
+                  {t(feature)}
                 </span>
                 <Control
                   checked={selected.includes(feature)}

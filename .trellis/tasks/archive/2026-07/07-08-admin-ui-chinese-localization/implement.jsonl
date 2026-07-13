@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/testing/index.md", "reason": "admin 组件测试用 vitest+RTL+happy-dom，root glob 收集，新增/修改 spec 需遵循"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "admin 包定位与 Tailwind 约定说明，区别于 core"}

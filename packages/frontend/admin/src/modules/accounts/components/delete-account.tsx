@@ -1,4 +1,5 @@
 import { TypeConfirmDialog } from '../../../components/shared/type-confirm-dialog';
+import { t } from '../../../i18n';
 
 export const DeleteAccountDialog = ({
   email,
@@ -17,16 +18,18 @@ export const DeleteAccountDialog = ({
     <TypeConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Delete Account ?"
+      title={t('Delete Account ?')}
       description={
         <>
-          <span className="font-bold">{email}</span> will be permanently
-          deleted. This operation is irreversible. Please proceed with caution.
+          <span className="font-bold">{email}</span>{' '}
+          {t(
+            'will be permanently deleted. This operation is irreversible. Please proceed with caution.'
+          )}
         </>
       }
       targetText={email}
-      inputPlaceholder="Please type email to confirm"
-      confirmText="Delete"
+      inputPlaceholder={t('Please type email to confirm')}
+      confirmText={t('Delete')}
       confirmButtonVariant="destructive"
       onConfirm={onDelete}
       onClose={onClose}

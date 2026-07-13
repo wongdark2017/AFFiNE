@@ -7,6 +7,7 @@ import {
   ListChecksIcon,
 } from 'lucide-react';
 
+import { t } from '../../i18n';
 import { NavItem } from './nav-item';
 import { ServerVersion } from './server-version';
 import { SettingsItem } from './settings-item';
@@ -34,28 +35,28 @@ export function Nav({ isCollapsed = false }: NavProps) {
           <NavItem
             to={ROUTES.admin.dashboard}
             icon={<BarChart3Icon size={18} />}
-            label="Dashboard"
+            label={t('Dashboard')}
             isCollapsed={isCollapsed}
           />
         )}
         <NavItem
           to={ROUTES.admin.accounts}
           icon={<AccountIcon fontSize={20} />}
-          label="Accounts"
+          label={t('Accounts')}
           isCollapsed={isCollapsed}
         />
         {environment.isSelfHosted ? null : (
           <NavItem
             to={ROUTES.admin.workspaces}
             icon={<LayoutDashboardIcon size={18} />}
-            label="Workspaces"
+            label={t('Workspaces')}
             isCollapsed={isCollapsed}
           />
         )}
         <NavItem
           to={ROUTES.admin.queue}
           icon={<ListChecksIcon size={18} />}
-          label="Queue"
+          label={t('Queue')}
           isCollapsed={isCollapsed}
         />
         {/* <NavItem
@@ -68,7 +69,7 @@ export function Nav({ isCollapsed = false }: NavProps) {
         <NavItem
           to={ROUTES.admin.about}
           icon={<SelfhostIcon fontSize={20} />}
-          label="About"
+          label={t('About')}
           isCollapsed={isCollapsed}
         />
       </nav>

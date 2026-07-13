@@ -1,6 +1,8 @@
 import { WarningIcon } from '@blocksuite/icons/rc';
 import type { FC } from 'react';
 
+import { t } from '../../../../i18n';
+
 interface CsvFormatGuidanceProps {
   passwordLimits: {
     minLength: number;
@@ -20,12 +22,15 @@ export const CsvFormatGuidance: FC<CsvFormatGuidanceProps> = ({
         <WarningIcon fontSize={16} className="text-foreground" />
       </div>
       <div>
-        <p>CSV file includes username, email, and password.</p>
+        <p>{t('CSV file includes username, email, and password.')}</p>
         <ul>
           {[
-            `Username (optional): any text.`,
-            `Email (required): e.g., user@example.com.`,
-            `Password (optional): ${passwordLimits.minLength}–${passwordLimits.maxLength} characters.`,
+            t('Username (optional): any text.'),
+            t('Email (required): e.g., user@example.com.'),
+            t('Password (optional): {min}–{max} characters.', {
+              min: passwordLimits.minLength,
+              max: passwordLimits.maxLength,
+            }),
           ].map((text, index) => (
             <li
               key={`guidance-${index}`}

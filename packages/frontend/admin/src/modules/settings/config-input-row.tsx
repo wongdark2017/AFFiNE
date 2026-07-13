@@ -11,6 +11,7 @@ import { cn } from '@affine/admin/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Textarea } from '../../components/ui/textarea';
+import { t } from '../../i18n';
 
 export type ConfigInputProps = {
   field: string;
@@ -106,7 +107,7 @@ const Inputs: Record<
         onValidationChange?.(undefined);
         onChange(value);
       } catch {
-        onValidationChange?.('Invalid JSON format');
+        onValidationChange?.(t('Invalid JSON format'));
         // Keep the draft "dirty" even when JSON is temporarily invalid
         // so Save/Cancel state can reflect real editing progress.
         onChange(nextText);
@@ -133,7 +134,7 @@ const Inputs: Record<
         onValueChange={onChange}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t('Select an option')} />
         </SelectTrigger>
         <SelectContent>
           {options?.map(option => (

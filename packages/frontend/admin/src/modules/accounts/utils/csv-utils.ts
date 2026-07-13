@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 
+import { t } from '../../../i18n';
 import { emailRegex } from '../../../utils';
 
 export interface ParsedUser {
@@ -119,7 +120,9 @@ export const exportImportResults = (results: ParsedUser[]) => {
     `import_results_${new Date().toISOString().slice(0, 10)}.csv`
   );
 
-  toast.success(`Exported ${results.length} import results`);
+  toast.success(
+    t('Exported {count} import results', { count: results.length })
+  );
 };
 
 /**
@@ -165,7 +168,7 @@ export const processCSVFile = async (
       .map(row => row.split(','));
 
     if (rows.length < 2) {
-      toast.error('CSV file format is incorrect or empty');
+      toast.error(t('CSV file format is incorrect or empty'));
       onError();
       return;
     }
@@ -181,7 +184,7 @@ export const processCSVFile = async (
     const usersWithEmail = users.filter(user => user.email);
 
     if (usersWithEmail.length === 0) {
-      toast.error('CSV file contains no valid user data');
+      toast.error(t('CSV file contains no valid user data'));
       onError();
       return;
     }
@@ -190,7 +193,7 @@ export const processCSVFile = async (
     const hasValidUsers = validatedUsers.some(user => user.valid !== false);
 
     if (!hasValidUsers) {
-      toast.error('CSV file contains no valid user data');
+      toast.error(t('CSV file contains no valid user data'));
       onError();
       return;
     }
@@ -198,7 +201,7 @@ export const processCSVFile = async (
     onSuccess(validatedUsers);
   } catch (error) {
     console.error('Failed to parse CSV file', error);
-    toast.error('Failed to parse CSV file');
+    toast.error(t('Failed to parse CSV file'));
     onError();
   }
 };

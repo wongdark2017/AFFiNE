@@ -8,6 +8,7 @@ import { Navigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { affineFetch } from '../../fetch-utils';
+import { t } from '../../i18n';
 import { isAdmin, useCurrentUser, useRevalidateCurrentUser } from '../common';
 import logo from './logo.svg';
 
@@ -34,7 +35,7 @@ export function Auth() {
         .then(async response => {
           if (!response.ok) {
             const data = await response.json();
-            throw new Error(data.message || 'Failed to login');
+            throw new Error(data.message || t('Failed to login'));
           }
           return response.json();
         })
@@ -59,15 +60,17 @@ export function Auth() {
             },
           }) => {
             if (features.includes(FeatureType.Admin)) {
-              toast.success('Logged in successfully');
+              toast.success(t('Logged in successfully'));
               await revalidate();
             } else {
-              toast.error('You are not an admin');
+              toast.error(t('You are not an admin'));
             }
           }
         )
         .catch(err => {
-          toast.error(`Failed to login: ${err.message}`);
+          toast.error(
+            t('Failed to login: {message}', { message: err.message })
+          );
         });
     },
     [revalidate]
@@ -82,15 +85,15 @@ export function Auth() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
+            <h1 className="text-3xl font-bold">{t('Login')}</h1>
             <p className="text-balance text-muted-foreground">
-              Enter your email below to login to your account
+              {t('Enter your email below to login to your account')}
             </p>
           </div>
           <form onSubmit={login} action="#">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('Email')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -102,7 +105,7 @@ export function Auth() {
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('Password')}</Label>
                 </div>
                 <Input
                   id="password"
@@ -113,7 +116,7 @@ export function Auth() {
                 />
               </div>
               <Button onClick={login} type="submit" className="w-full">
-                Login
+                {t('Login')}
               </Button>
             </div>
           </form>

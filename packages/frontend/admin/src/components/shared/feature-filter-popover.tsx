@@ -8,6 +8,8 @@ import {
 import type { FeatureType } from '@affine/graphql';
 import { useCallback } from 'react';
 
+import { t } from '../../i18n';
+
 type FeatureFilterPopoverProps = {
   selectedFeatures: FeatureType[];
   availableFeatures: FeatureType[];
@@ -22,7 +24,7 @@ export const FeatureFilterPopover = ({
   availableFeatures,
   onChange,
   align = 'start',
-  buttonLabel = 'Features',
+  buttonLabel = t('Features'),
   disabled = false,
 }: FeatureFilterPopoverProps) => {
   const handleFeatureToggle = useCallback(
@@ -67,7 +69,7 @@ export const FeatureFilterPopover = ({
         align={align}
         className="w-[240px] p-2 flex flex-col gap-2"
       >
-        <div className="text-xs font-medium px-1">Filter by feature</div>
+        <div className="text-xs font-medium px-1">{t('Filter by feature')}</div>
         <div className="flex flex-col gap-1 max-h-64 overflow-auto">
           {availableFeatures.map(feature => (
             <label
@@ -81,7 +83,7 @@ export const FeatureFilterPopover = ({
                 }
                 disabled={disabled}
               />
-              <span className="text-sm truncate">{feature}</span>
+              <span className="text-sm truncate">{t(feature)}</span>
             </label>
           ))}
         </div>
@@ -92,7 +94,7 @@ export const FeatureFilterPopover = ({
             onClick={handleClearFeatures}
             disabled={disabled || selectedFeatures.length === 0}
           >
-            Clear
+            {t('Clear')}
           </Button>
         </div>
       </PopoverContent>

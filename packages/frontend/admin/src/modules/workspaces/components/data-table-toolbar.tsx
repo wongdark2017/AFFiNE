@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from '../../../components/ui/popover';
 import { useDebouncedValue } from '../../../hooks/use-debounced-value';
+import { t } from '../../../i18n';
 import { useServerConfig } from '../../common';
 import type { WorkspaceFlagFilter } from '../schema';
 
@@ -35,13 +36,13 @@ interface DataTableToolbarProps<TData> {
 }
 
 const sortOptions: { value: AdminWorkspaceSort; label: string }[] = [
-  { value: AdminWorkspaceSort.CreatedAt, label: 'Created time' },
-  { value: AdminWorkspaceSort.BlobCount, label: 'Blob count' },
-  { value: AdminWorkspaceSort.BlobSize, label: 'Blob size' },
-  { value: AdminWorkspaceSort.SnapshotCount, label: 'Snapshot count' },
-  { value: AdminWorkspaceSort.SnapshotSize, label: 'Snapshot size' },
-  { value: AdminWorkspaceSort.MemberCount, label: 'Member count' },
-  { value: AdminWorkspaceSort.PublicPageCount, label: 'Public pages' },
+  { value: AdminWorkspaceSort.CreatedAt, label: t('Created time') },
+  { value: AdminWorkspaceSort.BlobCount, label: t('Blob count') },
+  { value: AdminWorkspaceSort.BlobSize, label: t('Blob size') },
+  { value: AdminWorkspaceSort.SnapshotCount, label: t('Snapshot count') },
+  { value: AdminWorkspaceSort.SnapshotSize, label: t('Snapshot size') },
+  { value: AdminWorkspaceSort.MemberCount, label: t('Member count') },
+  { value: AdminWorkspaceSort.PublicPageCount, label: t('Public pages') },
 ];
 
 export function DataTableToolbar<TData>({
@@ -82,22 +83,22 @@ export function DataTableToolbar<TData>({
   const selectedSortLabel = useMemo(
     () =>
       sortOptions.find(option => option.value === sort)?.label ??
-      'Created time',
+      t('Created time'),
     [sort]
   );
 
   const flagOptions: { key: keyof WorkspaceFlagFilter; label: string }[] = [
-    { key: 'public', label: 'Public' },
-    { key: 'enableSharing', label: 'Enable sharing' },
-    { key: 'enableAi', label: 'Enable AI' },
-    { key: 'enableUrlPreview', label: 'Enable URL preview' },
-    { key: 'enableDocEmbedding', label: 'Enable doc embedding' },
+    { key: 'public', label: t('Public') },
+    { key: 'enableSharing', label: t('Enable sharing') },
+    { key: 'enableAi', label: t('Enable AI') },
+    { key: 'enableUrlPreview', label: t('Enable URL preview') },
+    { key: 'enableDocEmbedding', label: t('Enable doc embedding') },
   ];
 
   const flagLabel = (value: boolean | undefined) => {
-    if (value === true) return 'On';
-    if (value === false) return 'Off';
-    return 'Any';
+    if (value === true) return t('On');
+    if (value === false) return t('Off');
+    return t('Any');
   };
 
   const handleFlagToggle = useCallback(
@@ -134,7 +135,7 @@ export function DataTableToolbar<TData>({
               className="h-8 px-2 lg:px-3"
               disabled={disabled}
             >
-              Sort: {selectedSortLabel}
+              {t('Sort: {label}', { label: selectedSortLabel })}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[220px] p-2">
@@ -162,7 +163,7 @@ export function DataTableToolbar<TData>({
               className="h-8 px-2 lg:px-3"
               disabled={disabled}
             >
-              Flags
+              {t('Flags')}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[260px] p-2">
@@ -187,7 +188,7 @@ export function DataTableToolbar<TData>({
         </Popover>
         <div className="flex">
           <Input
-            placeholder="Search Workspace / Owner"
+            placeholder={t('Search Workspace / Owner')}
             value={value}
             onChange={onValueChange}
             className="h-8 w-[150px] lg:w-[250px]"

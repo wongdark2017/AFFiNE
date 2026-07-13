@@ -2,6 +2,7 @@ import { useAsyncCallback } from '@affine/core/components/hooks/affine-async-hoo
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
+import { t } from '../../../../i18n';
 import {
   exportImportResults,
   getValidUsersToImport,
@@ -62,10 +63,18 @@ export function useImportUsersState({
 
       if (failedCount > 0) {
         toast.info(
-          `Successfully imported ${successCount} users, ${failedCount} failed`
+          t(
+            'Successfully imported {successCount} users, {failedCount} failed',
+            {
+              successCount,
+              failedCount,
+            }
+          )
         );
       } else {
-        toast.success(`Successfully imported ${successCount} users`);
+        toast.success(
+          t('Successfully imported {count} users', { count: successCount })
+        );
       }
 
       const successfulUserEmails = new Set(
@@ -140,7 +149,7 @@ export function useImportUsersState({
       await importUsers({ users: validUsersToImport }, importUsersCallback);
     } catch (error) {
       console.error('Failed to import users', error);
-      toast.error('Failed to import users');
+      toast.error(t('Failed to import users'));
       setIsImporting(false);
     }
   }, [importUsers, importUsersCallback, parsedUsers]);

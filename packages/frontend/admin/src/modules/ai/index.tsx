@@ -3,6 +3,7 @@ import { cn } from '@affine/admin/utils';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { useState } from 'react';
 
+import { t } from '../../i18n';
 import { Header } from '../header';
 
 function AiPage() {
@@ -10,19 +11,20 @@ function AiPage() {
 
   return (
     <div className="h-dvh flex-1 flex-col flex">
-      <Header title="AI" />
+      <Header title={t('AI')} />
       <ScrollAreaPrimitive.Root
         className={cn('relative overflow-hidden w-full')}
       >
         <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [&>div]:!block">
           <div className="p-6 max-w-3xl mx-auto">
-            <div className="text-[20px]">AI</div>
+            <div className="text-[20px]">{t('AI')}</div>
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-sm font-medium mt-6">Enable AI</p>
+                <p className="text-sm font-medium mt-6">{t('Enable AI')}</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  AI functionality is not currently supported. Self-hosted AI
-                  support is in progress.
+                  {t(
+                    'AI functionality is not currently supported. Self-hosted AI support is in progress.'
+                  )}
                 </p>
               </div>
               <Switch

@@ -1,4 +1,5 @@
 import { ConfirmDialog } from '../../../components/shared/confirm-dialog';
+import { t } from '../../../i18n';
 
 export const EnableAccountDialog = ({
   open,
@@ -17,15 +18,17 @@ export const EnableAccountDialog = ({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Enable Account"
+      title={t('Enable Account')}
       description={
         <>
-          Are you sure you want to enable the account? After enabling the
-          account, the <span className="font-bold">{email}</span> email can be
-          used to log in.
+          {t(
+            'Are you sure you want to enable the account? After enabling the account, the'
+          )}{' '}
+          <span className="font-bold">{email}</span>{' '}
+          {t('email can be used to log in.')}
         </>
       }
-      confirmText="Enable"
+      confirmText={t('Enable')}
       confirmButtonVariant="default"
       onConfirm={onConfirm}
       onClose={onClose}

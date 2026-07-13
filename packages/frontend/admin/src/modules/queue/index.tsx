@@ -3,6 +3,7 @@ import './queuedash.css';
 import { QueueDashApp } from '@queuedash/ui';
 import { useEffect } from 'react';
 
+import { t } from '../../i18n';
 import { Header } from '../header';
 
 const QUEUEDASH_SCOPE_CLASS = 'affine-queuedash';
@@ -85,7 +86,7 @@ export function QueuePage() {
 
   return (
     <div className="h-dvh flex-1 flex-col flex overflow-hidden">
-      <Header title="Queue" />
+      <Header title={t('Queue')} />
       <div className="flex-1 overflow-hidden">
         <div className={`${QUEUEDASH_SCOPE_CLASS} h-full`}>
           <QueueDashApp

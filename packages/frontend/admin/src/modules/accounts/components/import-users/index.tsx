@@ -6,6 +6,7 @@ import {
 } from '@affine/admin/components/ui/dialog';
 import { useEffect, useRef } from 'react';
 
+import { t } from '../../../../i18n';
 import { useServerConfig } from '../../../common';
 import type { FileUploadAreaRef } from './file-upload-area';
 import {
@@ -67,12 +68,12 @@ export function ImportUsersDialog({
         <DialogHeader>
           <DialogTitle>
             {isFormatError
-              ? 'Incorrect import format'
+              ? t('Incorrect import format')
               : isPreviewMode
                 ? isImported
-                  ? 'Import results'
-                  : 'Confirm import'
-                : 'Import'}
+                  ? t('Import results')
+                  : t('Confirm import')
+                : t('Import')}
           </DialogTitle>
         </DialogHeader>
         <div className="text-[15px] mt-3">

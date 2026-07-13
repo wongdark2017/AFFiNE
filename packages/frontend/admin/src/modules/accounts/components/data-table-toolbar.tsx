@@ -15,6 +15,7 @@ import {
 import { DiscardChanges } from '../../../components/shared/discard-changes';
 import { FeatureFilterPopover } from '../../../components/shared/feature-filter-popover';
 import { useDebouncedValue } from '../../../hooks/use-debounced-value';
+import { t } from '../../../i18n';
 import { useServerConfig } from '../../common';
 import { useRightPanel } from '../../panel/context';
 import type { UserType } from '../schema';
@@ -113,7 +114,7 @@ export function DataTableToolbar<TData>({
     const selectedRows = table.getFilteredSelectedRowModel().rows;
 
     if (selectedRows.length === 0) {
-      alert('Please select at least one user to export');
+      alert(t('Please select at least one user to export'));
       return;
     }
 
@@ -134,7 +135,7 @@ export function DataTableToolbar<TData>({
           onClick={handleImportUsers}
         >
           <ImportIcon fontSize={20} />
-          <span className="ml-2 hidden md:inline-block">Import</span>
+          <span className="ml-2 hidden md:inline-block">{t('Import')}</span>
         </Button>
 
         <Button
@@ -147,7 +148,7 @@ export function DataTableToolbar<TData>({
           }
         >
           <ExportIcon fontSize={20} />
-          <span className="ml-2 hidden md:inline-block">Export</span>
+          <span className="ml-2 hidden md:inline-block">{t('Export')}</span>
         </Button>
 
         {table && (
@@ -173,7 +174,7 @@ export function DataTableToolbar<TData>({
         />
         <div className="flex">
           <Input
-            placeholder="Search Email / UUID"
+            placeholder={t('Search Email / UUID')}
             value={value}
             onChange={onValueChange}
             className="h-8 w-[150px] lg:w-[250px]"
@@ -183,7 +184,7 @@ export function DataTableToolbar<TData>({
           className="h-8 px-2 lg:px-3 space-x-[6px] text-sm font-medium"
           onClick={handleOpenConfirm}
         >
-          <PlusIcon fontSize={20} /> <span>Add User</span>
+          <PlusIcon fontSize={20} /> <span>{t('Add User')}</span>
         </Button>
       </div>
 
