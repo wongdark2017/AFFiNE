@@ -1,98 +1,98 @@
-# 思考指南
+# Thinking Guides
 
-> **目的**：扩展思考，避免「没想到」的问题。
-
----
-
-## 为什么需要思考指南？
-
-**多数缺陷与技术债来自「没想到」，而不是不会做**：
-
-- 没想到层边界会发生什么 → 跨层 bug
-- 没想到代码模式在重复 → 到处复制
-- 没想到边界情况 → 运行时错误
-- 没想到未来维护者 → 难读代码
-
-这些指南帮助你在**编码前问对问题**。
+> **Purpose**: Expand your thinking to catch things you might not have considered.
 
 ---
 
-## 可用指南
+## Why Thinking Guides?
 
-| 指南                                               | 目的               | 何时使用       |
-| -------------------------------------------------- | ------------------ | -------------- |
-| [代码复用思考指南](./code-reuse-thinking-guide.md) | 识别模式、减少重复 | 发现重复模式时 |
-| [跨层思考指南](./cross-layer-thinking-guide.md)    | 想清楚跨层数据流   | 功能跨多层时   |
+**Most bugs and tech debt come from "didn't think of that"**, not from lack of skill:
 
----
+- Didn't think about what happens at layer boundaries → cross-layer bugs
+- Didn't think about code patterns repeating → duplicated code everywhere
+- Didn't think about edge cases → runtime errors
+- Didn't think about future maintainers → unreadable code
 
-## 速查：思考触发器
-
-### 何时思考跨层问题
-
-- [ ] 功能触及 3+ 层（API、Service、Component、Database）
-- [ ] 层间数据格式会变
-- [ ] 多个消费者需要同一份数据
-- [ ] 不确定逻辑该放哪里
-- [ ] 在添加 event kind、JSONL 记录、RPC 载荷或配置字段
-- [ ] UI / 命令代码开始直接对原始载荷字段做 cast
-
-→ 阅读 [跨层思考指南](./cross-layer-thinking-guide.md)
-
-### 何时思考代码复用
-
-- [ ] 正在写与已有代码相似的东西
-- [ ] 同一模式重复 3 次以上
-- [ ] 在多个地方加同一字段
-- [ ] **在修改任何常量或配置**
-- [ ] **在创建新的工具/辅助函数** ← 先搜索！
-- [ ] 两个文件对同一未类型化载荷字段做本地 cast
-- [ ] 多个分支根据 `kind` / `action` 更新同一派生状态
-
-→ 阅读 [代码复用思考指南](./code-reuse-thinking-guide.md)
-
-### 校验 AI 交叉评审结果时
-
-- [ ] 评审声称「用户输入可能恶意」→ 核对真实数据源（内部 manifest？用户配置？外部 API？）
-- [ ] 评审标记「缺少校验」→ 数据是否来自可信内部源？
-- [ ] 评审说「行为变化」→ 读代码注释——是否有意设计？
-- [ ] 评审指出测试里的「bug」→ 心里删掉被测功能——测试是否仍通过？是 → 同义反复测试
-
-**常见 AI 评审假阳性**：
-
-1. **信任边界混淆**：把内部数据（打包的 JSON manifest）当不可信外部输入
-2. **忽略设计注释**：把代码注释中的有意行为标成 bug
-3. **误读变量**：未追溯变量实际定义（例如按 path 还是 name 建键的 Map）
-
-**校验规则**：每条 CRITICAL/WARNING 在排优先级前必须对照真实代码核实。AI 评审按约 35% 假阳性预留预算。
+These guides help you **ask the right questions before coding**.
 
 ---
 
-## 修改前规则（关键）
+## Available Guides
 
-> **改任何值之前，先搜索！**
+| Guide                                                         | Purpose                                  | When to Use                       |
+| ------------------------------------------------------------- | ---------------------------------------- | --------------------------------- |
+| [Code Reuse Thinking Guide](./code-reuse-thinking-guide.md)   | Identify patterns and reduce duplication | When you notice repeated patterns |
+| [Cross-Layer Thinking Guide](./cross-layer-thinking-guide.md) | Think through data flow across layers    | Features spanning multiple layers |
+
+---
+
+## Quick Reference: Thinking Triggers
+
+### When to Think About Cross-Layer Issues
+
+- [ ] Feature touches 3+ layers (API, Service, Component, Database)
+- [ ] Data format changes between layers
+- [ ] Multiple consumers need the same data
+- [ ] You're not sure where to put some logic
+- [ ] You are adding an event kind, JSONL record, RPC payload, or config field
+- [ ] UI / command code starts casting raw payload fields directly
+
+→ Read [Cross-Layer Thinking Guide](./cross-layer-thinking-guide.md)
+
+### When to Think About Code Reuse
+
+- [ ] You're writing similar code to something that exists
+- [ ] You see the same pattern repeated 3+ times
+- [ ] You're adding a new field to multiple places
+- [ ] **You're modifying any constant or config**
+- [ ] **You're creating a new utility/helper function** ← Search first!
+- [ ] Two files read the same untyped payload field with local casts
+- [ ] Multiple branches update the same derived state from `kind` / `action`
+
+→ Read [Code Reuse Thinking Guide](./code-reuse-thinking-guide.md)
+
+### When Verifying AI Cross-Review Results
+
+- [ ] Reviewer claims "user input can be malicious" → Check the actual data source (internal manifest? user config? external API?)
+- [ ] Reviewer flags "missing validation" → Is the data from a trusted internal source?
+- [ ] Reviewer says "behavior change" → Read the code comments — is it intentional design?
+- [ ] Reviewer identifies a "bug" in test → Mentally delete the feature being tested — does the test still pass? If yes → tautological test
+
+**Common AI reviewer false-positive patterns**:
+
+1. **Trust boundary confusion**: Treating internal data (bundled JSON manifests) as untrusted external input
+2. **Ignoring design comments**: Flagging intentional behavior documented in code comments as bugs
+3. **Variable misreading**: Not tracing a variable to its actual definition (e.g., Map keyed by path vs name)
+
+**Verification rule**: Every CRITICAL/WARNING finding must be verified against the actual code before prioritizing. Budget ~35% false-positive rate for AI reviews.
+
+---
+
+## Pre-Modification Rule (CRITICAL)
+
+> **Before changing ANY value, ALWAYS search first!**
 
 ```bash
-# 搜索你即将改动的值
+# Search for the value you're about to change
 grep -r "value_to_change" .
 ```
 
-这一习惯能避免大多数「忘了更新 X」类 bug。
+This single habit prevents most "forgot to update X" bugs.
 
 ---
 
-## 如何使用本目录
+## How to Use This Directory
 
-1. **编码前**：浏览相关思考指南
-2. **编码中**：感到重复或复杂时查指南
-3. **出 bug 后**：把新洞见写回相关指南（从错误中学）
-
----
-
-## 贡献
-
-发现新的「没想到」？写进相关指南。
+1. **Before coding**: Skim the relevant thinking guide
+2. **During coding**: If something feels repetitive or complex, check the guides
+3. **After bugs**: Add new insights to the relevant guide (learn from mistakes)
 
 ---
 
-**核心原则**：30 分钟思考省下 3 小时调试。
+## Contributing
+
+Found a new "didn't think of that" moment? Add it to the relevant guide.
+
+---
+
+**Core Principle**: 30 minutes of thinking saves 3 hours of debugging.

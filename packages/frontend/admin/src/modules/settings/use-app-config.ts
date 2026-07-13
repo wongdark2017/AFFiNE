@@ -10,6 +10,7 @@ import {
 import { cloneDeep, get, merge, set } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 
+import { t } from '../../i18n';
 import type { AppConfig } from './config';
 import { isEqual } from './utils';
 
@@ -124,13 +125,13 @@ export const useAppConfig = () => {
       setUpdates({});
       setPatchedAppConfig(prev => merge({}, prev, savedAppConfig));
       notify.success({
-        title: 'Saved',
-        message: 'Settings have been saved successfully.',
+        title: t('Saved'),
+        message: t('Settings have been saved successfully.'),
       });
     } catch (e) {
       const error = UserFriendlyError.fromAny(e);
       notify.error({
-        title: 'Failed to save',
+        title: t('Failed to save'),
         message: error.message,
       });
       console.error(e);
@@ -165,13 +166,13 @@ export const useAppConfig = () => {
         setPatchedAppConfig(prev => merge({}, prev, savedAppConfig));
         bumpGroupVersion(module);
         notify.success({
-          title: 'Saved',
-          message: 'Settings have been saved successfully.',
+          title: t('Saved'),
+          message: t('Settings have been saved successfully.'),
         });
       } catch (e) {
         const error = UserFriendlyError.fromAny(e);
         notify.error({
-          title: 'Failed to save',
+          title: t('Failed to save'),
           message: error.message,
         });
         console.error(e);

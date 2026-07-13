@@ -18,6 +18,7 @@ import { useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { affineFetch } from '../../fetch-utils';
+import { t } from '../../i18n';
 import { useCurrentUser, useRevalidateCurrentUser } from '../common';
 
 interface UserDropdownProps {
@@ -46,7 +47,7 @@ const UserInfo = ({
       </Avatar>
       <div className="flex flex-col font-medium gap-1">
         {name ?? email.split('@')[0]}
-        <span className={adminBadgeClass}>Admin</span>
+        <span className={adminBadgeClass}>{t('Admin')}</span>
       </div>
     </>
   );
@@ -88,11 +89,11 @@ export function UserDropdown({ isCollapsed }: UserDropdownProps) {
   const handleLogout = useCallback(() => {
     affineFetch('/api/auth/sign-out', { method: 'POST' })
       .then(() => {
-        toast.success('Logged out successfully');
+        toast.success(t('Logged out successfully'));
         return relative();
       })
       .catch(err => {
-        toast.error(`Failed to logout: ${err.message}`);
+        toast.error(t('Failed to logout: {message}', { message: err.message }));
       });
   }, [relative]);
 
@@ -120,7 +121,9 @@ export function UserDropdown({ isCollapsed }: UserDropdownProps) {
             ) : null}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={handleLogout}>Logout</DropdownMenuItem>
+          <DropdownMenuItem onSelect={handleLogout}>
+            {t('Logout')}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -136,7 +139,7 @@ export function UserDropdown({ isCollapsed }: UserDropdownProps) {
           </AvatarFallback>
         </Avatar>
         <UserName name={currentUser?.name} email={currentUser?.email} />
-        <span className={adminBadgeClass}>Admin</span>
+        <span className={adminBadgeClass}>{t('Admin')}</span>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -159,7 +162,9 @@ export function UserDropdown({ isCollapsed }: UserDropdownProps) {
             ) : null}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={handleLogout}>Logout</DropdownMenuItem>
+          <DropdownMenuItem onSelect={handleLogout}>
+            {t('Logout')}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

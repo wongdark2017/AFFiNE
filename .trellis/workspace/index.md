@@ -125,4 +125,4 @@ Use this template when recording sessions:
 
 ---
 
-**语言**：本仓库 Trellis 技术文档统一使用**中文**。
+**Language**: All documentation must be written in **English**.

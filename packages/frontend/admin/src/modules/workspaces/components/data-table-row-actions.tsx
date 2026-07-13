@@ -3,6 +3,7 @@ import { EditIcon, LinkIcon } from '@blocksuite/icons/rc';
 import { useCallback, useState } from 'react';
 
 import { DiscardChanges } from '../../../components/shared/discard-changes';
+import { t } from '../../../i18n';
 import { useRightPanel } from '../../panel/context';
 import type { WorkspaceListItem } from '../schema';
 import { WorkspacePanel } from './workspace-panel';
@@ -107,7 +108,7 @@ export function DataTableRowActions({
           onClick={handleEdit}
         >
           <EditIcon fontSize={18} />
-          <span>Edit</span>
+          <span>{t('Edit')}</span>
         </Button>
         <Button
           variant="ghost"
@@ -116,7 +117,7 @@ export function DataTableRowActions({
           onClick={handleSharedLinks}
         >
           <LinkIcon fontSize={18} />
-          <span>Shared links</span>
+          <span>{t('Shared links')}</span>
         </Button>
       </div>
       <DiscardChanges
@@ -127,7 +128,7 @@ export function DataTableRowActions({
           setPendingAction(null);
         }}
         onConfirm={handleDiscardConfirm}
-        description="Changes to this workspace will not be saved."
+        description={t('Changes to this workspace will not be saved.')}
       />
     </>
   );

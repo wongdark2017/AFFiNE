@@ -13,6 +13,7 @@ import { CopyIcon } from '@blocksuite/icons/rc';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
+import { t } from '../../../i18n';
 import type { UserType } from '../schema';
 import { type ExportField, useExportUsers } from './use-user-management';
 
@@ -32,12 +33,12 @@ export function ExportUsersDialog({
   const [fields, setFields] = useState<ExportField[]>([
     {
       id: 'name',
-      label: 'Username',
+      label: t('Username'),
       checked: true,
     },
     {
       id: 'email',
-      label: 'Email',
+      label: t('Email'),
       checked: true,
     },
   ]);
@@ -59,11 +60,11 @@ export function ExportUsersDialog({
       await exportCSV(users, fields, () => {
         setIsExporting(false);
         onOpenChange(false);
-        toast('Users exported successfully');
+        toast(t('Users exported successfully'));
       });
     } catch (error) {
       console.error('Failed to export users', error);
-      toast.error('Failed to export users');
+      toast.error(t('Failed to export users'));
       setIsExporting(false);
     }
   }, [exportCSV, fields, onOpenChange, users]);
@@ -74,11 +75,11 @@ export function ExportUsersDialog({
       await copyToClipboard(users, fields, () => {
         setIsCopying(false);
         onOpenChange(false);
-        toast('Users copied successfully');
+        toast(t('Users copied successfully'));
       });
     } catch (error) {
       console.error('Failed to copy users', error);
-      toast.error('Failed to copy users');
+      toast.error(t('Failed to copy users'));
       setIsCopying(false);
     }
   }, [copyToClipboard, fields, onOpenChange, users]);
@@ -87,7 +88,7 @@ export function ExportUsersDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Export</DialogTitle>
+          <DialogTitle>{t('Export')}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
@@ -112,7 +113,9 @@ export function ExportUsersDialog({
             className="w-full text-[15px] px-4 py-2 h-10"
             disabled={isExporting || isCopying}
           >
-            {isExporting ? 'Exporting...' : 'Download account information'}
+            {isExporting
+              ? t('Exporting...')
+              : t('Download account information')}
           </Button>
           <Button
             variant="outline"

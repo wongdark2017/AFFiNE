@@ -15,6 +15,7 @@ import { SWRConfig } from 'swr';
 
 import { ThemeProvider } from './components/theme-provider';
 import { TooltipProvider } from './components/ui/tooltip';
+import { t } from './i18n';
 import { isAdmin, useCurrentUser, useServerConfig } from './modules/common';
 import { Layout } from './modules/layout';
 
@@ -55,7 +56,7 @@ function AuthenticatedRoutes() {
 
   useEffect(() => {
     if (user && !isAdmin(user)) {
-      toast.error('You are not an admin, please login the admin account.');
+      toast.error(t('You are not an admin, please login the admin account.'));
     }
   }, [user]);
 

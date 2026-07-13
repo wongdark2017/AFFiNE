@@ -19,6 +19,7 @@ import {
 } from '@tanstack/react-table';
 import { type ReactNode, useEffect, useState } from 'react';
 
+import { t } from '../../i18n';
 import { DataTablePagination } from './data-table-pagination';
 
 const DEFAULT_RESET_FILTERS_DEPS: unknown[] = [];
@@ -115,7 +116,7 @@ export function SharedDataTable<TData extends { id: string }, TValue>({
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               />
             </svg>
-            <span>Loading...</span>
+            <span>{t('Loading...')}</span>
           </div>
         ) : null}
         <Table>
@@ -187,7 +188,7 @@ export function SharedDataTable<TData extends { id: string }, TValue>({
                     colSpan={columns.length}
                     className="h-24 text-center flex-1"
                   >
-                    No results.
+                    {t('No results.')}
                   </TableCell>
                 </TableRow>
               )}

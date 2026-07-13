@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { ConfirmDialog } from './confirm-dialog';
 
 export const DiscardChanges = ({
@@ -5,7 +6,7 @@ export const DiscardChanges = ({
   onClose,
   onConfirm,
   onOpenChange,
-  description = 'Changes will not be saved.',
+  description = t('Changes will not be saved.'),
 }: {
   open: boolean;
   onClose: () => void;
@@ -17,9 +18,9 @@ export const DiscardChanges = ({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Discard Changes"
+      title={t('Discard Changes')}
       description={description}
-      confirmText="Discard"
+      confirmText={t('Discard')}
       confirmButtonVariant="destructive"
       onConfirm={onConfirm}
       onClose={onClose}

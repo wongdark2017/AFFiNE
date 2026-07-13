@@ -2,6 +2,7 @@ import { Button } from '@affine/admin/components/ui/button';
 import { DialogFooter } from '@affine/admin/components/ui/dialog';
 import type { FC } from 'react';
 
+import { t } from '../../../../i18n';
 import { downloadCsvTemplate, ImportStatus } from '../../utils/csv-utils';
 
 interface ImportUsersFooterProps {
@@ -79,7 +80,7 @@ const FormatErrorFooter: FC<FormatErrorFooterProps> = ({
       onClick={downloadCsvTemplate}
       className="mb-2 sm:mb-0 text-[15px] px-0 py-2 h-10 underline cursor-pointer"
     >
-      CSV template
+      {t('CSV template')}
     </div>
     <Button
       type="button"
@@ -87,7 +88,7 @@ const FormatErrorFooter: FC<FormatErrorFooterProps> = ({
       onClick={resetFormatError}
       className="w-full sm:w-auto text-[15px] px-4 py-2 h-10"
     >
-      Done
+      {t('Done')}
     </Button>
   </>
 );
@@ -119,7 +120,7 @@ const PreviewModeFooter: FC<PreviewModeFooterProps> = ({
       className="w-full mb-2 sm:mb-0 sm:w-auto"
       disabled={isImporting}
     >
-      Cancel
+      {t('Cancel')}
     </Button>
     <Button
       type="button"
@@ -130,7 +131,11 @@ const PreviewModeFooter: FC<PreviewModeFooterProps> = ({
         parsedUsers.some(user => user.importStatus === ImportStatus.Processing)
       }
     >
-      {isImporting ? 'Importing...' : isImported ? 'Export' : 'Confirm Import'}
+      {isImporting
+        ? t('Importing...')
+        : isImported
+          ? t('Export')
+          : t('Confirm Import')}
     </Button>
   </>
 );
@@ -154,7 +159,7 @@ const InitialFooter: FC<InitialFooterProps> = ({
       onClick={downloadCsvTemplate}
       className="mb-2 sm:mb-0 underline text-[15px] cursor-pointer"
     >
-      CSV template
+      {t('CSV template')}
     </div>
     <Button
       type="button"
@@ -162,7 +167,7 @@ const InitialFooter: FC<InitialFooterProps> = ({
       className="w-full sm:w-auto text-[15px] px-4 py-2 h-10"
       disabled={isImporting}
     >
-      {isImporting ? 'Parsing...' : 'Choose a file'}
+      {isImporting ? t('Parsing...') : t('Choose a file')}
     </Button>
   </>
 );
