@@ -35,7 +35,12 @@ import { CompatHistoryProjector } from './compat/history-projector';
 import { ConversationInboxService } from './conversation/inbox';
 import { PromptService } from './prompt/service';
 import { CopilotProviderFactory } from './providers/factory';
-import { ModelOutputType, type StreamObject } from './providers/types';
+import type { OpenAICompatibleProvider } from './providers/openai-compatible';
+import {
+  CopilotProviderType,
+  ModelOutputType,
+  type StreamObject,
+} from './providers/types';
 import { ChatSessionService } from './session';
 import { type ChatHistory, type ChatMessage, SubmittedMessage } from './types';
 
@@ -420,6 +425,25 @@ export class CopilotResolver {
     if (!prompt) {
       throw new NotFoundException('Prompt not found');
     }
+
+    // unified relay takeover: expose the dynamically fetched model list
+    // instead of the prompt's static optionalModels
+    const takeover = await this.providerFactory.resolveProvider({
+      outputType: ModelOutputType.Text,
+    });
+    if (takeover?.provider.type === CopilotProviderType.OpenAICompatible) {
+      const provider = takeover.provider as OpenAICompatibleProvider;
+      const ids = await provider.listModels(takeover.execution);
+      const defaultModel =
+        (takeover.profile.config as { defaultModel?: string }).defaultModel ||
+        prompt.model;
+      return {
+        defaultModel,
+        optionalModels: ids.map(id => ({ id, name: id })),
+        proModels: [],
+      };
+    }
+
     const convertModels = async (ids: string[]) => {
       const models = await Promise.all(
         ids.map(async id => {

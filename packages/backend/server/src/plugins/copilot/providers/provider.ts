@@ -91,16 +91,8 @@ export abstract class CopilotProvider<C = any> {
         const mapped = mapNativeSemanticError(error);
         return mapped === error ? spec.mapError(error) : mapped;
       },
-      checkParams: input =>
-        checkProviderParams(
-          this.resolveModelRuntimeContext(input.execution),
-          input
-        ),
-      selectModel: (cond, execution) =>
-        requireProviderModelSelection(
-          this.resolveModelRuntimeContext(execution),
-          cond
-        ),
+      checkParams: this.checkParams.bind(this),
+      selectModel: this.selectModel.bind(this),
       getTools: this.getTools.bind(this),
       getActiveProviderMiddleware: this.getActiveProviderMiddleware.bind(this),
     });

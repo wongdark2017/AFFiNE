@@ -13,6 +13,7 @@ import { CloudflareWorkersAIConfig } from './providers/cloudflare';
 import type { FalConfig } from './providers/fal';
 import { GeminiGenerativeConfig, GeminiVertexConfig } from './providers/gemini';
 import { OpenAIConfig } from './providers/openai';
+import type { OpenAICompatibleConfig } from './providers/openai-compatible';
 import {
   CopilotProviderType,
   ModelOutputType,
@@ -21,6 +22,7 @@ import {
 
 export type CopilotProviderConfigMap = {
   [CopilotProviderType.OpenAI]: OpenAIConfig;
+  [CopilotProviderType.OpenAICompatible]: OpenAICompatibleConfig;
   [CopilotProviderType.CloudflareWorkersAi]: CloudflareWorkersAIConfig;
   [CopilotProviderType.FAL]: FalConfig;
   [CopilotProviderType.Gemini]: GeminiGenerativeConfig;
@@ -112,6 +114,13 @@ const OpenAIConfigShape = z.object({
   oldApiStyle: z.boolean().optional(),
 });
 
+const OpenAICompatibleConfigShape = z.object({
+  apiKey: z.string(),
+  baseURL: z.string(),
+  defaultModel: z.string(),
+  reasoningSupported: z.boolean().optional(),
+});
+
 const FalConfigShape = z.object({
   apiKey: z.string(),
 });
@@ -144,6 +153,10 @@ const CopilotProviderProfileShape = z.discriminatedUnion('type', [
   CopilotProviderProfileBaseShape.extend({
     type: z.literal(CopilotProviderType.OpenAI),
     config: OpenAIConfigShape,
+  }),
+  CopilotProviderProfileBaseShape.extend({
+    type: z.literal(CopilotProviderType.OpenAICompatible),
+    config: OpenAICompatibleConfigShape,
   }),
   CopilotProviderProfileBaseShape.extend({
     type: z.literal(CopilotProviderType.FAL),
@@ -203,6 +216,7 @@ declare global {
         profiles: ConfigItem<CopilotProviderProfile[]>;
         defaults: ConfigItem<CopilotProviderDefaults>;
         openai: ConfigItem<OpenAIConfig>;
+        openaiCompatible: ConfigItem<OpenAICompatibleConfig>;
         cloudflareWorkersAi: ConfigItem<CloudflareWorkersAIConfig>;
         fal: ConfigItem<FalConfig>;
         gemini: ConfigItem<GeminiGenerativeConfig>;
@@ -251,6 +265,14 @@ defineModuleConfig('copilot', {
       baseURL: 'https://api.openai.com/v1',
     },
     link: 'https://github.com/openai/openai-node',
+  },
+  'providers.openaiCompatible': {
+    desc: 'Unified OpenAI-compatible relay. When configured (apiKey + baseURL + defaultModel), it takes over ALL chat routing: any model id is forwarded to the relay, and the model list is fetched dynamically from {baseURL}/v1/models instead of the built-in catalog.',
+    default: {
+      apiKey: '',
+      baseURL: '',
+      defaultModel: '',
+    },
   },
   'providers.cloudflareWorkersAi': {
     desc: 'The config for the Cloudflare Workers AI provider.',

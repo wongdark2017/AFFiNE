@@ -151,6 +151,7 @@ export const KNOWN_CONFIG_GROUPS = [
     module: 'copilot',
     fields: [
       'enabled',
+      'providers.openaiCompatible',
       'providers.openai',
       'providers.gemini',
       'providers.anthropic',

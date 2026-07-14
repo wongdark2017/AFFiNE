@@ -10,6 +10,8 @@ import { CopilotProviderType, ModelOutputType } from './types';
 const PROVIDER_ID_PATTERN = /^[a-zA-Z0-9-_]+$/;
 
 const LEGACY_PROVIDER_ORDER: CopilotProviderType[] = [
+  // unified relay takes over all chat routing when configured
+  CopilotProviderType.OpenAICompatible,
   CopilotProviderType.OpenAI,
   CopilotProviderType.CloudflareWorkersAi,
   CopilotProviderType.FAL,
