@@ -1197,6 +1197,15 @@
             "baseURL": "https://api.openai.com/v1"
           }
         },
+        "providers.openaiCompatible": {
+          "type": "object",
+          "description": "Unified OpenAI-compatible relay. When configured (apiKey + baseURL + defaultModel), it takes over ALL chat routing: any model id is forwarded to the relay, and the model list is fetched dynamically from {baseURL}/v1/models instead of the built-in catalog.\n@default {\"apiKey\":\"\",\"baseURL\":\"\",\"defaultModel\":\"\"}",
+          "default": {
+            "apiKey": "",
+            "baseURL": "",
+            "defaultModel": ""
+          }
+        },
         "providers.cloudflareWorkersAi": {
           "type": "object",
           "description": "The config for the Cloudflare Workers AI provider.\n@default {\"apiToken\":\"\",\"accountId\":\"\"}",
