@@ -96,7 +96,7 @@ const FreeFeature = {
     storageQuota: 10 * OneGB,
     historyPeriod: 7 * OneDay,
     memberLimit: 3,
-    copilotActionLimit: 10,
+    // self-host: no copilot action limit (undefined = unlimited)
   },
 } as const;
 
@@ -108,7 +108,7 @@ const ProFeature = {
     storageQuota: 100 * OneGB,
     historyPeriod: 30 * OneDay,
     memberLimit: 10,
-    copilotActionLimit: 10,
+    // self-host: no copilot action limit (undefined = unlimited)
   },
 } as const;
 
@@ -120,7 +120,7 @@ const LifetimeProFeature = {
     storageQuota: 1024 * OneGB,
     historyPeriod: 30 * OneDay,
     memberLimit: 10,
-    copilotActionLimit: 10,
+    // self-host: no copilot action limit (undefined = unlimited)
   },
 } as const;
 
