@@ -11,6 +11,9 @@ type DesktopPreviewHandlers = {
   renderTypstSvg?: (
     request: PreviewRenderRequestMap['typst']
   ) => Promise<PreviewRenderResultMap['typst']>;
+  renderTikzSvg?: (
+    request: PreviewRenderRequestMap['tikz']
+  ) => Promise<PreviewRenderResultMap['tikz']>;
 };
 
 type DesktopPreviewApis = {
@@ -49,4 +52,10 @@ export async function renderTypstSvgBackend(
   request: PreviewRenderRequestMap['typst']
 ): Promise<PreviewRenderResultMap['typst']> {
   return getRequiredDesktopHandler('renderTypstSvg')(request);
+}
+
+export async function renderTikzSvgBackend(
+  request: PreviewRenderRequestMap['tikz']
+): Promise<PreviewRenderResultMap['tikz']> {
+  return getRequiredDesktopHandler('renderTikzSvg')(request);
 }

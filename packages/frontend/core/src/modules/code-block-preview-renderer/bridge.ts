@@ -1,11 +1,16 @@
 import {
   renderMermaidSvgBackend,
+  renderTikzSvgBackend,
   renderTypstSvgBackend,
 } from '@affine/core/modules/code-block-preview-renderer/platform-backend';
 import type {
   MermaidRenderRequest,
   MermaidRenderResult,
 } from '@affine/core/modules/mermaid/renderer';
+import type {
+  TikzRenderRequest,
+  TikzRenderResult,
+} from '@affine/core/modules/tikz/renderer';
 import type {
   TypstRenderRequest,
   TypstRenderResult,
@@ -32,6 +37,18 @@ export async function renderTypstSvg(
   request: TypstRenderRequest
 ): Promise<TypstRenderResult> {
   const rendered = await renderTypstSvgBackend(request);
+
+  const sanitizedSvg = sanitizeSvgDocument(rendered.svg);
+  if (!sanitizedSvg) {
+    throw new Error('Preview renderer returned invalid SVG.');
+  }
+  return { svg: sanitizedSvg };
+}
+
+export async function renderTikzSvg(
+  request: TikzRenderRequest
+): Promise<TikzRenderResult> {
+  const rendered = await renderTikzSvgBackend(request);
 
   const sanitizedSvg = sanitizeSvgDocument(rendered.svg);
   if (!sanitizedSvg) {

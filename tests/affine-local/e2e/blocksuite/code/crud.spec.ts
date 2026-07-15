@@ -81,6 +81,50 @@ test.describe('Code Block Preview', () => {
     await expect(typstPreview).toBeVisible();
   });
 
+  test('insert tikz diagram via slash menu and render preview', async ({
+    page,
+  }) => {
+    // the first render downloads the TeX assets and compiles the wasm engine
+    test.setTimeout(180_000);
+    await openHomePage(page);
+    await createNewPage(page);
+    await waitForEditorLoad(page);
+    await gotoContentFromTitle(page);
+
+    await page.keyboard.press('/');
+    await expect(page.locator('affine-slash-menu .slash-menu')).toBeVisible();
+    await page.keyboard.type('tikz');
+    await page.getByTestId('TikZ Diagram').click();
+
+    // the inserted code block has language=tikz and preview enabled;
+    // the first render downloads the TeX assets, so allow extra time
+    const tikzSvg = page.locator('tikz-preview .tikz-preview-svg svg');
+    await expect(tikzSvg).toBeVisible({ timeout: 120_000 });
+  });
+
+  test('tikz preview shows an error state for invalid code', async ({
+    page,
+  }) => {
+    test.setTimeout(180_000);
+    const code = page.locator('affine-code');
+
+    await openHomePage(page);
+    await createNewPage(page);
+    await waitForEditorLoad(page);
+    await gotoContentFromTitle(page);
+    await type(page, '```tikz \\badcommand{');
+    await code.hover({
+      position: {
+        x: 155,
+        y: 65,
+      },
+    });
+    await page.getByText('Preview').click();
+    await expect(page.locator('tikz-preview .tikz-preview-error')).toBeVisible({
+      timeout: 120_000,
+    });
+  });
+
   test('change lang without preview', async ({ page }) => {
     const code = page.locator('affine-code');
     const preview = page.locator('affine-code .affine-code-block-preview');

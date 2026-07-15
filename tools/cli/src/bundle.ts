@@ -86,6 +86,10 @@ function getBaseWorkerConfigs(
       createWorkerTargetConfig(
         pkg,
         core.srcPath.join('modules/typst/renderer/typst.worker.ts').value
+      ),
+      createWorkerTargetConfig(
+        pkg,
+        core.srcPath.join('modules/tikz/renderer/tikz.worker.ts').value
       )
     );
   }
