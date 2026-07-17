@@ -26,6 +26,7 @@ import {
   OpenInNewIcon,
   PlusIcon,
   SplitViewIcon,
+  UnlinkIcon,
 } from '@blocksuite/icons/rc';
 import { useLiveData, useServices } from '@toeverything/infra';
 import { useCallback, useMemo, useState } from 'react';
@@ -278,5 +279,76 @@ export const useNavigationPanelDocNodeOperations = (
       handleToggleFavoriteDoc,
       t,
     ]
+  );
+};
+
+/**
+ * Extra operations for a linked-doc child node in the sidebar: remove the
+ * inline references / embeds pointing to it from the parent doc's content.
+ * The linked doc itself is kept.
+ */
+export const useNavigationPanelDocLinkedNodeOperations = (
+  parentDocId: string,
+  docId: string
+): NodeOperation[] => {
+  const t = useI18n();
+  const { docsService, guardService } = useServices({
+    DocsService,
+    GuardService,
+  });
+  const { openConfirmModal } = useConfirmModal();
+  const docRecord = useLiveData(docsService.list.doc$(docId));
+
+  const handleRemoveLinkedDoc = useCallback(() => {
+    openConfirmModal({
+      title: t['com.affine.removeLinkedPage.confirmModal.title'](),
+      description: t['com.affine.removeLinkedPage.confirmModal.description']({
+        title: docRecord?.title$.value || t['Untitled'](),
+      }),
+      confirmText: t['com.affine.removeLinkedPage.confirmModal.confirm'](),
+      cancelText: t['com.affine.confirmModal.button.cancel'](),
+      confirmButtonOptions: {
+        variant: 'error',
+      },
+      onConfirm: async () => {
+        const canEdit = await guardService.can('Doc_Update', parentDocId);
+        if (!canEdit) {
+          toast(t['com.affine.no-permission']());
+          return;
+        }
+        await docsService.removeLinkedDoc(parentDocId, docId);
+        toast(t['com.affine.toastMessage.removedLinkedPage']());
+      },
+    });
+  }, [
+    docId,
+    docRecord,
+    docsService,
+    guardService,
+    openConfirmModal,
+    parentDocId,
+    t,
+  ]);
+
+  return useMemo(
+    () => [
+      {
+        index: 9998,
+        view: (
+          <Guard docId={parentDocId} permission="Doc_Update">
+            {canEdit => (
+              <MenuItem
+                prefixIcon={<UnlinkIcon />}
+                onClick={handleRemoveLinkedDoc}
+                disabled={!canEdit}
+              >
+                {t['com.affine.page-operation.remove-linked-page']()}
+              </MenuItem>
+            )}
+          </Guard>
+        ),
+      },
+    ],
+    [handleRemoveLinkedDoc, parentDocId, t]
   );
 };

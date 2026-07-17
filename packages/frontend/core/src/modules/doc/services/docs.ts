@@ -19,6 +19,7 @@ import type { DocsStore } from '../stores/docs';
 import type { DocCreateOptions } from '../types';
 import { DocService } from './doc';
 import { getDuplicatedDocTitle } from './duplicate-title';
+import { removeDocReferences } from './remove-doc-references';
 
 const logger = new DebugLogger('DocsService');
 
@@ -201,6 +202,23 @@ export class DocsService extends Service {
         frame.id
       );
     release();
+  }
+
+  /**
+   * Remove all references to `linkedDocId` from the content of `targetDocId`:
+   * inline `@doc` references and embed-linked/synced-doc blocks. The linked
+   * doc itself is not deleted.
+   */
+  async removeLinkedDoc(targetDocId: string, linkedDocId: string) {
+    const { doc, release } = this.open(targetDocId);
+    const disposePriorityLoad = doc.addPriorityLoad(10);
+    await doc.waitForSyncReady();
+    disposePriorityLoad();
+    try {
+      removeDocReferences(doc.blockSuiteDoc, linkedDocId);
+    } finally {
+      release();
+    }
   }
 
   async changeDocTitle(docId: string, newTitle: string) {

@@ -3057,6 +3057,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.page-operation.add-linked-page"](): string;
     /**
+      * `Remove linked doc`
+      */
+    ["com.affine.page-operation.remove-linked-page"](): string;
+    /**
       * `{{ count }} more properties`
       */
     ["com.affine.page-properties.more-property.more"](options: {
@@ -4749,6 +4753,20 @@ export function useAFFiNEI18N(): {
     ["com.affine.quicksearch.group.searchfor-locally"](options: {
         readonly query: string;
     }): string;
+    /**
+      * `Remove linked doc?`
+      */
+    ["com.affine.removeLinkedPage.confirmModal.title"](): string;
+    /**
+      * `The link to "{{title}}" will be removed from the parent doc's content. The doc itself won't be deleted.`
+      */
+    ["com.affine.removeLinkedPage.confirmModal.description"](options: {
+        readonly title: string;
+    }): string;
+    /**
+      * `Remove`
+      */
+    ["com.affine.removeLinkedPage.confirmModal.confirm"](): string;
     /**
       * `Reset sync`
       */
@@ -7476,6 +7494,10 @@ export function useAFFiNEI18N(): {
       * `Moved to trash`
       */
     ["com.affine.toastMessage.movedTrash"](): string;
+    /**
+      * `Successfully removed linked doc`
+      */
+    ["com.affine.toastMessage.removedLinkedPage"](): string;
     /**
       * `Page Mode`
       */
