@@ -3,7 +3,10 @@ import {
   checkProviderParams,
   type ResolvedProviderModel,
 } from './provider-model-runtime';
-import type { CopilotProviderExecution } from './provider-runtime-contract';
+import type {
+  CopilotProviderExecution,
+  ProviderDriverSpec,
+} from './provider-runtime-contract';
 import {
   type CopilotChatOptions,
   type CopilotImageOptions,
@@ -161,6 +164,48 @@ export class OpenAICompatibleProvider extends OpenAIProvider {
           defaultForOutputType: true,
         },
       ],
+    };
+  }
+
+  /**
+   * The relay path builds requests through the native runtime, which rejects
+   * remote attachment URLs (`allowRemoteUrls: false`) and does not materialize
+   * them. The base provider only materializes attachments on the image-output
+   * path, so a chat/action carrying an image (e.g. "extract image text") sends
+   * AFFiNE's internal blob URL to the native builder and fails with
+   * "Native path does not support remote attachment urls".
+   *
+   * Mirror the image path for chat and structured outputs: materialize remote
+   * image attachments into inline base64 data URLs before the request is built,
+   * so an external relay that cannot reach AFFiNE's internal blob URLs still
+   * receives the image inline. Materialization is idempotent (data: URLs and
+   * non-remote attachments pass through untouched).
+   */
+  override getDriverSpec(): ProviderDriverSpec {
+    const base = super.getDriverSpec();
+    return {
+      ...base,
+      ...(base.chat === false
+        ? {}
+        : {
+            chat: {
+              ...base.chat,
+              prepareMessages: context =>
+                this.prepareImageMessages(
+                  context.input.messages,
+                  context.options ?? {}
+                ),
+            },
+          }),
+      ...(base.structured === false
+        ? {}
+        : {
+            structured: {
+              ...base.structured,
+              prepareMessages: (messages, _backendConfig, options) =>
+                this.prepareImageMessages(messages, options ?? {}),
+            },
+          }),
     };
   }
 

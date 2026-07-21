@@ -80,7 +80,7 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     );
   }
 
-  private async prepareImageMessages(
+  protected async prepareImageMessages(
     messages: PromptMessage[],
     options: {
       signal?: AbortSignal;
