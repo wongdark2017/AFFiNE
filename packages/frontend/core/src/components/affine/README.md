@@ -1,12 +1,12 @@
-# Affine Official Workspace Component
+# Affine 官方 Workspace 组件
 
-This component need specific configuration to work properly.
+此组件需要特定配置才能正常工作。
 
-## Configuration
+## 配置
 
 ### SWR
 
-Each component use SWR to fetch data from the API. You need to provide a configuration to SWR to make it work.
+每个组件使用 SWR 从 API 拉取数据。你需要向 SWR 提供配置。
 
 ```tsx
 const Wrapper = () => {

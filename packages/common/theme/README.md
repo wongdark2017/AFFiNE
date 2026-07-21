@@ -1,1 +1,1 @@
-This package has been moved to [toeverything/design](https://github.com/toeverything/design)
+本包已迁移至 [toeverything/design](https://github.com/toeverything/design)。

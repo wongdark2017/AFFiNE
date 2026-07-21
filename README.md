@@ -46,6 +46,24 @@
 <img src="https://github.com/toeverything/AFFiNE/assets/79301703/49a426bb-8d2b-4216-891a-fa5993642253" style="width: 100%"/>
 </div>
 
+## 技术文档（中文）
+
+面向开发者的本地技术文档已尽量中文化，入口如下：
+
+| 文档 | 说明 |
+|------|------|
+| [docs/BUILDING.md](./docs/BUILDING.md) | Web 构建与开发环境 |
+| [docs/developing-server.md](./docs/developing-server.md) | 本地 Server / Docker |
+| [docs/building-desktop-client-app.md](./docs/building-desktop-client-app.md) | 桌面客户端构建 |
+| [.trellis/spec/index.md](./.trellis/spec/index.md) | Trellis 编码规范（AI / 功能开发） |
+| [.trellis/workflow.md](./.trellis/workflow.md) | Trellis 开发工作流 |
+| [SECURITY.md](./SECURITY.md) | 安全策略 |
+| [AGENTS.md](./AGENTS.md) | AI 助手说明 |
+
+在线产品文档仍以官方站点为准：https://docs.affine.pro/
+
+---
+
 ## Getting started & staying tuned with us.
 
 Star us, and you will receive all release notifications from GitHub without any delay!

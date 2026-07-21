@@ -1,16 +1,16 @@
 # i18n
 
-## Usages
+## 用法
 
-- Update missing translations into the base resources, a.k.a the `src/resources/en.json`
-- Replace literal text with translation keys
+- 将缺失翻译更新到基础资源，即 `src/resources/en.json`
+- 用翻译键替换字面文案
 
 ```tsx
 import { useI18n, LOCALES } from '@affine/i18n';
 // src/resources/en.json
 // {
 //     'Text': 'some text',
-//     'Switch to language': 'Switch to {{language}}', // <- you can interpolation by curly brackets
+//     'Switch to language': 'Switch to {{language}}', // <- 可用花括号插值
 // };
 
 const App = () => {
@@ -41,27 +41,4 @@ const App = () => {
 };
 ```
 
-## How the i18n workflow works?
-
-- When the `src/resources/en.json`(base language) updated and merged to the develop branch, will trigger the `languages-sync` action.
-- The `languages-sync` action will check the base language and add missing translations to the Tolgee platform.
-- This way, partners from the community can update the translations.
-
-## How to sync translations manually
-
-- Set token as environment variable
-
-```shell
-export TOLGEE_API_KEY=tgpak_XXXXXXX
-```
-
-- Run the `sync-languages:check` to check all languages
-- Run the `sync-languages` script to add new keys to the Tolgee platform
-- Run the `download-resources` script to download the latest full-translation translation resources from the Tolgee platform
-
-## References
-
-- [AFFiNE | Tolgee](https://i18n.affine.pro/)
-- [Tolgee Documentation](https://tolgee.io/docs/)
-- [i18next](https://www.i18next.com/)
-- [react-i18next](https://react.i18next.com/)
+> 详细 API 与资源文件结构见包内源码与 `en.json`。

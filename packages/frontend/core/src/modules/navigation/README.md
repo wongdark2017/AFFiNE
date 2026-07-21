@@ -1,3 +1,3 @@
 # navigation
 
-Provide support for forward and back buttons.
+为前进 / 后退按钮提供支持。

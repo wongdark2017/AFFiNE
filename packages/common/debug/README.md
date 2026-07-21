@@ -1,3 +1,3 @@
 # @affine/debug
 
-A common debug interface for packages in this repository.
+本仓库各包共用的调试接口。

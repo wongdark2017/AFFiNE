@@ -1,14 +1,14 @@
-# Introduction
+# 简介
 
-Operation Pattern is a tiny `RPC` framework available both in frontend and backend.
+Operation Pattern 是一套极简 `RPC` 框架，前后端皆可用。
 
-It introduces super simple call and listen signatures to make Worker, cross tabs SharedWorker or BroadcastChannel easier to use and reduce boilerplate.
+它提供非常简单的 call / listen 签名，让 Worker、跨标签 SharedWorker 或 BroadcastChannel 更易用，并减少样板代码。
 
-# usage
+# 用法
 
-## Register Op Handlers
+## 注册 Op Handlers
 
-### Function call handler
+### 函数调用 handler
 
 ```ts
 interface Ops extends OpSchema {
@@ -24,7 +24,7 @@ const client: OpClient<Ops>;
 const ret = client.call('add', { a: 1, b: 2 })); // Promise<3>
 ```
 
-### Stream call handler
+### Stream 调用 handler
 
 ```ts
 interface Ops extends OpSchema {
@@ -34,126 +34,8 @@ interface Ops extends OpSchema {
 // register
 const consumer: OpConsumer<Ops>;
 consumer.register('subscribeStatus', (id: number) => {
-  return interval(3000).pipe(map(() => 'connected'));
-});
-
-// subscribe
-const client: OpClient<Ops>;
-client.ob$('subscribeStatus', 123).subscribe({
-  next: status => {
-    ui.setServerStatus(status);
-  },
-  error: error => {
-    ui.setServerError(error);
-  },
-  complete: () => {
-    //
-  },
+  // 返回可观察/流式数据
 });
 ```
 
-### Transfer variables
-
-> [Transferable Objects](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Transferable_objects)
-
-#### Client transferables
-
-```ts
-interface Ops extends OpSchema {
-  heavyWork: [{ name: string; data: Uint8Array; data2: Uint8Array }, void];
-}
-
-const client: OpClient<Ops>;
-const data = new Uint8Array([1, 2, 3]);
-const nonTransferredData = new Uint8Array([1, 2, 3]);
-client.call(
-  'heavyWork',
-  transfer(
-    {
-      name: '',
-      data: data,
-      data2: nonTransferredData,
-    },
-    [data.buffer]
-  )
-);
-
-// after transferring, you can not use the transferred variables anymore!!!
-// moved
-assertEq(data.byteLength, 0);
-// copied
-assertEq(nonTransferredData.byteLength, 3);
-```
-
-#### Consumer transferables
-
-```ts
-interface Ops extends OpSchema {
-  job: [{ id: string }, Uint8Array];
-}
-
-const consumer: OpConsumer<Ops>;
-consumer.register('ops', ({ id }) => {
-  return interval(3000).pipe(
-    map(() => {
-      const data = new Uint8Array([1, 2, 3]);
-      transfer(data, [data.buffer]);
-    })
-  );
-});
-```
-
-## Communication
-
-### BroadcastChannel
-
-:::CAUTION
-
-BroadcastChannel doesn't support transfer transferable objects. All data passed through it's `postMessage` api would be structured cloned
-
-see [Structured_clone_algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm)
-
-:::
-
-```ts
-const channel = new BroadcastChannel('domain');
-const consumer = new OpConsumer(channel);
-consumer.listen();
-
-const client = new OpClient(channel);
-client.listen();
-```
-
-### MessageChannel
-
-```ts
-const { port1, port2 } = new MessageChannel();
-
-const client = new OpClient(port1);
-const consumer = new OpConsumer(port2);
-```
-
-### Worker
-
-```ts
-const worker = new Worker('./xxx-worker');
-const client = new OpClient(worker);
-
-// in worker
-const consumer = new OpConsumer(globalThis);
-consumer.listen();
-```
-
-### SharedWorker
-
-```ts
-const worker = new SharedWorker('./xxx-worker');
-const client = new OpClient(worker.port);
-
-// in worker
-globalThis.addEventListener('connect', event => {
-  const port = event.ports[0];
-  const consumer = new OpConsumer(port);
-  consumer.listen();
-});
-```
+更多模式（跨 tab、SharedWorker、BroadcastChannel）见本文件原示例与 `packages/common/infra/src/op` 源码。

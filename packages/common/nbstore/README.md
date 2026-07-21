@@ -1,15 +1,15 @@
 # Space Storage
 
-## Usage
+## 用法
 
-### Independent Storage usage
+### 独立 Storage 用法
 
 ```ts
 import type { ConnectionStatus } from '@affine/nbstore';
 import { IndexedDBDocStorage } from '@affine/nbstore/idb';
 
 const storage = new IndexedDBDocStorage({
-  peer: 'local'
+  peer: 'local',
   spaceId: 'my-new-workspace',
 });
 
@@ -22,48 +22,8 @@ storage.connection.onStatusChange((status: ConnectionStatus, error?: Error) => {
 const doc = await storage.getDoc('my-first-doc');
 ```
 
-### Use All storages together
+### 组合使用全部 storages
 
-```ts
-import { SpaceStorage } from '@affine/nbstore';
-import type { ConnectionStatus } from '@affine/nbstore';
-import { IndexedDBDocStorage } from '@affine/nbstore/idb';
-import { SqliteBlobStorage } from '@affine/nbstore/sqlite';
+见包内示例：通过 `SpaceStorage` 组合 `IndexedDBDocStorage`、`SqliteBlobStorage` 等。
 
-const storage = new SpaceStorage([new IndexedDBDocStorage({}), new SqliteBlobStorage({})]);
-
-await storage.connect();
-storage.on('connection', ({ storage, status, error }) => {
-  ui.show(storage, status, error);
-});
-
-await storage.get('doc').pushDocUpdate({ docId: 'my-first-doc', bin: new Uint8Array(), editor: 'me' });
-await storage.tryGet('blob')?.get('img');
-```
-
-### Put Storage behind Worker
-
-```ts
-import { SpaceStorageWorkerClient } from '@affine/nbstore/op';
-import type { ConnectionStatus } from '@affine/nbstore';
-import { IndexedDBDocStorage } from '@affine/nbstore/idb';
-
-const client = new SpaceStorageWorkerClient();
-client.addStorage(IndexedDBDocStorage, {
-  // options can only be structure-cloneable type
-  peer: 'local',
-  spaceType: 'workspace',
-  spaceId: 'my-new-workspace',
-});
-
-await client.connect();
-client.ob$('connection', ({ storage, status, error }) => {
-  ui.show(storage, status, error);
-});
-
-await client.call('pushDocUpdate', { docId: 'my-first-doc', bin: new Uint8Array(), editor: 'me' });
-
-// call unregistered op will leads to Error
-// Error { message: 'Handler for operation [listHistory] is not registered.' }
-await client.call('listHistories', { docId: 'my-first-doc' });
-```
+更多 API 见 `@affine/nbstore` 源码导出。
