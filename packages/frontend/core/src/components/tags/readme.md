@@ -1,3 +1,3 @@
-# Tags Editor
+# Tags 编辑器
 
-A common module for both page and database tags editing (serviceless).
+用于页面与数据库标签编辑的公共模块（无服务依赖）。

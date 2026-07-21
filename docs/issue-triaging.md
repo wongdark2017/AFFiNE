@@ -1,28 +1,28 @@
-# Issues Triaging
+# Issue 分诊
 
-When we receive your issue, we will first triaging it. Triaging an issue usually takes around one business day but may take longer. Goal of triaging is to provide you with a clear understanding of what will happen to your issue. For example, after your feature request was triaged you know whether we plan to tackle the issue or whether we'll wait to hear what the broader community thinks about this request.
+收到你的 issue 后，我们会先分诊。分诊通常约一个工作日，也可能更久。分诊目标是让你清楚 issue 接下来会发生什么。例如，功能请求分诊后，你会知道我们是否计划处理，或是否等待更广泛社区反馈。
 
-Here are issue states and their descriptions:
+Issue 状态与说明：
 
-| State               | Description                                                                                                                                                                                                                           |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Untriaged           | The team has not yet reviewed the issue. We usually do it within one business day.                                                                                                                                                    |
-| As designed         | The behavior described in the issue is intentional. If you find it seriously disruptive or if we’ve misunderstood you, please let us know in the issue’s comments section.                                                            |
-| Blocked             | We can’t work on this issue until another one (linked) is resolved.                                                                                                                                                                   |
-| Can’t Reproduce     | We have been unable to reproduce the issue on our side. It could be flaky or fixed already, or we may not have had all the details we needed. If you’re still experiencing the issue and have any further details, please share them. |
-| Duplicate           | The issue is the same (or has the same cause) as another one (linked).                                                                                                                                                                |
-| Fixed               | If the issue was a bug, it’s been fixed; if it was a missing feature, it’s been implemented.                                                                                                                                          |
-| Fixed In Branch     | If the issue was a bug, it’s been fixed; if it was a missing feature, it’s been implemented; the changes are now in a separate branch and haven’t been merged into the default branch yet.                                            |
-| In Progress         | We’re currently working on the issue.                                                                                                                                                                                                 |
-| Incomplete          | Unfortunately we don’t have enough information to proceed. If you’re willing to share any further details about the issue, please do so in the comments.                                                                              |
-| Obsolete            | The part of the product that was causing this issue has been removed or significantly reworked since it was created.                                                                                                                  |
-| Upvoting            | We are currently evaluating demand for the issue and checking whether it requires complicated or risky changes. Please leave a vote or comment if you think it should be prioritized.                                                 |
-| Open                | We want to implement the fix or feature in the near future. We can’t promise it will appear in the next public release, but it’s on our short list.                                                                                   |
-| Shelved             | We have reviewed the issue and decided that, even though it has merit, we cannot currently include it in our near-term plan.                                                                                                          |
-| Third Party Problem | The issue is caused by a third party. We've done our best to inform them about it.                                                                                                                                                    |
-| To be Discussed     | We need some time to discuss the issue.                                                                                                                                                                                               |
-| To Reproduce        | We will try to find the steps needed to reproduce the issue on our side.                                                                                                                                                              |
-| Under Investigation | We’ve triaged the issue, but now we need to investigate it more thoroughly. This may require processing additional information like logs or dumps.                                                                                    |
-| Waiting for Info    | We’ve requested additional information from the person who created the issue and are waiting for them to get back to us.                                                                                                              |
-| Declined            | We’ve reviewed the suggestion and, while we appreciate its value, we unfortunately do not have the resources to implement it.                                                                                                         |
-| Answered            | The issue actually turned out to be a question or a misunderstanding, and it has been answered or resolved.                                                                                                                           |
+| 状态                | 说明                                                                 |
+| ------------------- | -------------------------------------------------------------------- |
+| Untriaged           | 团队尚未审阅。通常一个工作日内完成。                                 |
+| As designed         | 描述的行为是有意设计。若严重影响使用或我们误解了你，请在评论中说明。 |
+| Blocked             | 需等另一 issue（已链接）解决后才能处理。                             |
+| Can't Reproduce     | 我们无法复现。可能不稳定、已修复，或缺少细节。若仍复现请补充信息。   |
+| Duplicate           | 与另一 issue（已链接）相同或同因。                                   |
+| Fixed               | 若是 bug 已修复；若是缺功能已实现。                                  |
+| Fixed In Branch     | 已修复/已实现，变更在独立分支，尚未合入默认分支。                    |
+| In Progress         | 正在处理。                                                           |
+| Incomplete          | 信息不足，无法继续。欢迎在评论补充。                                 |
+| Obsolete            | 相关产品部分已移除或大幅重做。                                       |
+| Upvoting            | 正在评估需求与改动复杂度/风险。若希望优先请投票或评论。              |
+| Open                | 希望近期实现。不保证下一公开发版，但在短名单上。                     |
+| Shelved             | 已审阅并认为有价值，但短期计划无法纳入。                             |
+| Third Party Problem | 由第三方引起。我们已尽量通知对方。                                   |
+| To be Discussed     | 需要时间讨论。                                                       |
+| To Reproduce        | 将尝试找出可复现步骤。                                               |
+| Under Investigation | 已分诊，需更深入调查（可能要日志或 dump）。                          |
+| Waiting for Info    | 已向创建者索取更多信息并等待回复。                                   |
+| Declined            | 已审阅建议；虽有价值，但暂无资源实现。                               |
+| Answered            | 实际是问题或误解，已回答或解决。                                     |

@@ -1,19 +1,17 @@
 # Android
 
-AFFiNE Android app.
+AFFiNE Android 应用。
 
-## Setup
+## 配置
 
-- set CARGO_HOME to your system environment
-- add
+- 将 CARGO_HOME 设为系统环境变量
+- 在 App/local.properties 中添加：
 
   `rust.cargoCommand={replace_with_your_own_cargo_home_absolute_path}/bin/cargo`
 
   `rust.rustcCommand={replace_with_your_own_cargo_home_absolute_path}/bin/rustc`
 
-  to App/local.properties
-
-## Build
+## 构建
 
 - yarn install
 - BUILD_TYPE=canary PUBLIC_PATH="/" yarn affine @affine/android build

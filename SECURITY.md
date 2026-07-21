@@ -1,28 +1,28 @@
-# Security Policy
+# 安全策略
 
-## Supported Versions
+## 支持的版本
 
-We recommend users to always use the latest major version. Security updates will be provided for the current major version until the next major version is released.
+建议用户始终使用最新主版本。安全更新将为当前主版本提供，直到下一主版本发布。
 
-| Version         | Supported          |
-| --------------- | ------------------ |
+| 版本 | 是否支持 |
+|------|----------|
 | 0.26.x (stable) | :white_check_mark: |
-| < 0.26.x        | :x:                |
+| < 0.26.x | :x: |
 
-## Reporting a Vulnerability
+## 报告漏洞
 
-We welcome you to provide us with bug reports via and email at [security@toeverything.info](mailto:security@toeverything.info) or submit directly on [GitHub](https://github.com/toeverything/AFFiNE/security), **we encourage you to submit the relevant information directly via GitHub**. We expect your report to contain at least the following for us to evaluate and reproduce:
+欢迎通过邮件 [security@toeverything.info](mailto:security@toeverything.info) 或直接在 [GitHub](https://github.com/toeverything/AFFiNE/security) 提交漏洞报告，**我们鼓励通过 GitHub 直接提交相关信息**。报告至少应包含以下内容以便评估与复现：
 
-1. Using platform and version, for example:
+1. 使用平台与版本，例如：
    - macos arm64 0.12.0-canary-202402220729-0868ac6
    - app.affine.pro 0.12.0-canary-202402220729-0868ac6
 
-2. A sets of video or screenshot containing the reproduce steps that proves you successfully exploited the vulnerability, preferably including the time and software version of the successful exploit.
+2. 一组包含复现步骤的视频或截图，证明成功利用漏洞，最好包含成功利用的时间与软件版本。
 
-3. Your classification or analysis of the vulnerability (optional)
+3. 你对漏洞的分类或分析（可选）
 
-Since we are an open source project, we also welcome you to provide corresponding fix PRs, we will determine specific rewards based on the evaluation results.
+作为开源项目，也欢迎提供对应修复 PR；我们会根据评估结果决定具体奖励。
 
-Due to limited resources, we do not accept and will not review any AI-generated security reports.
+因资源有限，我们不接受、也不审阅任何 AI 生成的安全报告。
 
-If the vulnerability is caused by a library we depend on, we encourage you to submit a security report to the corresponding dependent library at the same time to benefit more users.
+若漏洞由依赖库引起，鼓励你同时向对应依赖库提交安全报告，以惠及更多用户。

@@ -1,8 +1,8 @@
 # iOS
 
-AFFiNE iOS app.
+AFFiNE iOS 应用。
 
-## Build
+## 构建
 
 - `yarn install`
 - `BUILD_TYPE=canary PUBLIC_PATH="/" yarn affine @affine/ios build`
@@ -11,10 +11,10 @@ AFFiNE iOS app.
 
 ## Live Reload
 
-> Capacitor doc: https://capacitorjs.com/docs/guides/live-reload#using-with-framework-clis
+> Capacitor 文档：https://capacitorjs.com/docs/guides/live-reload#using-with-framework-clis
 
 - `yarn install`
 - `yarn dev`
-  - select `ios` for the "Distribution" option
+  - 「Distribution」选项选择 `ios`
 - `yarn affine @affine/ios sync:dev`
 - `yarn affine @affine/ios cap open ios`

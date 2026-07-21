@@ -1,3 +1,3 @@
-# `GraphQL` client
+# `GraphQL` 客户端
 
-Auto generated `GraphQL` client for affine.pro
+为 affine.pro 自动生成的 `GraphQL` 客户端。

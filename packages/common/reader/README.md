@@ -1,8 +1,8 @@
-# Affine Blocksuite format YDoc reader
+# Affine Blocksuite 格式 YDoc 读取器
 
-## Usage
+## 用法
 
-### read rootYDoc
+### 读取 rootYDoc
 
 ```ts
 import { readAllDocsFromRootDoc } from '@affine/reader';
@@ -16,7 +16,7 @@ console.log(Array.from(docsWithTrash.entries()));
 // ]
 ```
 
-### read YDoc
+### 读取 YDoc
 
 ```ts
 import { readAllBlocksFromDoc } from '@affine/reader';

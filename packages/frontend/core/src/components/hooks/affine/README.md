@@ -1,6 +1,5 @@
 # AFFiNE Hooks
 
-> This directory will be moved to `@affine/worksapce/affine/hooks` in the future.
+> 本目录未来将迁至 `@affine/worksapce/affine/hooks`。
 
-Only put hooks in this directory if they are specific to AFFiNE, for example
-if they are using the AFFiNE API, or if the `AffineWorkspace` is required.
+仅在与 AFFiNE 强相关时把 hook 放在这里，例如使用 AFFiNE API，或需要 `AffineWorkspace`。

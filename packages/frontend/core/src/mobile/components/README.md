@@ -1,3 +1,3 @@
 # mobile components
 
-Maintain the smallest possible business components here.
+在此维护尽可能小的业务组件。

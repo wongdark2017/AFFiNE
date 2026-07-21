@@ -1,51 +1,51 @@
-# Building AFFiNE Web
+# 构建 AFFiNE Web
 
-> **Warning**:
+> **警告**：
 >
-> This document is not guaranteed to be up-to-date.
-> If you find any outdated information, please feel free to open an issue or submit a PR.
+> 本文不保证始终最新。
+> 若发现过时信息，请提 issue 或 PR。
 
-> **Note**
-> For developing & building desktop client app, please refer to [building-desktop-client-app.md](./building-desktop-client-app.md)
+> **说明**
+> 开发与构建桌面客户端，请参阅 [building-desktop-client-app.md](./building-desktop-client-app.md)
 
-## Table of Contents
+## 目录
 
-- [Prerequisites](#prerequisites)
-- [Setup Environment](#setup-environment)
-- [Start Development Server](#start-development-server)
-- [Testing](#testing)
+- [前置条件](#前置条件)
+- [环境准备](#环境准备)
+- [启动开发服务器](#启动开发服务器)
+- [测试](#测试)
 
-## Prerequisites
+## 前置条件
 
-AFFiNE client has both **Node.js** & **Rust** toolchains.
+AFFiNE 客户端需要 **Node.js** 与 **Rust** 工具链。
 
-### Install Node.js
+### 安装 Node.js
 
-We suggest develop our product under node.js LTS(Long-term support) version
+建议在 Node.js LTS（长期支持）版本下开发。
 
-#### Option 1: Manually install node.js
+#### 选项 1：手动安装 node.js
 
-install [Node LTS version](https://nodejs.org/en/download)
+安装 [Node LTS 版本](https://nodejs.org/en/download)
 
-> Up to now, the major node.js version is 20.x
+> 目前主版本为 20.x
 
-#### Option 2: Use node version manager
+#### 选项 2：使用 node 版本管理器
 
-install [fnm](https://github.com/Schniz/fnm)
+安装 [fnm](https://github.com/Schniz/fnm)
 
 ```sh
 fnm use
 ```
 
-### Install Rust Tools
+### 安装 Rust 工具
 
-Please follow the official guide at https://www.rust-lang.org/tools/install.
+请按官方指南：https://www.rust-lang.org/tools/install
 
-### Setup Node.js Environment
+### 配置 Node.js 环境
 
-This setup requires modern yarn (currently `4.x`), run this if your yarn version is `1.x`
+需要现代 yarn（当前 `4.x`）。若 yarn 为 `1.x`，请执行：
 
-Reference: [Yarn installation doc](https://yarnpkg.com/getting-started/install)
+参考：[Yarn 安装文档](https://yarnpkg.com/getting-started/install)
 
 ```sh
 corepack enable
@@ -53,11 +53,11 @@ corepack prepare yarn@stable --activate
 ```
 
 ```sh
-# install dependencies
+# 安装依赖
 yarn install
 ```
 
-### Clone repository
+### 克隆仓库
 
 #### Linux & MacOS
 
@@ -67,54 +67,54 @@ git clone https://github.com/toeverything/AFFiNE
 
 #### Windows
 
-In our codebase, we use symbolic links. Due to the security design of Windows, the creation of symbolic links requires administrator privileges. This is part of the security policy settings of Windows, and more information can be found at [Security Policy Settings for Creating Symbolic Links](https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/create-symbolic-links).
+代码库使用符号链接。由于 Windows 安全设计，创建符号链接需要管理员权限。详见 [创建符号链接的安全策略](https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/create-symbolic-links)。
 
-For detailed guidance on enabling this feature, please refer to the official documentation: [Enable Developer Mode on Windows](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development).
+启用开发者模式： [Enable Developer Mode on Windows](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development)。
 
-Once Developer Mode is enabled, execute the following command with administrator privileges:
+启用后以管理员权限执行：
 
 ```sh
-# Enable symbolic links
+# 启用符号链接
 git config --global core.symlinks true
-# Clone the repository
+# 克隆仓库
 git clone https://github.com/toeverything/AFFiNE
 ```
 
-### Build Native Dependencies
+### 构建 Native 依赖
 
-Run the following script. It will build the native module at [`/packages/frontend/native`](/packages/frontend/native) and build Node.js binding using [NAPI.rs](https://napi.rs/).
-This could take a while if you build it for the first time.
-Note: use `strip` from system instead of `binutils` if you are running MacOS. [see problem here](https://github.com/toeverything/AFFiNE/discussions/2840)
+运行下列脚本，将在 [`/packages/frontend/native`](/packages/frontend/native) 构建原生模块，并用 [NAPI.rs](https://napi.rs/) 构建 Node.js 绑定。
+首次构建可能较久。
+注意：在 MacOS 上请用系统 `strip` 而不是 `binutils`。[相关讨论](https://github.com/toeverything/AFFiNE/discussions/2840)
 
 ```sh
 yarn affine @affine/native build
 ```
 
-### Build Server Dependencies
+### 构建 Server 依赖
 
 ```sh
 yarn affine @affine/server-native build
 ```
 
-## Testing
+## 测试
 
-Adding test cases is strongly encouraged when you contribute new features and bug fixes.
+贡献新功能与修 bug 时强烈建议补充测试用例。
 
-We use [Playwright](https://playwright.dev/) for E2E test, and [vitest](https://vitest.dev/) for unit test.
-To test locally, please make sure browser binaries are already installed via `npx playwright install`.
+E2E 使用 [Playwright](https://playwright.dev/)，单元测试使用 [vitest](https://vitest.dev/)。
+本地测试前请先通过 `npx playwright install` 安装浏览器二进制。
 
-Start server before tests by following [`docs/developing-server.md`](./developing-server.md) first.
+测试前请按 [`docs/developing-server.md`](./developing-server.md) 先启动服务端。
 
-### Unit Test
+### 单元测试
 
 ```sh
 yarn test
 ```
 
-### E2E Test
+### E2E 测试
 
 ```shell
-# there are `affine-local`, `affine-migration`, `affine-local`, `affine-prototype` e2e tests,
-#   which are run under different situations.
+# 存在 `affine-local`、`affine-migration`、`affine-prototype` 等 e2e，
+#   在不同场景下运行。
 yarn workspace @affine-test/affine-local e2e
 ```

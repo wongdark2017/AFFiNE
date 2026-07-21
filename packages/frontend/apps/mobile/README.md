@@ -1,3 +1,3 @@
 # mobile
 
-AFFiNE Mobile Edition Web app.
+AFFiNE 移动版 Web 应用。

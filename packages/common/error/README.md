@@ -1,3 +1,3 @@
 # @affine/error
 
-AFFiNE error handler utilities
+AFFiNE 错误处理工具。
