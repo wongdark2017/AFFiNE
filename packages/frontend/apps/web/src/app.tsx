@@ -95,6 +95,10 @@ window.addEventListener('focus', () => {
 });
 frameworkProvider.get(LifecycleService).applicationStart();
 
+// App 组件是前端应用的入口组件，负责设置应用的各类全局 Provider（如国际化、缓存、框架上下文等），
+// 并挂载路由系统，用于渲染页面内容和处理 Suspense（异步加载）等功能。
+// 其中 Suspense 是 React 提供的用于“暂停渲染”某些子组件直到其异步依赖（如懒加载的组件、数据等）准备就绪的组件，
+// 可以配合 fallback 等属性优雅地处理加载状态。
 export function App() {
   return (
     <Suspense>
