@@ -1,4 +1,4 @@
-import { Button, IconButton, Modal } from '@affine/component';
+import { Button, IconButton, Modal, notify } from '@affine/component';
 import { getStoreManager } from '@affine/core/blocksuite/manager/store';
 import { useAsyncCallback } from '@affine/core/components/hooks/affine-async-hooks';
 import { useNavigateHelper } from '@affine/core/components/hooks/use-navigate-helper';
@@ -11,6 +11,7 @@ import {
   type ImportRunContext,
   ImportService,
 } from '@affine/core/modules/import';
+import { OrganizeService } from '@affine/core/modules/organize';
 import { UrlService } from '@affine/core/modules/url';
 import {
   getAFFiNEWorkspaceSchema,
@@ -79,7 +80,7 @@ type AcceptType =
   | 'OneNote'
   | 'Directory'
   | 'Skip'; // Skip is used for dotaffinefile
-type Status = 'idle' | 'importing' | 'success' | 'error';
+type Status = 'idle' | 'importing' | 'error';
 type ImportErrorState = {
   code: string;
   message: string;
@@ -145,6 +146,12 @@ function requireImportService(importService?: ImportService) {
 type ImportConfig = {
   fileOptions: { acceptType: AcceptType; multiple: boolean };
   nativeOnly?: boolean;
+  /**
+   * Whether the import pipeline itself places imported content into the
+   * organize tree (via ImportCommitService). Types without this flag get
+   * their docs linked to the target folder by the dialog after importing.
+   */
+  organizeAware?: boolean;
   importFunction: (args: ImportFunctionArgs) => Promise<ImportResult>;
 };
 
@@ -307,6 +314,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
   },
   markdownZip: {
     fileOptions: { acceptType: 'Zip', multiple: true },
+    organizeAware: true,
     importFunction: async ({ files, importService, context }) => {
       if (!files.length) {
         throw new Error(
@@ -342,6 +350,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
   },
   notion: {
     fileOptions: { acceptType: 'Zip', multiple: false },
+    organizeAware: true,
     importFunction: async ({ files, importService, context }) => {
       const file = files.length === 1 ? files[0] : null;
       if (!file) {
@@ -352,6 +361,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
   },
   obsidian: {
     fileOptions: { acceptType: 'Directory', multiple: false },
+    organizeAware: true,
     importFunction: async ({ files, importService, context }) => {
       return requireImportService(importService).importObsidianVault(
         files,
@@ -361,6 +371,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
   },
   bear: {
     fileOptions: { acceptType: 'Zip', multiple: false },
+    organizeAware: true,
     importFunction: async ({ files, importService, context }) => {
       const file = files.length === 1 ? files[0] : null;
       if (!file) {
@@ -375,6 +386,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
   oneNote: {
     fileOptions: { acceptType: 'OneNote', multiple: false },
     nativeOnly: true,
+    organizeAware: true,
     importFunction: async ({ files, importService, context }) => {
       const file = files.length === 1 ? files[0] : null;
       if (!file) {
@@ -562,47 +574,6 @@ const ImportingStatus = ({
   );
 };
 
-const SuccessStatus = ({
-  warnings,
-  onComplete,
-}: {
-  warnings: string[];
-  onComplete: () => void;
-}) => {
-  const t = useI18n();
-  return (
-    <>
-      <div className={style.importModalTitle}>
-        {t['com.affine.import.status.success.title']()}
-      </div>
-      <p className={style.importStatusContent}>
-        {t['com.affine.import.status.success.message']()}{' '}
-        <a
-          className={style.link}
-          href={BUILD_CONFIG.discordUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Discord
-        </a>
-        .
-      </p>
-      {warnings.length ? (
-        <div className={style.importWarnings}>
-          {warnings.map((warning, index) => (
-            <div key={`${warning}-${index}`}>{warning}</div>
-          ))}
-        </div>
-      ) : null}
-      <div className={style.importModalButtonContainer}>
-        <Button onClick={onComplete} variant="primary">
-          {t['Complete']()}
-        </Button>
-      </div>
-    </>
-  );
-};
-
 const ErrorStatus = ({
   error,
   onRetry,
@@ -641,12 +612,12 @@ const ErrorStatus = ({
 };
 
 export const ImportDialog = ({
+  targetFolderId,
   close,
 }: DialogComponentProps<WORKSPACE_DIALOG_SCHEMA['import']>) => {
   const t = useI18n();
   const [status, setStatus] = useState<Status>('idle');
   const [importError, setImportError] = useState<ImportErrorState | null>(null);
-  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [importProgress, setImportProgress] = useState<{
     completed: number;
     total: number;
@@ -655,6 +626,7 @@ export const ImportDialog = ({
   const workspace = useService(WorkspaceService).workspace;
   const docCollection = workspace.docCollection;
   const importService = useService(ImportService);
+  const organizeService = useService(OrganizeService);
 
   const globalDialogService = useService(GlobalDialogService);
 
@@ -704,6 +676,43 @@ export const ImportDialog = ({
       });
     };
   }, [globalDialogService]);
+
+  const finishImport = useCallback(
+    (result: ImportResult | null) => {
+      if (result?.importedWorkspace) {
+        handleCreatedWorkspace({ metadata: result.importedWorkspace });
+      }
+      if (!result) {
+        close();
+        return;
+      }
+      close({
+        docIds: result.docIds,
+        entryId: result.entryId,
+        isWorkspaceFile: result.isWorkspaceFile,
+      });
+    },
+    [close, handleCreatedWorkspace]
+  );
+
+  // Links docs imported by pipelines that are not organize-aware (plain
+  // markdown/html/docx/snapshot files) into the target folder.
+  const linkDocsToTargetFolder = useCallback(
+    (docIds: string[]) => {
+      if (!targetFolderId || !docIds.length) {
+        return;
+      }
+      const folder =
+        organizeService.folderTree.folderNode$(targetFolderId).value;
+      if (!folder) {
+        return;
+      }
+      for (const docId of docIds) {
+        folder.createLink('doc', docId, folder.indexAt('after'));
+      }
+    },
+    [organizeService, targetFolderId]
+  );
 
   const handleImport = useAsyncCallback(
     async (type: ImportType) => {
@@ -761,19 +770,15 @@ export const ImportDialog = ({
             onProgress: progress => {
               setImportProgress(progress);
             },
+            targetFolderId,
           },
         });
         importAbortControllerRef.current = null;
 
-        setImportResult({
-          docIds,
-          entryId,
-          isWorkspaceFile,
-          rootFolderId,
-          importedWorkspace,
-          warnings,
-        });
-        setStatus('success');
+        if (!importConfig.organizeAware) {
+          linkDocsToTargetFolder(docIds);
+        }
+
         track.$.importModal.$.import({
           type,
           status: 'success',
@@ -783,6 +788,27 @@ export const ImportDialog = ({
         });
         track.$.importModal.$.createDoc({
           control: 'import',
+        });
+
+        const warningMessages = (warnings ?? []).map(warning =>
+          typeof warning === 'string' ? warning : warning.message
+        );
+        if (warningMessages.length) {
+          notify.warning({
+            title: t['com.affine.import.status.success.title'](),
+            message: warningMessages.join('\n'),
+          });
+        }
+
+        // Close the dialog right away; navigation to the imported content is
+        // handled by the close callback of the dialog opener.
+        finishImport({
+          docIds,
+          entryId,
+          isWorkspaceFile,
+          rootFolderId,
+          importedWorkspace,
+          warnings,
         });
       } catch (error) {
         importAbortControllerRef.current = null;
@@ -797,27 +823,16 @@ export const ImportDialog = ({
         logger.error('Failed to import', error);
       }
     },
-    [docCollection, handleImportAffineFile, importService, t]
+    [
+      docCollection,
+      finishImport,
+      handleImportAffineFile,
+      importService,
+      linkDocsToTargetFolder,
+      t,
+      targetFolderId,
+    ]
   );
-
-  const finishImport = useCallback(() => {
-    if (importResult?.importedWorkspace) {
-      handleCreatedWorkspace({ metadata: importResult.importedWorkspace });
-    }
-    if (!importResult) {
-      close();
-      return;
-    }
-    close({
-      docIds: importResult.docIds,
-      entryId: importResult.entryId,
-      isWorkspaceFile: importResult.isWorkspaceFile,
-    });
-  }, [close, handleCreatedWorkspace, importResult]);
-
-  const handleComplete = useCallback(() => {
-    finishImport();
-  }, [finishImport]);
 
   const handleRetry = () => {
     setImportProgress(null);
@@ -833,14 +848,6 @@ export const ImportDialog = ({
     importing: (
       <ImportingStatus progress={importProgress} onCancel={handleCancel} />
     ),
-    success: (
-      <SuccessStatus
-        warnings={(importResult?.warnings ?? []).map(warning =>
-          typeof warning === 'string' ? warning : warning.message
-        )}
-        onComplete={handleComplete}
-      />
-    ),
     error: <ErrorStatus error={importError} onRetry={handleRetry} />,
   };
 
@@ -849,7 +856,7 @@ export const ImportDialog = ({
       open
       onOpenChange={(open: boolean) => {
         if (!open) {
-          finishImport();
+          finishImport(null);
         }
       }}
       width={480}

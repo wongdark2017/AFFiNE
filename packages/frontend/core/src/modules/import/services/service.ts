@@ -29,6 +29,11 @@ const logger = new DebugLogger('import');
 export type ImportRunContext = {
   signal?: AbortSignal;
   onProgress?: (progress: { completed: number; total: number }) => void;
+  /**
+   * When set, imported content is placed under this organize folder instead
+   * of the organize root.
+   */
+  targetFolderId?: string;
 };
 
 export class ImportService extends Service {
@@ -73,7 +78,10 @@ export class ImportService extends Service {
 
     // Progress is reported at zip granularity; intra-zip progress from the
     // native session would make the progress label jump back and forth.
-    const perZipContext: ImportRunContext = { signal: context?.signal };
+    const perZipContext: ImportRunContext = {
+      signal: context?.signal,
+      targetFolderId: context?.targetFolderId,
+    };
 
     for (const file of files) {
       throwIfAborted(context?.signal);
@@ -115,7 +123,10 @@ export class ImportService extends Service {
     context?: ImportRunContext
   ) {
     const collection = this.workspaceService.workspace.docCollection;
-    const commitService = this.createCommitService({ organize: true });
+    const commitService = this.createCommitService({
+      organize: true,
+      targetFolderId: context?.targetFolderId,
+    });
     if (BUILD_CONFIG.isElectron) {
       return commitNativeImport('markdownZip', file, commitService, context);
     }
@@ -135,6 +146,7 @@ export class ImportService extends Service {
     const commitService = this.createCommitService({
       organize: true,
       explorerIcon: true,
+      targetFolderId: context?.targetFolderId,
     });
     if (BUILD_CONFIG.isElectron) {
       return commitNativeImport('notionZip', file, commitService, context);
@@ -164,7 +176,11 @@ export class ImportService extends Service {
   async importObsidianVault(files: File[], context?: ImportRunContext) {
     const collection = this.workspaceService.workspace.docCollection;
     const commitService = this.createCommitService({
+      // Obsidian imports do not organize by default; only mount into the
+      // organize tree when a target folder is requested.
+      organize: !!context?.targetFolderId,
       explorerIcon: true,
+      targetFolderId: context?.targetFolderId,
     });
     if (!BUILD_CONFIG.isElectron) {
       await preflightWebFilesImport(files);
@@ -192,6 +208,7 @@ export class ImportService extends Service {
     const commitService = this.createCommitService({
       organize: true,
       tag: true,
+      targetFolderId: context?.targetFolderId,
     });
     if (BUILD_CONFIG.isElectron) {
       return commitNativeImport('bearZip', file, commitService, context);
@@ -214,6 +231,7 @@ export class ImportService extends Service {
     }
     const commitService = this.createCommitService({
       organize: true,
+      targetFolderId: context?.targetFolderId,
     });
     return commitNativeImport('oneNote', file, commitService, context);
   }
@@ -222,6 +240,7 @@ export class ImportService extends Service {
     organize?: boolean;
     explorerIcon?: boolean;
     tag?: boolean;
+    targetFolderId?: string;
   }) {
     return new ImportCommitService({
       collection: this.workspaceService.workspace.docCollection,
@@ -232,6 +251,7 @@ export class ImportService extends Service {
         ? this.explorerIconService
         : undefined,
       tagService: options.tag ? this.tagService : undefined,
+      targetFolderId: options.targetFolderId,
       logger,
     });
   }

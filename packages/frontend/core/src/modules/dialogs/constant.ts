@@ -66,7 +66,7 @@ export type WORKSPACE_DIALOG_SCHEMA = {
     position?: [number, number, number, number]; // [x, y, width, height]
     onSelect?: (date?: string) => void;
   }) => string;
-  import: () => {
+  import: (props: { targetFolderId?: string } | undefined) => {
     docIds: string[];
     entryId?: string;
     isWorkspaceFile?: boolean;
