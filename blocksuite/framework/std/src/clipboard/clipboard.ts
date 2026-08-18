@@ -12,7 +12,11 @@ import { unified } from 'unified';
 
 import { LifeCycleWatcher } from '../extension/index.js';
 import { ClipboardAdapterConfigIdentifier } from './clipboard-adapter.js';
-import { onlyContainImgElement } from './utils.js';
+import {
+  htmlOnlyWrapsPlainText,
+  isMarkdownLikeText,
+  onlyContainImgElement,
+} from './utils.js';
 
 export class Clipboard extends LifeCycleWatcher {
   static override key = 'clipboard';
@@ -54,6 +58,24 @@ export class Clipboard extends LifeCycleWatcher {
         data.delete('text/html');
       }
     }
+
+    // Prefer Markdown parsing when `text/html` merely wraps the same Markdown
+    // text as `text/plain` (e.g. content copied from a Markdown preview pane).
+    // Otherwise the higher-priority HTML adapter would insert the raw Markdown
+    // verbatim instead of rendering it.
+    const htmlItem = data.get('text/html');
+    const plainItem = data.get('text/plain');
+    if (
+      typeof htmlItem === 'string' &&
+      htmlItem.length > 0 &&
+      typeof plainItem === 'string' &&
+      plainItem.trim().length > 0 &&
+      isMarkdownLikeText(plainItem) &&
+      htmlOnlyWrapsPlainText(htmlItem, plainItem)
+    ) {
+      data.delete('text/html');
+    }
+
     return (type: string) => {
       const item = data.get(type);
       if (item) {

@@ -4964,6 +4964,208 @@ bbb
     });
   });
 
+  test('inline latex with digit-leading content renders as math', async () => {
+    const markdown = 'value $3x+1$ here\n';
+    const blockSnapshot: BlockSnapshot = {
+      type: 'block',
+      id: 'matchesReplaceMap[0]',
+      flavour: 'affine:note',
+      props: {
+        xywh: '[0,0,800,95]',
+        background: DefaultTheme.noteBackgrounColor,
+        index: 'a0',
+        hidden: false,
+        displayMode: NoteDisplayMode.DocAndEdgeless,
+      },
+      children: [
+        {
+          type: 'block',
+          id: 'matchesReplaceMap[1]',
+          flavour: 'affine:paragraph',
+          props: {
+            type: 'text',
+            text: {
+              '$blocksuite:internal:text$': true,
+              delta: [
+                { insert: 'value ' },
+                { insert: ' ', attributes: { latex: '3x+1' } },
+                { insert: ' here' },
+              ],
+            },
+          },
+          children: [],
+        },
+      ],
+    };
+    const mdAdapter = new MarkdownAdapter(createJob(), provider);
+    const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
+      file: markdown,
+    });
+    expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+  });
+
+  test('inline latex with digit-leading content renders as math', async () => {
+    const markdown = 'value $3x+1$ here\n';
+    const blockSnapshot: BlockSnapshot = {
+      type: 'block',
+      id: 'matchesReplaceMap[0]',
+      flavour: 'affine:note',
+      props: {
+        xywh: '[0,0,800,95]',
+        background: DefaultTheme.noteBackgrounColor,
+        index: 'a0',
+        hidden: false,
+        displayMode: NoteDisplayMode.DocAndEdgeless,
+      },
+      children: [
+        {
+          type: 'block',
+          id: 'matchesReplaceMap[1]',
+          flavour: 'affine:paragraph',
+          props: {
+            type: 'text',
+            text: {
+              '$blocksuite:internal:text$': true,
+              delta: [
+                { insert: 'value ' },
+                { insert: ' ', attributes: { latex: '3x+1' } },
+                { insert: ' here' },
+              ],
+            },
+          },
+          children: [],
+        },
+      ],
+    };
+    const mdAdapter = new MarkdownAdapter(createJob(), provider);
+    const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
+      file: markdown,
+    });
+    expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+  });
+
+  describe('bare latex without delimiters', () => {
+    test.each([
+      [
+        'superscript and subscript with \\odot',
+        '得到约 M=1.34^{+0.15}_{-0.16}M_\\odot 附近\n',
+        '得到约 ',
+        'M=1.34^{+0.15}_{-0.16}M_\\odot',
+        ' 附近',
+      ],
+      [
+        'braced subscript containing \\rm with spaces',
+        '半径 R_{\\rm eq}=12.71^{+1.14}_{-1.19} km\n',
+        '半径 ',
+        'R_{\\rm eq}=12.71^{+1.14}_{-1.19}',
+        ' km',
+      ],
+      [
+        'digit-leading value with \\pm and \\, spacing',
+        '质量约 2.08\\pm0.07\\,M_\\odot 左右\n',
+        '质量约 ',
+        '2.08\\pm0.07\\,M_\\odot',
+        ' 左右',
+      ],
+      [
+        '\\simeq directly attached to digits',
+        '得到 R\\simeq13.02 km\n',
+        '得到 ',
+        'R\\simeq13.02',
+        ' km',
+      ],
+      [
+        'range using \\! negative spacing',
+        '区间 R_{1.4}=12.0\\!-\\!12.3 km\n',
+        '区间 ',
+        'R_{1.4}=12.0\\!-\\!12.3',
+        ' km',
+      ],
+    ])(
+      'wraps bare TeX (%s) as inline math',
+      async (_, markdown, before, latex, after) => {
+        const blockSnapshot: BlockSnapshot = {
+          type: 'block',
+          id: 'matchesReplaceMap[0]',
+          flavour: 'affine:note',
+          props: {
+            xywh: '[0,0,800,95]',
+            background: DefaultTheme.noteBackgrounColor,
+            index: 'a0',
+            hidden: false,
+            displayMode: NoteDisplayMode.DocAndEdgeless,
+          },
+          children: [
+            {
+              type: 'block',
+              id: 'matchesReplaceMap[1]',
+              flavour: 'affine:paragraph',
+              props: {
+                type: 'text',
+                text: {
+                  '$blocksuite:internal:text$': true,
+                  delta: [
+                    { insert: before },
+                    { insert: ' ', attributes: { latex } },
+                    { insert: after },
+                  ],
+                },
+              },
+              children: [],
+            },
+          ],
+        };
+        const mdAdapter = new MarkdownAdapter(createJob(), provider);
+        const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
+          file: markdown,
+        });
+        expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+      }
+    );
+
+    test('leaves identifiers, paths, ids and key=value untouched', async () => {
+      const markdown =
+        'file_name 与 C:\\Users\\test 与 J0030+0451 与 timeout=30 保持原样\n';
+      const blockSnapshot: BlockSnapshot = {
+        type: 'block',
+        id: 'matchesReplaceMap[0]',
+        flavour: 'affine:note',
+        props: {
+          xywh: '[0,0,800,95]',
+          background: DefaultTheme.noteBackgrounColor,
+          index: 'a0',
+          hidden: false,
+          displayMode: NoteDisplayMode.DocAndEdgeless,
+        },
+        children: [
+          {
+            type: 'block',
+            id: 'matchesReplaceMap[1]',
+            flavour: 'affine:paragraph',
+            props: {
+              type: 'text',
+              text: {
+                '$blocksuite:internal:text$': true,
+                delta: [
+                  {
+                    insert:
+                      'file_name 与 C:\\Users\\test 与 J0030+0451 与 timeout=30 保持原样',
+                  },
+                ],
+              },
+            },
+            children: [],
+          },
+        ],
+      };
+      const mdAdapter = new MarkdownAdapter(createJob(), provider);
+      const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
+        file: markdown,
+      });
+      expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+    });
+  });
+
   describe('latex block', () => {
     test.each([
       ['dollar sign syntax', '$$\nE=mc^2\n$$\n'],
