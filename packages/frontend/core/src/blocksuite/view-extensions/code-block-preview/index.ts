@@ -5,14 +5,20 @@ import {
 import { FrameworkProvider } from '@toeverything/infra';
 import { z } from 'zod';
 
+import { TikzSlashMenuConfigExtension } from '../tikz/slash-menu';
 import {
   CodeBlockHtmlPreview,
   effects as htmlPreviewEffects,
 } from './html-preview';
+import { CodeBlockLangsExtension } from './langs';
 import {
   CodeBlockMermaidPreview,
   effects as mermaidPreviewEffects,
 } from './mermaid-preview';
+import {
+  CodeBlockTikzPreview,
+  effects as tikzPreviewEffects,
+} from './tikz-preview';
 import {
   CodeBlockTypstPreview,
   effects as typstPreviewEffects,
@@ -33,6 +39,7 @@ export class CodeBlockPreviewViewExtension extends ViewExtensionProvider {
     htmlPreviewEffects();
     mermaidPreviewEffects();
     typstPreviewEffects();
+    tikzPreviewEffects();
   }
 
   override setup(
@@ -43,5 +50,10 @@ export class CodeBlockPreviewViewExtension extends ViewExtensionProvider {
     context.register(CodeBlockHtmlPreview);
     context.register(CodeBlockMermaidPreview);
     context.register(CodeBlockTypstPreview);
+    context.register(CodeBlockTikzPreview);
+    context.register(TikzSlashMenuConfigExtension);
+    context.register(
+      CodeBlockLangsExtension({ isMobile: this.isMobile(context.scope) })
+    );
   }
 }

@@ -36,7 +36,7 @@ export type OpenAIConfig = {
 };
 
 export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
-  readonly type = CopilotProviderType.OpenAI;
+  readonly type: CopilotProviderType = CopilotProviderType.OpenAI;
   @Inject() protected readonly attachmentMaterializer!: AttachmentMaterializer;
   @Inject()
   protected readonly attachmentAdmissionHost?: AttachmentAdmissionHost;
@@ -80,7 +80,7 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     );
   }
 
-  private async prepareImageMessages(
+  protected async prepareImageMessages(
     messages: PromptMessage[],
     options: {
       signal?: AbortSignal;

@@ -3,6 +3,10 @@ import type {
   MermaidRenderResult,
 } from '@affine/core/modules/mermaid/renderer';
 import type {
+  TikzRenderRequest,
+  TikzRenderResult,
+} from '@affine/core/modules/tikz/renderer';
+import type {
   TypstRenderRequest,
   TypstRenderResult,
 } from '@affine/core/modules/typst/renderer';
@@ -12,6 +16,7 @@ type NativePreviewHandlers = {
     request: MermaidRenderRequest
   ) => Promise<MermaidRenderResult>;
   renderTypstSvg?: (request: TypstRenderRequest) => Promise<TypstRenderResult>;
+  renderTikzSvg?: (request: TikzRenderRequest) => Promise<TikzRenderResult>;
 };
 
 let enableMermaidWasmNativeRenderer =

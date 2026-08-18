@@ -314,6 +314,7 @@ export async function checkProviderParams(
     embeddings,
     options = {},
     withAttachment = true,
+    resolveModel,
   }: {
     cond: ModelFullConditions;
     messages?: PromptMessage[];
@@ -324,6 +325,8 @@ export async function checkProviderParams(
       | CopilotImageOptions;
     withAttachment?: boolean;
     execution?: unknown;
+    // catalog-free providers supply their own model selection
+    resolveModel?: (cond: ModelFullConditions) => CopilotProviderModel;
   }
 ): Promise<ModelFullConditions> {
   if (messages) {
@@ -348,7 +351,9 @@ export async function checkProviderParams(
       withAttachment
     );
     const mergedCond = mergeModelConditions(cond, inferredCond);
-    const model = requireProviderModelSelection(context, mergedCond);
+    const model = resolveModel
+      ? resolveModel(mergedCond)
+      : requireProviderModelSelection(context, mergedCond);
     const multimodal = isMultimodal(model);
 
     if (

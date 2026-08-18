@@ -22,3 +22,13 @@ export async function renderTypstSvgBackend(
 ): Promise<PreviewRenderResultMap['typst']> {
   return getRequiredNativeHandler('renderTypstSvg')(request);
 }
+
+export async function renderTikzSvgBackend(
+  request: PreviewRenderRequestMap['tikz']
+): Promise<PreviewRenderResultMap['tikz']> {
+  const handler = getNativePreviewHandlers()?.renderTikzSvg;
+  if (!handler) {
+    throw new Error('TikZ preview is not supported on this platform yet.');
+  }
+  return handler(request);
+}

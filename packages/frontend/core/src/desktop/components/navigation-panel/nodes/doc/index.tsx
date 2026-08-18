@@ -36,7 +36,10 @@ import {
 } from '../../tree';
 import type { GenericNavigationPanelNode } from '../types';
 import { Empty } from './empty';
-import { useNavigationPanelDocNodeOperations } from './operations';
+import {
+  useNavigationPanelDocLinkedNodeOperations,
+  useNavigationPanelDocNodeOperations,
+} from './operations';
 import * as styles from './styles.css';
 
 export const NavigationPanelDocNode = ({
@@ -324,16 +327,11 @@ export const NavigationPanelDocNode = ({
           {canRead =>
             canRead
               ? children?.map((child, index) => (
-                  <NavigationPanelDocNode
+                  <NavigationPanelLinkedDocNode
                     key={`${child.docId}-${index}`}
+                    parentDocId={docId}
                     docId={child.docId}
-                    reorderable={false}
-                    location={{
-                      at: 'navigation-panel:doc:linked-docs',
-                      docId,
-                    }}
                     parentPath={path}
-                    isLinked
                   />
                 ))
               : null
@@ -341,5 +339,37 @@ export const NavigationPanelDocNode = ({
         </Guard>
       ) : null}
     </NavigationPanelTreeNode>
+  );
+};
+
+/**
+ * A linked-doc child rendered under its parent doc node. Adds the
+ * "remove linked doc" operation targeting the parent doc's content.
+ */
+const NavigationPanelLinkedDocNode = ({
+  parentDocId,
+  docId,
+  parentPath,
+}: {
+  parentDocId: string;
+  docId: string;
+  parentPath: string[];
+}) => {
+  const linkedDocOperations = useNavigationPanelDocLinkedNodeOperations(
+    parentDocId,
+    docId
+  );
+  return (
+    <NavigationPanelDocNode
+      docId={docId}
+      reorderable={false}
+      location={{
+        at: 'navigation-panel:doc:linked-docs',
+        docId: parentDocId,
+      }}
+      parentPath={parentPath}
+      operations={linkedDocOperations}
+      isLinked
+    />
   );
 };

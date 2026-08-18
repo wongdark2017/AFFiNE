@@ -3,6 +3,8 @@
 | Spec                   | Covers                                                                                                                                                   |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [forms.md](./forms.md) | Form state (`useState` + `useAsyncCallback`), `@affine/component` primitives, validation, GraphQL mutations via stores/services, vanilla-extract styling |
+| [code-block-preview.md](./code-block-preview.md) | Code block preview renderers (html/mermaid/typst/tikz): worker-op architecture, adding a renderer, non-shiki language registration, TikZ TeX/WASM pipeline |
+| [sidebar-linked-docs.md](./sidebar-linked-docs.md) | Sidebar doc-tree children (index-derived linked docs), add/removeLinkedDoc pattern, Guard/permission pattern, reactive Text signal staleness inside transactions |
 
 Quick orientation: `packages/frontend/component` (shared UI primitives) ·
 `packages/frontend/core` (app logic; DI services/stores under `src/modules/*`) ·

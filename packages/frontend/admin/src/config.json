@@ -406,6 +406,10 @@
       "desc": "The config for the openai provider.",
       "link": "https://github.com/openai/openai-node"
     },
+    "providers.openaiCompatible": {
+      "type": "Object",
+      "desc": "Unified OpenAI-compatible relay. When configured (apiKey + baseURL + defaultModel), it takes over ALL chat routing: any model id is forwarded to the relay, and the model list is fetched dynamically from {baseURL}/v1/models instead of the built-in catalog."
+    },
     "providers.cloudflareWorkersAi": {
       "type": "Object",
       "desc": "The config for the Cloudflare Workers AI provider."

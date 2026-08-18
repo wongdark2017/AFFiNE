@@ -194,9 +194,12 @@ export class QuotaService {
       storageQuota: Number(state.storageQuota),
       historyPeriod: state.historyPeriodSeconds,
       memberLimit: this.userMemberLimit(state.plan),
-      copilotActionLimit: flags.unlimitedCopilot
-        ? undefined
-        : (state.copilotActionLimit ?? undefined),
+      // self-host: copilot uses the operator's own provider key, so there is
+      // no action cap. `undefined` limit means unlimited (see ConversationPolicy).
+      copilotActionLimit:
+        env.selfhosted || flags.unlimitedCopilot
+          ? undefined
+          : (state.copilotActionLimit ?? undefined),
     };
   }
 
