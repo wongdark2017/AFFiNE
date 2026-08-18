@@ -3,6 +3,7 @@ import { ImportCommitService } from '@affine/core/desktop/dialogs/import/commit-
 import { commitNativeImport } from '@affine/core/desktop/dialogs/import/native-backend';
 import {
   preflightWebFilesImport,
+  preflightWebMultiZipImport,
   preflightWebZipImport,
 } from '@affine/core/desktop/dialogs/import/web-limits';
 import { DebugLogger } from '@affine/debug';
@@ -41,13 +42,84 @@ export class ImportService extends Service {
   }
 
   async importMarkdownZip(file: File, context?: ImportRunContext) {
+    if (!BUILD_CONFIG.isElectron) {
+      await preflightWebZipImport(file);
+    }
+    return this.importSingleMarkdownZip(file, context);
+  }
+
+  /**
+   * Imports multiple markdown zip files sequentially. Each zip is imported
+   * with its own commit service, so the result is identical to importing the
+   * zips one by one manually. A zip that fails to import is reported as a
+   * warning and does not stop the remaining zips.
+   */
+  async importMarkdownZips(files: File[], context?: ImportRunContext) {
+    const first = files[0];
+    if (files.length === 1 && first) {
+      // Preserve the single-zip behavior, including native intra-zip progress.
+      return this.importMarkdownZip(first, context);
+    }
+    if (!BUILD_CONFIG.isElectron) {
+      await preflightWebMultiZipImport(files);
+    }
+
+    const docIds: string[] = [];
+    const warnings: ImportWarning[] = [];
+    let rootFolderId: string | undefined;
+    const total = files.length;
+    let completed = 0;
+    context?.onProgress?.({ completed, total });
+
+    // Progress is reported at zip granularity; intra-zip progress from the
+    // native session would make the progress label jump back and forth.
+    const perZipContext: ImportRunContext = { signal: context?.signal };
+
+    for (const file of files) {
+      throwIfAborted(context?.signal);
+      try {
+        const result = await this.importSingleMarkdownZip(file, perZipContext);
+        docIds.push(...result.docIds);
+        warnings.push(...result.warnings);
+        rootFolderId ??= result.rootFolderId;
+      } catch (error) {
+        if (isAbortError(error)) {
+          throw error;
+        }
+        logger.error(`Failed to import markdown zip: ${file.name}`, error);
+        warnings.push({
+          code: 'zip_import_failed',
+          sourcePath: file.name,
+          message: `Failed to import ${file.name}: ${errorMessage(error)}`,
+        });
+      }
+      completed += 1;
+      context?.onProgress?.({ completed, total });
+    }
+
+    if (!docIds.length) {
+      const firstFailure = warnings.find(
+        warning => warning.code === 'zip_import_failed'
+      );
+      throw new Error(
+        firstFailure?.message ??
+          'No importable documents were found in the selected files.'
+      );
+    }
+
+    return { docIds, rootFolderId, warnings };
+  }
+
+  private async importSingleMarkdownZip(
+    file: File,
+    context?: ImportRunContext
+  ) {
     const collection = this.workspaceService.workspace.docCollection;
     const commitService = this.createCommitService({ organize: true });
     if (BUILD_CONFIG.isElectron) {
       return commitNativeImport('markdownZip', file, commitService, context);
     }
 
-    await preflightWebZipImport(file);
     const snapshot = await snapshotFile(file);
     const { batch } = await MarkdownTransformer.planMarkdownZip({
       collection,
@@ -163,6 +235,22 @@ export class ImportService extends Service {
       logger,
     });
   }
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
+function throwIfAborted(signal?: AbortSignal) {
+  if (signal?.aborted) {
+    throw new DOMException('Import cancelled', 'AbortError');
+  }
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error
+    ? error.message || error.name
+    : 'Unknown error occurred';
 }
 
 async function detectNotionZipFormat(file: File): Promise<'markdown' | 'html'> {

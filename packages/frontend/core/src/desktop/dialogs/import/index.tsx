@@ -306,14 +306,15 @@ const importConfigs: Record<ImportType, ImportConfig> = {
     },
   },
   markdownZip: {
-    fileOptions: { acceptType: 'Zip', multiple: false },
+    fileOptions: { acceptType: 'Zip', multiple: true },
     importFunction: async ({ files, importService, context }) => {
-      const file = files.length === 1 ? files[0] : null;
-      if (!file) {
-        throw new Error('Expected a single zip file for markdownZip import');
+      if (!files.length) {
+        throw new Error(
+          'Expected at least one zip file for markdownZip import'
+        );
       }
-      return requireImportService(importService).importMarkdownZip(
-        file,
+      return requireImportService(importService).importMarkdownZips(
+        files,
         context
       );
     },

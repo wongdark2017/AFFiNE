@@ -6,7 +6,7 @@ const fixturesDir = Path.dir(import.meta.url).join('../../../fixtures');
 
 export async function importFile(
   page: Page,
-  file: string,
+  file: string | string[],
   fn?: (page: Page) => Promise<void>
 ) {
   await page.evaluate(() => {
@@ -19,7 +19,10 @@ export async function importFile(
 
   if (fn) await fn(page);
 
-  await (await fileChooser).setFiles(fixturesDir.join(file).value);
+  const files = Array.isArray(file) ? file : [file];
+  await (
+    await fileChooser
+  ).setFiles(files.map(name => fixturesDir.join(name).value));
 }
 
 export async function importAttachment(page: Page, file: string) {

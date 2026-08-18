@@ -2491,7 +2491,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import.markdown-with-media-files"](): string;
     /**
-      * `Please upload a markdown zip file with attachments, experimental function, there may be data loss.`
+      * `Please upload one or more markdown zip files with attachments, experimental function, there may be data loss.`
       */
     ["com.affine.import.markdown-with-media-files.tooltip"](): string;
     /**
