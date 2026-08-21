@@ -2297,6 +2297,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.explorer.display-menu.ordering"](): string;
     /**
+      * `Sort by name`
+      */
+    ["com.affine.explorer.sort-by-name"](): string;
+    /**
       * `View in Page mode`
       */
     ["com.affine.header.mode-switch.page"](): string;
@@ -4945,6 +4949,10 @@ export function useAFFiNEI18N(): {
       * `Create a subfolder`
       */
     ["com.affine.rootAppSidebar.organize.folder.create-subfolder"](): string;
+    /**
+      * `Sort by name`
+      */
+    ["com.affine.rootAppSidebar.organize.folder.sort-by-name"](): string;
     /**
       * `New folder`
       */

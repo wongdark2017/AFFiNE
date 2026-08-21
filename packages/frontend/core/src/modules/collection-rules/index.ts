@@ -3,6 +3,7 @@ import type { Framework } from '@toeverything/infra';
 import { DocsService } from '../doc';
 import { DocsSearchService } from '../docs-search';
 import { FavoriteService } from '../favorite';
+import { I18nService } from '../i18n';
 import { ShareDocsListService } from '../share-doc';
 import { TagService } from '../tag';
 import { WorkspaceScope } from '../workspace';
@@ -367,5 +368,8 @@ export function configureCollectionRulesModule(framework: Framework) {
     .impl(OrderByProvider('system:template'), TemplateOrderByProvider, [
       DocsService,
     ])
-    .impl(OrderByProvider('system:title'), TitleOrderByProvider, [DocsService]);
+    .impl(OrderByProvider('system:title'), TitleOrderByProvider, [
+      DocsService,
+      I18nService,
+    ]);
 }

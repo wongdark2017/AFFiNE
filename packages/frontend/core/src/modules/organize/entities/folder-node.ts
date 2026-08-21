@@ -121,6 +121,31 @@ export class FolderNode extends Entity<{
     this.store.moveNode(childId, this.id, index);
   }
 
+  /**
+   * Rewrite direct-child indexes so `sortedChildren$` matches `orderedIds`.
+   * Indexes are generated as a fresh increasing sequence; do not splice into
+   * existing keys while iterating, or `sortedChildren$` will shift mid-write.
+   */
+  reorderChildren(orderedIds: string[]) {
+    if (this.type$.value !== 'folder') {
+      throw new Error('Cannot reorder children of a non-folder node');
+    }
+    const childIds = new Set(
+      this.sortedChildren$.value
+        .map(child => child.id)
+        .filter((id): id is string => !!id)
+    );
+    let prev: string | null = null;
+    for (const id of orderedIds) {
+      if (!childIds.has(id)) {
+        continue;
+      }
+      const index = generateFractionalIndexingKeyBetween(prev, null);
+      this.store.moveNode(id, this.id, index);
+      prev = index;
+    }
+  }
+
   rename(name: string) {
     if (this.id === null) {
       throw new Error('Cannot rename root node');

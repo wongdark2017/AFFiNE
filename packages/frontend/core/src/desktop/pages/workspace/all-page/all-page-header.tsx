@@ -1,4 +1,4 @@
-import { type MenuProps } from '@affine/component';
+import { Button, type MenuProps } from '@affine/component';
 import { usePageHelper } from '@affine/core/blocksuite/block-suite-page-list/utils';
 import { ExplorerDisplayMenuButton } from '@affine/core/components/explorer/display-menu';
 import { ViewToggle } from '@affine/core/components/explorer/display-menu/view-toggle';
@@ -12,6 +12,7 @@ import { WorkspaceService } from '@affine/core/modules/workspace';
 import { inferOpenMode } from '@affine/core/utils';
 import { useI18n } from '@affine/i18n';
 import track from '@affine/track';
+import { SortDownIcon } from '@blocksuite/icons/rc';
 import { useService } from '@toeverything/infra';
 import { useCallback } from 'react';
 
@@ -81,12 +82,31 @@ export const AllDocsHeader = ({
     });
   }, [workspaceDialogService, handleOpenDocs]);
 
+  const onSortByName = useCallback(() => {
+    onDisplayPreferenceChange({
+      ...displayPreference,
+      orderBy: {
+        type: 'system',
+        key: 'title',
+        desc: false,
+      },
+      groupBy: undefined,
+    });
+  }, [displayPreference, onDisplayPreferenceChange]);
+
   return (
     <div className={styles.header}>
       <ExplorerNavigation active="docs" />
 
       <div className={styles.actions}>
         <ViewToggle view={view} onViewChange={onViewChange} />
+        <Button
+          prefix={<SortDownIcon />}
+          onClick={onSortByName}
+          data-testid="all-docs-sort-by-name"
+        >
+          {t['com.affine.explorer.sort-by-name']()}
+        </Button>
         <ExplorerDisplayMenuButton
           menuProps={menuProps}
           displayPreference={displayPreference}
