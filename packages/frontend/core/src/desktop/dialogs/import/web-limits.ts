@@ -25,6 +25,34 @@ export async function preflightWebZipImport(
   file: File,
   limits = webImportLimits
 ) {
+  await preflightSingleWebZipImport(file, limits);
+}
+
+/**
+ * Preflights a multi-zip import. Each zip must individually satisfy the
+ * single-zip limits, and the document count summed across all zips must stay
+ * within `maxDocumentCount` so that splitting an oversized import into
+ * multiple archives cannot bypass the web app limits.
+ */
+export async function preflightWebMultiZipImport(
+  files: File[],
+  limits = webImportLimits
+) {
+  let totalDocumentCount = 0;
+  for (const file of files) {
+    totalDocumentCount += await preflightSingleWebZipImport(file, limits);
+  }
+  if (totalDocumentCount > limits.maxDocumentCount) {
+    throw new WebImportLimitError(
+      'This import has too many documents for the web app. Please import it in the desktop client.'
+    );
+  }
+}
+
+async function preflightSingleWebZipImport(
+  file: File,
+  limits: WebImportLimits
+): Promise<number> {
   if (file.size > limits.maxTotalBytes) {
     throw new WebImportLimitError(
       'This import is too large for the web app. Please import it in the desktop client.'
@@ -62,6 +90,8 @@ export async function preflightWebZipImport(
       );
     }
   }
+
+  return documentCount;
 }
 
 export async function preflightWebFilesImport(

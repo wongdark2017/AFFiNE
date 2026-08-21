@@ -18,6 +18,7 @@ import {
   type FolderNode,
   OrganizeService,
 } from '@affine/core/modules/organize';
+import { WorkbenchService } from '@affine/core/modules/workbench';
 import { WorkspaceService } from '@affine/core/modules/workspace';
 import type { AffineDNDData } from '@affine/core/types/dnd';
 import { Unreachable } from '@affine/env/constant';
@@ -26,6 +27,7 @@ import { track } from '@affine/track';
 import {
   DeleteIcon,
   FolderIcon,
+  ImportIcon,
   PageIcon,
   PlusIcon,
   PlusThickIcon,
@@ -189,13 +191,18 @@ const NavigationPanelFolderNodeFolder = ({
   node: FolderNode;
 } & GenericNavigationPanelNode) => {
   const t = useI18n();
-  const { workspaceService, featureFlagService, workspaceDialogService } =
-    useServices({
-      WorkspaceService,
-      CompatibleFavoriteItemsAdapter,
-      FeatureFlagService,
-      WorkspaceDialogService,
-    });
+  const {
+    workspaceService,
+    featureFlagService,
+    workspaceDialogService,
+    workbenchService,
+  } = useServices({
+    WorkspaceService,
+    CompatibleFavoriteItemsAdapter,
+    FeatureFlagService,
+    WorkspaceDialogService,
+    WorkbenchService,
+  });
   const navigationPanelService = useService(NavigationPanelService);
   const name = useLiveData(node.name$);
   const enableEmojiIcon = useLiveData(
@@ -605,6 +612,31 @@ const NavigationPanelFolderNodeFolder = ({
     setNewFolderId(newFolderId);
   }, [node, setCollapsed, t]);
 
+  const handleImportToFolder = useCallback(() => {
+    if (!node.id) {
+      return;
+    }
+    const targetFolderId = node.id;
+    track.$.navigationPanel.importModal.open();
+    workspaceDialogService.open('import', { targetFolderId }, payload => {
+      if (!payload) {
+        return;
+      }
+      setCollapsed(false);
+      const { docIds, entryId, isWorkspaceFile } = payload;
+      const workbench = workbenchService.workbench;
+      if (isWorkspaceFile && entryId) {
+        workbench.openDoc(entryId);
+        return;
+      }
+      // Open the doc directly for a single-doc import; for multi-doc imports
+      // the expanded folder already shows the imported content.
+      if (docIds.length === 1 && docIds[0]) {
+        workbench.openDoc(docIds[0]);
+      }
+    });
+  }, [node.id, setCollapsed, workbenchService, workspaceDialogService]);
+
   const handleAddToFolder = useCallback(
     (type: 'doc' | 'collection' | 'tag') => {
       const initialIds = children
@@ -715,6 +747,18 @@ const NavigationPanelFolderNodeFolder = ({
           </MenuSub>
         ),
       },
+      {
+        index: 103,
+        view: (
+          <MenuItem
+            prefixIcon={<ImportIcon />}
+            onClick={handleImportToFolder}
+            data-testid="navigation-panel-folder-import"
+          >
+            {t['Import']()}
+          </MenuItem>
+        ),
+      },
 
       {
         index: 200,
@@ -742,6 +786,7 @@ const NavigationPanelFolderNodeFolder = ({
     handleAddToFolder,
     handleCreateSubfolder,
     handleDelete,
+    handleImportToFolder,
     handleNewDoc,
     node,
     t,

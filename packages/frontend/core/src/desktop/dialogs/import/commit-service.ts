@@ -1,6 +1,9 @@
 import type { IconData } from '@affine/component';
 import type { ExplorerIconService } from '@affine/core/modules/explorer-icon/services/explorer-icon';
-import type { OrganizeService } from '@affine/core/modules/organize';
+import type {
+  FolderNode,
+  OrganizeService,
+} from '@affine/core/modules/organize';
 import type { TagService } from '@affine/core/modules/tag';
 import {
   type ExtensionType,
@@ -26,6 +29,12 @@ type CommitServiceOptions = {
   organizeService?: OrganizeService;
   explorerIconService?: ExplorerIconService;
   tagService?: TagService;
+  /**
+   * When set, imported folder trees are mounted under this folder instead of
+   * the organize root, and imported docs not covered by any folder are linked
+   * into it.
+   */
+  targetFolderId?: string;
   logger: Logger;
 };
 
@@ -48,8 +57,57 @@ export class ImportCommitService {
   private readonly folderIdByPath = new Map<string, string>();
   private readonly linkedDocsByFolder = new Set<string>();
   private readonly pendingFolders: ImportFolder[] = [];
+  private readonly committedDocIds: string[] = [];
+  private readonly folderCoveredPageIds = new Set<string>();
+  private targetFolderMissingWarned = false;
 
   constructor(private readonly options: CommitServiceOptions) {}
+
+  /**
+   * Resolves the configured target folder node. Warns once and returns null
+   * (falling back to the organize root) when the folder no longer exists.
+   */
+  private resolveTargetFolder(
+    warnings: ImportCommitResult['warnings']
+  ): FolderNode | null {
+    const { organizeService, targetFolderId } = this.options;
+    if (!organizeService || !targetFolderId) return null;
+    const node = organizeService.folderTree.folderNode$(targetFolderId).value;
+    if (!node) {
+      if (!this.targetFolderMissingWarned) {
+        this.targetFolderMissingWarned = true;
+        warnings.push({
+          code: 'target_folder_missing',
+          message:
+            'The target folder no longer exists; imported content was placed at the organize root instead.',
+        });
+      }
+      return null;
+    }
+    return node;
+  }
+
+  private linkDocToFolder(folder: FolderNode, docId: string) {
+    const linkKey = `${folder.id}:${docId}`;
+    if (this.linkedDocsByFolder.has(linkKey)) return;
+    folder.createLink('doc', docId, folder.indexAt('after'));
+    this.linkedDocsByFolder.add(linkKey);
+  }
+
+  /**
+   * Links imported docs that are not part of any imported folder tree into
+   * the target folder, so a folder-scoped import never leaves docs behind.
+   */
+  private linkUncoveredDocsToTargetFolder(
+    warnings: ImportCommitResult['warnings']
+  ) {
+    const targetFolder = this.resolveTargetFolder(warnings);
+    if (!targetFolder) return;
+    for (const docId of this.committedDocIds) {
+      if (this.folderCoveredPageIds.has(docId)) continue;
+      this.linkDocToFolder(targetFolder, docId);
+    }
+  }
 
   async commitBatch(batch: ImportBatch): Promise<ImportCommitResult> {
     const warnings = [...(batch.warnings ?? [])];
@@ -132,6 +190,17 @@ export class ImportCommitService {
     );
     this.applyNativeTags(tags);
     this.applyNativeIcons(batch.icons);
+
+    this.committedDocIds.push(...docIds);
+    for (const folder of batch.folders ?? []) {
+      if (folder.pageId) {
+        this.folderCoveredPageIds.add(folder.pageId);
+      }
+    }
+    if (batch.done) {
+      this.linkUncoveredDocsToTargetFolder(warnings);
+    }
+
     return {
       docIds,
       entryId: batch.entryId,
@@ -181,7 +250,8 @@ export class ImportCommitService {
                     this.folderIdByPath.get(folder.parentPath) ?? ''
                   ).value
                 : null
-              : organizeService.folderTree.rootFolder;
+              : (this.resolveTargetFolder(warnings) ??
+                organizeService.folderTree.rootFolder);
             if (!parent) {
               nextPending.push(folder);
               continue;
@@ -198,7 +268,7 @@ export class ImportCommitService {
           }
 
           if (folder.pageId) {
-            if (!this.applyFolderDocLink(folder)) {
+            if (!this.applyFolderDocLink(folder, warnings)) {
               nextPending.push(folder);
               continue;
             }
@@ -229,10 +299,19 @@ export class ImportCommitService {
     }
   }
 
-  private applyFolderDocLink(folder: ImportFolder): boolean {
+  private applyFolderDocLink(
+    folder: ImportFolder,
+    warnings: ImportCommitResult['warnings']
+  ): boolean {
     const { organizeService } = this.options;
     if (!folder.pageId) return true;
     if (!folder.parentPath) {
+      // Root-level doc leaves are normally left unlinked; when a target
+      // folder is configured they should land inside it.
+      const targetFolder = this.resolveTargetFolder(warnings);
+      if (targetFolder) {
+        this.linkDocToFolder(targetFolder, folder.pageId);
+      }
       this.applyIcon(folder.pageId, folder.icon);
       return true;
     }
