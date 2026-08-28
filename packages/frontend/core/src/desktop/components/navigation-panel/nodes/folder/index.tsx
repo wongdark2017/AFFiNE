@@ -17,6 +17,7 @@ import { NavigationPanelService } from '@affine/core/modules/navigation-panel';
 import {
   type FolderNode,
   OrganizeService,
+  useSortFolderChildrenByName,
 } from '@affine/core/modules/organize';
 import { WorkbenchService } from '@affine/core/modules/workbench';
 import { WorkspaceService } from '@affine/core/modules/workspace';
@@ -32,6 +33,7 @@ import {
   PlusIcon,
   PlusThickIcon,
   RemoveFolderIcon,
+  SortDownIcon,
   TagsIcon,
 } from '@blocksuite/icons/rc';
 import { useLiveData, useService, useServices } from '@toeverything/infra';
@@ -681,6 +683,8 @@ const NavigationPanelFolderNodeFolder = ({
     [children, node, setCollapsed, workspaceDialogService]
   );
 
+  const handleSortByName = useSortFolderChildrenByName(node);
+
   const folderOperations = useMemo(() => {
     return [
       {
@@ -759,6 +763,18 @@ const NavigationPanelFolderNodeFolder = ({
           </MenuItem>
         ),
       },
+      {
+        index: 104,
+        view: (
+          <MenuItem
+            prefixIcon={<SortDownIcon />}
+            onClick={handleSortByName}
+            data-testid="navigation-panel-folder-sort-by-name"
+          >
+            {t['com.affine.rootAppSidebar.organize.folder.sort-by-name']()}
+          </MenuItem>
+        ),
+      },
 
       {
         index: 200,
@@ -788,6 +804,7 @@ const NavigationPanelFolderNodeFolder = ({
     handleDelete,
     handleImportToFolder,
     handleNewDoc,
+    handleSortByName,
     node,
     t,
   ]);

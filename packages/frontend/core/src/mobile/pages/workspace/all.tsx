@@ -1,4 +1,4 @@
-import { useThemeColorV2, Wrapper } from '@affine/component';
+import { MobileMenuItem, useThemeColorV2, Wrapper } from '@affine/component';
 import { EmptyDocs } from '@affine/core/components/affine/empty';
 import {
   createDocExplorerContext,
@@ -6,13 +6,28 @@ import {
 } from '@affine/core/components/explorer/context';
 import { DocsExplorer } from '@affine/core/components/explorer/docs-view/docs-list';
 import { CollectionRulesService } from '@affine/core/modules/collection-rules';
+import type { OrderByParams } from '@affine/core/modules/collection-rules/types';
+import { useI18n } from '@affine/i18n';
+import { SortDownIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Page } from '../../components/page';
 import { AllDocsHeader } from '../../views';
 
-const AllDocs = () => {
+const DEFAULT_ORDER_BY: OrderByParams = {
+  type: 'system',
+  key: 'updatedAt',
+  desc: true,
+};
+
+const TITLE_ORDER_BY: OrderByParams = {
+  type: 'system',
+  key: 'title',
+  desc: false,
+};
+
+const AllDocs = ({ orderBy }: { orderBy: OrderByParams }) => {
   const [explorerContextValue] = useState(() =>
     createDocExplorerContext({
       quickFavorite: false,
@@ -49,11 +64,7 @@ const AllDocs = () => {
             value: 'false',
           },
         ],
-        orderBy: {
-          type: 'system',
-          key: 'updatedAt',
-          desc: true,
-        },
+        orderBy,
       })
       .subscribe({
         next: result => {
@@ -62,7 +73,7 @@ const AllDocs = () => {
         error: console.error,
       });
     return () => subscription.unsubscribe();
-  }, [collectionRulesService, explorerContextValue.groups$]);
+  }, [collectionRulesService, explorerContextValue.groups$, orderBy]);
 
   if (isEmpty) {
     return (
@@ -81,11 +92,31 @@ const AllDocs = () => {
 };
 
 export const Component = () => {
+  const t = useI18n();
   useThemeColorV2('layer/background/mobile/primary');
+  const [orderBy, setOrderBy] = useState<OrderByParams>(DEFAULT_ORDER_BY);
+  const onSortByName = useCallback(() => {
+    setOrderBy(TITLE_ORDER_BY);
+  }, []);
 
   return (
-    <Page header={<AllDocsHeader />} tab>
-      <AllDocs />
+    <Page
+      header={
+        <AllDocsHeader
+          operations={
+            <MobileMenuItem
+              prefixIcon={<SortDownIcon />}
+              onClick={onSortByName}
+              data-testid="all-docs-sort-by-name"
+            >
+              {t['com.affine.explorer.sort-by-name']()}
+            </MobileMenuItem>
+          }
+        />
+      }
+      tab
+    >
+      <AllDocs orderBy={orderBy} />
     </Page>
   );
 };

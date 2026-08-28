@@ -8,6 +8,7 @@ import { OrganizeService } from './services/organize';
 import { FolderStore } from './stores/folder';
 
 export type { FolderNode } from './entities/folder-node';
+export { useSortFolderChildrenByName } from './hooks/use-sort-folder-children-by-name';
 export { OrganizeService } from './services/organize';
 
 export function configureOrganizeModule(framework: Framework) {
