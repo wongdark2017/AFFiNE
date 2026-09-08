@@ -27,10 +27,12 @@ export const AppContainer = ({
   children,
   className,
   fallback = false,
+  fallbackMode = 'loading',
   ...rest
 }: PropsWithChildren<{
   className?: string;
   fallback?: boolean;
+  fallbackMode?: 'loading' | 'error';
 }>) => {
   const { appSettings } = useAppSettingHelper();
 
@@ -50,7 +52,9 @@ export const AppContainer = ({
       data-noise-background={noisyBackground}
       data-translucent={blurBackground}
     >
-      <LayoutComponent fallback={fallback}>{children}</LayoutComponent>
+      <LayoutComponent fallback={fallback} fallbackMode={fallbackMode}>
+        {children}
+      </LayoutComponent>
     </div>
   );
 };
@@ -58,7 +62,11 @@ export const AppContainer = ({
 const DesktopLayout = ({
   children,
   fallback = false,
-}: PropsWithChildren<{ fallback?: boolean }>) => {
+  fallbackMode = 'loading',
+}: PropsWithChildren<{
+  fallback?: boolean;
+  fallbackMode?: 'loading' | 'error';
+}>) => {
   const workspaceService = useServiceOptional(WorkspaceService);
   const isInWorkspace = !!workspaceService;
   return (
@@ -75,7 +83,7 @@ const DesktopLayout = ({
       </div>
       <div className={styles.desktopAppViewMain}>
         {fallback ? (
-          <AppSidebarFallback />
+          <AppSidebarFallback loading={fallbackMode === 'loading'} />
         ) : (
           isInWorkspace && <RootAppSidebar />
         )}
@@ -88,13 +96,21 @@ const DesktopLayout = ({
 const BrowserLayout = ({
   children,
   fallback = false,
-}: PropsWithChildren<{ fallback?: boolean }>) => {
+  fallbackMode = 'loading',
+}: PropsWithChildren<{
+  fallback?: boolean;
+  fallbackMode?: 'loading' | 'error';
+}>) => {
   const workspaceService = useServiceOptional(WorkspaceService);
   const isInWorkspace = !!workspaceService;
 
   return (
     <div className={styles.browserAppViewContainer}>
-      {fallback ? <AppSidebarFallback /> : isInWorkspace && <RootAppSidebar />}
+      {fallback ? (
+        <AppSidebarFallback loading={fallbackMode === 'loading'} />
+      ) : (
+        isInWorkspace && <RootAppSidebar />
+      )}
       <MainContainer>{children}</MainContainer>
     </div>
   );

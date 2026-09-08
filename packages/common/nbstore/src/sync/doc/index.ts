@@ -28,6 +28,8 @@ export interface DocSyncState {
 }
 
 export interface DocSyncDocState {
+  /** Successful initial source discovery and completion of this doc's jobs. */
+  initialSyncComplete?: boolean;
   synced: boolean;
   syncing: boolean;
   retrying: boolean;
@@ -109,6 +111,7 @@ export class DocSyncImpl implements DocSync {
   private _docState$(docId: string): Observable<DocSyncDocState> {
     if (this.peers.length === 0) {
       return of({
+        initialSyncComplete: true,
         errorMessage: null,
         retrying: false,
         syncing: false,
@@ -118,6 +121,7 @@ export class DocSyncImpl implements DocSync {
     return combineLatest(this.peers.map(peer => peer.docState$(docId))).pipe(
       map(allPeers => {
         return {
+          initialSyncComplete: allPeers.every(peer => peer.initialSyncComplete),
           errorMessage:
             allPeers.find(peer => peer.errorMessage)?.errorMessage ?? null,
           retrying: allPeers.some(peer => peer.retrying),

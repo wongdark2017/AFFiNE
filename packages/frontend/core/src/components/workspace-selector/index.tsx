@@ -12,12 +12,13 @@ import {
   useServiceOptional,
   useServices,
 } from '@toeverything/infra';
-import { useCallback, useEffect, useState } from 'react';
+import { type ReactElement, useCallback, useEffect, useState } from 'react';
 
 import { UserWithWorkspaceList } from './user-with-workspace-list';
 import { WorkspaceCard } from './workspace-card';
 
 interface WorkspaceSelectorProps {
+  trigger?: ReactElement;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   workspaceMetadata?: WorkspaceMetadata;
@@ -37,6 +38,7 @@ interface WorkspaceSelectorProps {
 }
 
 export const WorkspaceSelector = ({
+  trigger,
   workspaceMetadata: outerWorkspaceMetadata,
   onSelectWorkspace,
   onCreatedWorkspace,
@@ -125,22 +127,23 @@ export const WorkspaceSelector = ({
         },
       }}
     >
-      {workspaceMetadata ? (
-        <WorkspaceCard
-          workspaceMetadata={workspaceMetadata}
-          onClick={openUserWorkspaceList}
-          showSyncStatus={showSyncStatus}
-          className={className}
-          showArrowDownIcon={showArrowDownIcon}
-          disable={disable}
-          hideCollaborationIcon={true}
-          hideTeamWorkspaceIcon={true}
-          data-testid="current-workspace-card"
-          dense={dense}
-        />
-      ) : (
-        <span></span>
-      )}
+      {trigger ??
+        (workspaceMetadata ? (
+          <WorkspaceCard
+            workspaceMetadata={workspaceMetadata}
+            onClick={openUserWorkspaceList}
+            showSyncStatus={showSyncStatus}
+            className={className}
+            showArrowDownIcon={showArrowDownIcon}
+            disable={disable}
+            hideCollaborationIcon={true}
+            hideTeamWorkspaceIcon={true}
+            data-testid="current-workspace-card"
+            dense={dense}
+          />
+        ) : (
+          <span></span>
+        ))}
     </Menu>
   );
 };

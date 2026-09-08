@@ -5,6 +5,7 @@ import { useServiceOptional } from '@toeverything/infra';
 import {
   forwardRef,
   type HTMLAttributes,
+  type ReactElement,
   useCallback,
   useEffect,
   useState,
@@ -15,8 +16,8 @@ import { SelectorMenu } from './menu';
 
 export const WorkspaceSelector = forwardRef<
   HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(function WorkspaceSelector({ className }, ref) {
+  HTMLAttributes<HTMLDivElement> & { trigger?: ReactElement }
+>(function WorkspaceSelector({ className, trigger }, ref) {
   const [open, setOpen] = useState(false);
   const workspaceManager = useServiceOptional(WorkspacesService);
 
@@ -36,18 +37,17 @@ export const WorkspaceSelector = forwardRef<
   return (
     <MobileMenu
       items={<SelectorMenu onClose={close} />}
-      rootOptions={{ open }}
+      rootOptions={{
+        open,
+        onOpenChange: next => (next ? openMenu() : close()),
+      }}
       contentOptions={{
         onInteractOutside: close,
         onEscapeKeyDown: close,
         style: { padding: 0 },
       }}
     >
-      <CurrentWorkspaceCard
-        ref={ref}
-        onClick={openMenu}
-        className={className}
-      />
+      {trigger ?? <CurrentWorkspaceCard ref={ref} className={className} />}
     </MobileMenu>
   );
 });

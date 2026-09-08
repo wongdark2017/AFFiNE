@@ -1,0 +1,4 @@
+{"file":".trellis/spec/core/frontend/quality-guidelines.md","reason":"验证工具与回归模式"}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"状态合约和旧 Worker 兼容"}
+{"file":".trellis/tasks/09-07-workspace-missing-root-loading/research/code-map.md","reason":"防止误判迁移、慢同步与 readonly skipped"}
+{"file": ".trellis/spec/core/frontend/workspace-root-loading.md", "reason": "核对根读取、来源完成、异常入口和诊断白名单"}

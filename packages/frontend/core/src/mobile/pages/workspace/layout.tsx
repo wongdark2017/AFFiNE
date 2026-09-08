@@ -1,8 +1,9 @@
-import { uniReactRoot } from '@affine/component';
+import { SafeArea, uniReactRoot } from '@affine/component';
 import { AffineErrorBoundary } from '@affine/core/components/affine/affine-error-boundary';
 import { AiLoginRequiredModal } from '@affine/core/components/affine/auth/ai-login-required';
 import { SWRConfigProvider } from '@affine/core/components/providers/swr-config-provider';
 import { WorkspaceSideEffects } from '@affine/core/components/providers/workspace-side-effects';
+import { WorkspaceLoadFailure } from '@affine/core/components/workspace-load-failure';
 import {
   DefaultServerService,
   WorkspaceServerService,
@@ -13,13 +14,11 @@ import type {
   Workspace,
   WorkspaceMetadata,
 } from '@affine/core/modules/workspace';
-import { WorkspacesService } from '@affine/core/modules/workspace';
 import {
-  FrameworkScope,
-  LiveData,
-  useLiveData,
-  useServices,
-} from '@toeverything/infra';
+  WorkspaceRootLoadService,
+  WorkspacesService,
+} from '@affine/core/modules/workspace';
+import { FrameworkScope, useLiveData, useServices } from '@toeverything/infra';
 import {
   type PropsWithChildren,
   useEffect,
@@ -27,9 +26,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { map } from 'rxjs';
 
 import { AppFallback } from '../../components/app-fallback';
+import { WorkspaceSelector } from '../../components/workspace-selector';
 import { WorkspaceDialogs } from '../../dialogs';
 
 // TODO(@forehalo): reuse the global context with [core/electron]
@@ -109,26 +108,42 @@ export const WorkspaceLayout = ({
     workspaceServer,
   ]);
 
-  const rootDocReady$ = useMemo(
-    () =>
-      workspace
-        ? LiveData.from(
-            workspace.engine.doc
-              .docState$(workspace.id)
-              .pipe(map(v => v.ready)),
-            false
-          )
-        : null,
+  const rootLoad = useMemo(
+    () => workspace?.scope.get(WorkspaceRootLoadService),
     [workspace]
   );
-  const isRootDocReady = useLiveData(rootDocReady$) ?? false;
+  const rootLoadState = useLiveData(rootLoad?.state$);
 
-  if (!workspace) {
+  if (
+    !workspace ||
+    !rootLoad ||
+    !rootLoadState ||
+    workspace.id !== meta.id ||
+    workspace.flavour !== meta.flavour
+  ) {
     return null; // skip this, workspace will be set in layout effect
   }
 
-  if (!isRootDocReady) {
+  if (rootLoadState.kind === 'loading') {
     return <AppFallback />;
+  }
+
+  if (rootLoadState.kind !== 'ready') {
+    return (
+      <FrameworkScope scope={workspaceServer?.scope}>
+        <FrameworkScope scope={workspace.scope}>
+          <SafeArea top bottom style={{ height: '100dvh' }}>
+            <WorkspaceLoadFailure
+              state={rootLoadState}
+              getDiagnostics={rootLoad.getDiagnostics}
+              renderWorkspaceSwitcher={trigger => (
+                <WorkspaceSelector trigger={trigger} />
+              )}
+            />
+          </SafeArea>
+        </FrameworkScope>
+      </FrameworkScope>
+    );
   }
 
   return (

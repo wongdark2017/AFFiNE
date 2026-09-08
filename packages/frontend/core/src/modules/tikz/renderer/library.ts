@@ -146,7 +146,7 @@ function openSync(filename: string, mode: string): number {
   let buffer: Uint8Array = new Uint8Array();
   if (filesystem[filename]) {
     buffer = filesystem[filename];
-  } else if (/\.tfm$/.test(filename)) {
+  } else if (filename.endsWith('.tfm')) {
     buffer = Uint8Array.from(tfmData(filename.replace(/\.tfm$/, '')));
   } else if (mode === 'r') {
     // If this file has been opened before without an error, that means it was
@@ -358,14 +358,7 @@ export function printInteger(descriptor: number, x: number) {
 }
 
 export function printFloat(descriptor: number, x: number) {
-  const file: Partial<TexFile> | StdStub =
-    descriptor < 0 ? { stdout: true } : files[descriptor];
-  if (file.stdout) {
-    writeToConsole(x.toString());
-    return;
-  }
-
-  writeSync(file as Partial<TexFile>, textEncoder.encode(x.toString()));
+  printInteger(descriptor, x);
 }
 
 export function printNewline(descriptor: number, _x: number) {
@@ -383,7 +376,9 @@ export function reset(length: number, pointer: number) {
   const buffer = new Uint8Array(memory as ArrayBuffer, pointer, length);
   let filename = bytesToString(buffer);
 
-  filename = filename.replace(/\x00+$/g, '');
+  while (filename.endsWith('\0')) {
+    filename = filename.slice(0, -1);
+  }
   if (filename.startsWith('{')) {
     filename = filename.replace(/^{/g, '');
     filename = filename.replace(/}.*/g, '');

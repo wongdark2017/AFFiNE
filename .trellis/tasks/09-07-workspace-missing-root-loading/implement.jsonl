@@ -1,0 +1,6 @@
+{"file":".trellis/spec/core/frontend/state-management.md","reason":"workspace scoped service 和 LiveData 约定"}
+{"file":".trellis/spec/core/frontend/component-guidelines.md","reason":"组件与 theme tokens"}
+{"file":".trellis/spec/core/frontend/quality-guidelines.md","reason":"Vitest 和组件测试模式"}
+{"file":".trellis/spec/guides/cross-layer-thinking-guide.md","reason":"读取和来源完成状态的跨层契约"}
+{"file":".trellis/tasks/09-07-workspace-missing-root-loading/research/code-map.md","reason":"根加载、迁移和同步边界的代码证据"}
+{"file": ".trellis/spec/core/frontend/workspace-root-loading.md", "reason": "实现后固化的工作区根加载状态合约"}

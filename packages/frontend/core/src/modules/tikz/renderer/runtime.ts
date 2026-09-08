@@ -1,5 +1,5 @@
 import { dvi2html } from '@prinsss/dvi2html';
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 
 import * as library from './library';
 import type { TikzRenderOptions, TikzRenderResult } from './types';

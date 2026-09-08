@@ -28,3 +28,7 @@
 | `@affine/i18n`        | `useI18n` / `t['key']()`                           |
 | `@toeverything/infra` | `useService`、`useLiveData`、`Service`             |
 | `@affine/error`       | GraphQL 失败时的 `UserFriendlyError.fromAny`       |
+
+## 工作区根文档加载
+
+涉及根读取、迁移完成信号或异常入口时，阅读[工作区根文档加载合约](./workspace-root-loading.md)。

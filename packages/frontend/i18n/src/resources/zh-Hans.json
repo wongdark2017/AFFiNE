@@ -2458,5 +2458,17 @@
   "error.COMMENT_NOT_FOUND": "未找到评论。",
   "error.REPLY_NOT_FOUND": "未找到回复。",
   "error.COMMENT_ATTACHMENT_NOT_FOUND": "未找到评论附件。",
-  "error.COMMENT_ATTACHMENT_QUOTA_EXCEEDED": "您已超出评论附件的大小限制。"
+  "error.COMMENT_ATTACHMENT_QUOTA_EXCEEDED": "您已超出评论附件的大小限制。",
+  "com.affine.workspace-load.missing.title": "无法读取此本地工作区",
+  "com.affine.workspace-load.missing.description": "未找到用于打开此工作区的本地数据。是否能恢复仍需检查，请勿清除站点数据。",
+  "com.affine.workspace-load.stalled.title": "工作区加载时间过长",
+  "com.affine.workspace-load.stalled.description": "尚未完成读取。可以检查连接、重新加载或切换工作区。此提示不表示文档已丢失。",
+  "com.affine.workspace-load.error.title": "工作区加载失败",
+  "com.affine.workspace-load.error.description": "读取工作区时发生错误。可以重新加载或切换到其他工作区。",
+  "com.affine.workspace-load.switch": "切换工作区",
+  "com.affine.workspace-load.copy": "复制诊断信息",
+  "com.affine.workspace-load.copied": "诊断信息已复制",
+  "com.affine.workspace-load.copy-failed": "无法复制诊断信息",
+  "com.affine.workspace-load.recovery.title": "查看恢复建议",
+  "com.affine.workspace-load.recovery.description": "请保留当前站点数据，并检查原设备或浏览器配置、备份及导出文件。重新加载不会重建缺失的文档。"
 }

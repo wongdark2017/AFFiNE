@@ -50,6 +50,17 @@ interface DocFrontendOptions {
   mergeUpdates?: (updates: Uint8Array[]) => Promise<Uint8Array> | Uint8Array;
 }
 
+export type LocalDocLoadState = {
+  ready: boolean;
+  loaded: boolean;
+  updating: boolean;
+  initialRead: 'pending' | 'empty' | 'nonempty' | 'failed';
+  failure?: {
+    phase: 'connect' | 'read' | 'decode';
+    code: 'connection_failed' | 'read_failed' | 'invalid_update';
+  };
+};
+
 export type DocFrontendDocState = {
   /**
    * some data is available in yjs doc instance
@@ -79,6 +90,8 @@ export type DocFrontendDocState = {
    * the error message when syncing with remote peers
    */
   syncErrorMessage: string | null;
+  /** Missing on older workers; it must not be interpreted as completed. */
+  initialSyncComplete?: boolean;
 };
 
 export type DocFrontendState = {
@@ -116,6 +129,16 @@ export class DocFrontend {
   private readonly uniqueId = `frontend:${nanoid()}`;
 
   private readonly prioritySettings = new Map<string, number>();
+  private readonly initialReads = new Map<
+    string,
+    LocalDocLoadState['initialRead']
+  >();
+  private readonly readFailures = new Map<
+    string,
+    NonNullable<LocalDocLoadState['failure']>
+  >();
+  private loopFailure: LocalDocLoadState['failure'];
+  private storageConnected = false;
 
   private readonly status = {
     docs: new Map<string, YDoc>(),
@@ -136,16 +159,20 @@ export class DocFrontend {
     readonly options: DocFrontendOptions = {}
   ) {}
 
-  private _docState$(docId: string): Observable<DocFrontendDocState> {
-    const frontendState$ = new Observable<{
-      ready: boolean;
-      loaded: boolean;
-      updating: boolean;
-    }>(subscribe => {
+  /** Local progress must remain observable when a remote/worker never responds. */
+  localDocState$(docId: string): Observable<LocalDocLoadState> {
+    return new Observable<LocalDocLoadState>(subscribe => {
       const next = () => {
+        const ready = this.status.readyDocs.has(docId);
+        const failure = this.readFailures.get(docId) ?? this.loopFailure;
         subscribe.next({
-          ready: this.status.readyDocs.has(docId),
+          ready,
           loaded: this.status.connectedDocs.has(docId),
+          initialRead:
+            failure && !ready
+              ? 'failed'
+              : (this.initialReads.get(docId) ?? 'pending'),
+          failure,
           updating:
             (this.status.jobMap.get(docId)?.length ?? 0) > 0 ||
             this.status.currentJob?.docId === docId,
@@ -156,14 +183,18 @@ export class DocFrontend {
         if (updatedId === docId) next();
       });
     });
+  }
+
+  private _docState$(docId: string): Observable<DocFrontendDocState> {
     const syncState$ = this.sync.docState$(docId);
-    return combineLatest([frontendState$, syncState$]).pipe(
+    return combineLatest([this.localDocState$(docId), syncState$]).pipe(
       map(([frontend, sync]) => ({
         ...frontend,
         synced: sync.synced,
         syncing: sync.syncing,
         syncRetrying: sync.retrying,
         syncErrorMessage: sync.errorMessage,
+        initialSyncComplete: sync.initialSyncComplete,
       }))
     );
   }
@@ -222,6 +253,13 @@ export class DocFrontend {
       throw new Error('doc frontend can only start once');
     }
     this.mainLoop(this.abort.signal).catch(error => {
+      if (this.abort.signal.aborted) return;
+      this.loopFailure = this.storageConnected
+        ? { phase: 'read', code: 'read_failed' }
+        : { phase: 'connect', code: 'connection_failed' };
+      for (const docId of this.status.docs.keys()) {
+        this.statusUpdatedSubject$.next(docId);
+      }
       console.error(error);
     });
   }
@@ -232,6 +270,8 @@ export class DocFrontend {
 
   private async mainLoop(signal?: AbortSignal) {
     await this.storage.connection.waitForConnected(signal);
+    throwIfAborted(signal);
+    this.storageConnected = true;
     const dispose = this.storage.subscribeDocUpdate((record, origin) => {
       this.event.onStorageUpdate(record, origin);
     });
@@ -316,9 +356,12 @@ export class DocFrontend {
       throwIfAborted(signal);
 
       if (docRecord && !isEmptyUpdate(docRecord.bin)) {
-        this.applyUpdate(job.docId, docRecord.bin);
-
-        this.status.readyDocs.add(job.docId);
+        this.initialReads.set(job.docId, 'nonempty');
+        if (this.applyUpdate(job.docId, docRecord.bin)) {
+          this.status.readyDocs.add(job.docId);
+        }
+      } else {
+        this.initialReads.set(job.docId, 'empty');
       }
 
       this.status.connectedDocs.add(job.docId);
@@ -351,10 +394,10 @@ export class DocFrontend {
       if (!this.status.docs.has(job.docId)) {
         return;
       }
-      if (this.status.connectedDocs.has(job.docId)) {
-        this.applyUpdate(job.docId, job.update);
-      }
-      if (!isEmptyUpdate(job.update)) {
+      if (
+        this.status.connectedDocs.has(job.docId) &&
+        this.applyUpdate(job.docId, job.update)
+      ) {
         this.status.readyDocs.add(job.docId);
         this.statusUpdatedSubject$.next(job.docId);
       }
@@ -383,6 +426,8 @@ export class DocFrontend {
     this.status.docs.delete(doc.guid);
     this.status.connectedDocs.delete(doc.guid);
     this.status.readyDocs.delete(doc.guid);
+    this.initialReads.delete(doc.guid);
+    this.readFailures.delete(doc.guid);
     this.status.jobDocQueue.remove(doc.guid);
     this.status.jobMap.delete(doc.guid);
     this.statusUpdatedSubject$.next(doc.guid);
@@ -442,12 +487,20 @@ export class DocFrontend {
       try {
         this.isApplyingUpdate = true;
         applyUpdate(doc, update, NBSTORE_ORIGIN);
+        this.readFailures.delete(docId);
+        return true;
       } catch (err) {
+        this.readFailures.set(docId, {
+          phase: 'decode',
+          code: 'invalid_update',
+        });
+        this.statusUpdatedSubject$.next(docId);
         console.error('failed to apply update yjs doc', err);
       } finally {
         this.isApplyingUpdate = false;
       }
     }
+    return false;
   }
 
   private readonly handleDocUpdate = (

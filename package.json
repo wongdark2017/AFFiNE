@@ -31,6 +31,7 @@
     "lint": "yarn lint:ox && yarn lint:eslint && yarn lint:prettier",
     "lint:fix": "yarn lint:ox:fix && yarn lint:eslint:fix && yarn lint:prettier:fix",
     "test": "vitest --run",
+    "test:workspace-loading": "yarn workspace @affine-test/affine-local e2e --config playwright.workspace-loading.config.ts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc -b tsconfig.json --verbose",

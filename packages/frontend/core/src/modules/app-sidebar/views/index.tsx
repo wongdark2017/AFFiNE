@@ -213,7 +213,11 @@ export function FallbackHeader() {
   );
 }
 
-export function FallbackHeaderWithWorkspaceNavigator() {
+export function FallbackHeaderWithWorkspaceNavigator({
+  showSyncStatus = true,
+}: {
+  showSyncStatus?: boolean;
+}) {
   // if navigate is not defined, it is rendered outside of router
   // WorkspaceNavigator requires navigate context
   // todo: refactor
@@ -223,7 +227,11 @@ export function FallbackHeaderWithWorkspaceNavigator() {
   return (
     <div className={styles.fallbackHeader}>
       {currentWorkspace && navigate ? (
-        <WorkspaceNavigator showSyncStatus showEnableCloudButton dense />
+        <WorkspaceNavigator
+          showSyncStatus={showSyncStatus}
+          showEnableCloudButton={showSyncStatus}
+          dense
+        />
       ) : (
         <FallbackHeaderSkeleton />
       )}
@@ -287,7 +295,11 @@ const FallbackBody = () => {
   );
 };
 
-export const AppSidebarFallback = (): ReactElement | null => {
+export const AppSidebarFallback = ({
+  loading = true,
+}: {
+  loading?: boolean;
+}): ReactElement | null => {
   const appSidebarService = useService(AppSidebarService).sidebar;
   const width = useLiveData(appSidebarService.width$);
   const { appSettings } = useAppSettingHelper();
@@ -304,8 +316,8 @@ export const AppSidebarFallback = (): ReactElement | null => {
         {!BUILD_CONFIG.isElectron ? <div className={navHeaderStyle} /> : null}
         <div className={navBodyStyle}>
           <div className={styles.fallback}>
-            <FallbackHeaderWithWorkspaceNavigator />
-            <FallbackBody />
+            <FallbackHeaderWithWorkspaceNavigator showSyncStatus={loading} />
+            {loading && <FallbackBody />}
           </div>
         </div>
       </nav>

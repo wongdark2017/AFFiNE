@@ -9309,6 +9309,54 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.devices.sign-out-all-failed"](): string;
     /**
+      * `Unable to open this local workspace`
+      */
+    ["com.affine.workspace-load.missing.title"](): string;
+    /**
+      * `The local data needed to open this workspace was not found. This does not establish whether the documents can be recovered. Do not clear this site’s data.`
+      */
+    ["com.affine.workspace-load.missing.description"](): string;
+    /**
+      * `Workspace is taking longer to load`
+      */
+    ["com.affine.workspace-load.stalled.title"](): string;
+    /**
+      * `Loading has not finished. You can check your connection, reload, or switch workspaces. This message does not mean that your documents are lost.`
+      */
+    ["com.affine.workspace-load.stalled.description"](): string;
+    /**
+      * `Workspace could not be loaded`
+      */
+    ["com.affine.workspace-load.error.title"](): string;
+    /**
+      * `An error occurred while reading the workspace. You can reload or switch to another workspace.`
+      */
+    ["com.affine.workspace-load.error.description"](): string;
+    /**
+      * `Switch workspace`
+      */
+    ["com.affine.workspace-load.switch"](): string;
+    /**
+      * `Copy diagnostic information`
+      */
+    ["com.affine.workspace-load.copy"](): string;
+    /**
+      * `Diagnostic information copied`
+      */
+    ["com.affine.workspace-load.copied"](): string;
+    /**
+      * `Could not copy diagnostic information`
+      */
+    ["com.affine.workspace-load.copy-failed"](): string;
+    /**
+      * `Recovery options`
+      */
+    ["com.affine.workspace-load.recovery.title"](): string;
+    /**
+      * `Keep the current site data. Check the original device or browser profile, backups, and exported files for a copy. Reloading does not recreate missing documents.`
+      */
+    ["com.affine.workspace-load.recovery.description"](): string;
+    /**
       * `An internal error occurred.`
       */
     ["error.INTERNAL_SERVER_ERROR"](): string;

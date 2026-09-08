@@ -1,5 +1,7 @@
 import { DNDContext } from '@affine/component';
 import { AffineOtherPageLayout } from '@affine/component/affine-other-page-layout';
+import { WorkspaceLoadFailure } from '@affine/core/components/workspace-load-failure';
+import { WorkspaceNavigator } from '@affine/core/components/workspace-selector';
 import { workbenchRoutes } from '@affine/core/desktop/workbench-router';
 import {
   DefaultServerService,
@@ -13,12 +15,12 @@ import {
   getAFFiNEWorkspaceSchema,
   type Workspace,
   type WorkspaceMetadata,
+  WorkspaceRootLoadService,
   WorkspacesService,
 } from '@affine/core/modules/workspace';
 import { ZipTransformer } from '@blocksuite/affine/widgets/linked-doc';
 import {
   FrameworkScope,
-  LiveData,
   useLiveData,
   useService,
   useServices,
@@ -31,7 +33,6 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom';
-import { map } from 'rxjs';
 import * as _Y from 'yjs';
 
 import { AffineErrorBoundary } from '../../../components/affine/affine-error-boundary';
@@ -219,7 +220,7 @@ export const Component = (): ReactElement => {
 
   return (
     <FrameworkScope scope={server?.scope}>
-      <WorkspacePage meta={meta} />
+      <WorkspacePage key={`${meta.flavour}:${meta.id}`} meta={meta} />
     </FrameworkScope>
   );
 };
@@ -253,19 +254,11 @@ const WorkspacePage = ({ meta }: { meta: WorkspaceMetadata }) => {
     };
   }, [meta, workspacesService]);
 
-  const rootDocReady$ = useMemo(
-    () =>
-      workspace
-        ? LiveData.from(
-            workspace.engine.doc
-              .docState$(workspace.id)
-              .pipe(map(v => v.ready)),
-            false
-          )
-        : null,
+  const rootLoad = useMemo(
+    () => workspace?.scope.get(WorkspaceRootLoadService),
     [workspace]
   );
-  const isRootDocReady = useLiveData(rootDocReady$) ?? false;
+  const rootLoadState = useLiveData(rootLoad?.state$);
 
   useEffect(() => {
     if (workspace) {
@@ -327,16 +320,36 @@ const WorkspacePage = ({ meta }: { meta: WorkspaceMetadata }) => {
     return;
   }, [globalContextService, workspace]);
 
-  if (!workspace) {
+  if (!workspace || !rootLoad || !rootLoadState) {
     return null; // skip this, workspace will be set in layout effect
   }
 
-  if (!isRootDocReady) {
+  if (rootLoadState.kind !== 'ready') {
     return (
       <FrameworkScope scope={workspace.scope}>
         <DNDContextProvider>
           <OpenInAppGuard>
-            <AppContainer fallback />
+            <AppContainer
+              fallback
+              fallbackMode={
+                rootLoadState.kind === 'loading' ? 'loading' : 'error'
+              }
+            >
+              {rootLoadState.kind !== 'loading' && (
+                <WorkspaceLoadFailure
+                  state={rootLoadState}
+                  getDiagnostics={rootLoad.getDiagnostics}
+                  renderWorkspaceSwitcher={trigger => (
+                    <WorkspaceNavigator
+                      trigger={trigger}
+                      workspaceMetadata={meta}
+                      showSyncStatus={false}
+                      showEnableCloudButton={false}
+                    />
+                  )}
+                />
+              )}
+            </AppContainer>
           </OpenInAppGuard>
         </DNDContextProvider>
       </FrameworkScope>

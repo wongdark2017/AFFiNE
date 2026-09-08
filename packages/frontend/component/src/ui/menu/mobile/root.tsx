@@ -120,9 +120,9 @@ export const MobileMenu = ({
   const onItemClick = useCallback(
     (e: any) => {
       e.preventDefault();
-      onOpenChange(!open);
+      onOpenChange(!finalOpen);
     },
-    [onOpenChange, open]
+    [onOpenChange, finalOpen]
   );
 
   const t = useI18n();

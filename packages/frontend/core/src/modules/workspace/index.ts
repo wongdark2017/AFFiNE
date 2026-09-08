@@ -10,6 +10,7 @@ export type { WorkspaceFlavourProvider } from './providers/flavour';
 export { WorkspaceFlavoursProvider } from './providers/flavour';
 export { WorkspaceLocalCache, WorkspaceLocalState } from './providers/storage';
 export { WorkspaceScope } from './scopes/workspace';
+export { WorkspaceRootLoadService } from './services/root-load';
 export { WorkspaceService } from './services/workspace';
 export { WorkspacesService } from './services/workspaces';
 
@@ -34,6 +35,7 @@ import { WorkspaceFlavoursService } from './services/flavours';
 import { WorkspaceListService } from './services/list';
 import { WorkspaceProfileService } from './services/profile';
 import { WorkspaceRepositoryService } from './services/repo';
+import { WorkspaceRootLoadService } from './services/root-load';
 import { WorkspaceTransformService } from './services/transform';
 import { WorkspaceService } from './services/workspace';
 import { WorkspacesService } from './services/workspaces';
@@ -72,6 +74,7 @@ export function configureWorkspaceModule(framework: Framework) {
     ])
     .scope(WorkspaceScope)
     .service(WorkspaceService)
+    .service(WorkspaceRootLoadService, [WorkspaceService])
     .entity(Workspace, [WorkspaceScope, FeatureFlagService])
     .service(WorkspaceEngineService, [WorkspaceScope])
     .entity(WorkspaceEngine, [

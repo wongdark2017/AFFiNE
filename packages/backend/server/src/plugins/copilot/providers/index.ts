@@ -9,8 +9,8 @@ export { GeminiGenerativeProvider, GeminiVertexProvider } from './gemini';
 export { CopilotProviderLifecycleService } from './lifecycle-service';
 export { OpenAIProvider } from './openai';
 export {
-  OpenAICompatibleProvider,
   type OpenAICompatibleConfig,
+  OpenAICompatibleProvider,
 } from './openai-compatible';
 export type { CopilotProvider } from './provider';
 export { CopilotProviders } from './provider-tokens';

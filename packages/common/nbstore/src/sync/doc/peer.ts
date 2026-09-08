@@ -45,6 +45,7 @@ interface Status {
   syncing: boolean;
   retrying: boolean;
   skipped: boolean;
+  initialScanComplete: boolean;
   errorMessage: string | null;
 }
 
@@ -57,6 +58,7 @@ interface PeerState {
 }
 
 interface PeerDocState {
+  initialSyncComplete: boolean;
   syncing: boolean;
   synced: boolean;
   retrying: boolean;
@@ -174,6 +176,7 @@ export class DocSyncPeer {
     syncing: false,
     retrying: false,
     skipped: false,
+    initialScanComplete: false,
     errorMessage: null,
   };
   private readonly statusUpdatedSubject$ = new Subject<string | true>();
@@ -235,6 +238,7 @@ export class DocSyncPeer {
         const docErrorMessage = this.status.docErrors.get(docId) ?? null;
         if (this.status.skipped) {
           subscribe.next({
+            initialSyncComplete: false,
             syncing: false,
             synced: true,
             retrying: false,
@@ -243,6 +247,15 @@ export class DocSyncPeer {
           return;
         }
         subscribe.next({
+          initialSyncComplete:
+            this.status.initialScanComplete &&
+            this.status.syncing &&
+            !this.status.retrying &&
+            !this.status.errorMessage &&
+            !docErrorMessage &&
+            !this.status.jobMap.has(docId) &&
+            (!this.status.docs.has(docId) ||
+              this.status.connectedDocs.has(docId)),
           syncing:
             !docErrorMessage &&
             (!this.status.connectedDocs.has(docId) ||
@@ -594,6 +607,7 @@ export class DocSyncPeer {
           remoteClocks: new ClockMap(new Map()),
           syncing: false,
           skipped: false,
+          initialScanComplete: false,
           // tell ui to show retrying status
           retrying: shouldRetry,
           // error message from last retry
@@ -754,6 +768,13 @@ export class DocSyncPeer {
         this.actions.addDoc(docId);
       }
 
+      // A requested root may not exist in either source and never get a job.
+      // Only this boundary proves that discovery completed successfully.
+      throwIfAborted(signal);
+      this.status.initialScanComplete = true;
+      this.status.errorMessage = null;
+      this.statusUpdatedSubject$.next(true);
+
       // begin to process jobs
 
       while (true) {
@@ -838,6 +859,7 @@ export class DocSyncPeer {
         dispose();
       }
       this.status.syncing = false;
+      this.status.initialScanComplete = false;
       console.info('Remote sync ended');
     }
   }
