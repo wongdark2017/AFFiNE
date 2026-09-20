@@ -18,6 +18,7 @@ const mocked = vi.hoisted(() => {
         blob: {
           storage: {
             provider: string;
+            config?: { region: string; requestTimeoutMs?: number };
           };
         };
       };
@@ -190,4 +191,53 @@ describe('useAppConfig', () => {
 
     expect(result.current.isGroupDirty('storages')).toBe(true);
   });
+
+  test.each(['save', 'saveGroup'] as const)(
+    '%s replaces saved objects so clearing optional fields survives later edits',
+    async saveMethod => {
+      const query = mocked.getQueryState();
+      query.appConfig.storages.blob.storage.config = {
+        region: 'test-region',
+        requestTimeoutMs: 30000,
+      };
+      const { result } = renderHook(() => useAppConfig());
+      act(() => {
+        result.current.update(
+          'storages/blob.storage/config.requestTimeoutMs',
+          undefined
+        );
+      });
+      // JSON serialization omits cleared optional properties.
+      mocked.saveUpdatesMock.mockResolvedValue({
+        updateAppConfig: {
+          storages: {
+            blob: {
+              storage: { provider: 'fs', config: { region: 'test-region' } },
+            },
+          },
+        },
+      });
+      await act(async () => {
+        if (saveMethod === 'saveGroup') {
+          await result.current.saveGroup('storages');
+        } else {
+          await result.current.save();
+        }
+      });
+      expect(
+        mocked.getQueryState().appConfig.storages.blob.storage.config
+      ).not.toHaveProperty('requestTimeoutMs');
+      expect(
+        result.current.patchedAppConfig.storages.blob.storage.config
+      ).not.toHaveProperty('requestTimeoutMs');
+
+      act(() => {
+        result.current.update('storages/blob.storage/provider', 'aws-s3');
+      });
+      expect(result.current.updates['storages.blob.storage'].to).toEqual({
+        provider: 'aws-s3',
+        config: { region: 'test-region' },
+      });
+    }
+  );
 });

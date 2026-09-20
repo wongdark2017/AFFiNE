@@ -24,6 +24,129 @@ export const UI_ZH: Record<string, string> = {
   'The test email has been successfully sent.': '测试邮件已成功发送。',
   'Failed to send test email': '测试邮件发送失败',
 
+  // AI settings form
+  'OpenAI-compatible API': 'OpenAI 兼容接口',
+  'Enter an API key, endpoint and default model to route all chats through this service. Clear the API key to stop using it.':
+    '填写密钥、接口地址和默认模型后，所有聊天都会通过此服务。清空密钥即可停用。',
+  'API key': 'API 密钥',
+  'Enter API key': '输入 API 密钥',
+  'API endpoint': '接口地址',
+  'Use the API base URL, with or without /v1. Do not include /chat/completions.':
+    '填写 API 基础地址，可带或不带 /v1，无需添加 /chat/completions。',
+  'Default model': '默认模型',
+  'Test connection': '测试连接',
+  'Testing connection...': '测试中…',
+  'Test again': '重新测试',
+  'Connection successful.': '连接成功',
+  'Model: {model} · {latency} ms': '模型：{model} · 耗时 {latency} 毫秒',
+  'Sends a short request using the current settings. This uses a small amount of model quota.':
+    '使用当前配置发送简短请求，会产生少量模型用量。',
+  'Fill in the API key, endpoint and default model to test the connection.':
+    '填写密钥、接口地址和默认模型后，即可测试连接。',
+  'Connection test failed. Check the API key, endpoint and model, then try again.':
+    '连接测试失败，请检查密钥、接口地址和模型后重试。',
+  'API key, base URL and default model are required.':
+    '请先填写密钥、接口地址和默认模型。',
+  'Model service returned an invalid chat response.':
+    '模型服务未返回有效的聊天响应。',
+  'The selected model is unavailable or does not support chat.':
+    '所选模型不可用或不支持聊天，请检查模型权限与名称。',
+  'The model service has insufficient quota.':
+    '模型服务额度不足，请检查账户余额或配额。',
+  'Sign in as an administrator to test the connection.':
+    '请以管理员身份登录后测试连接。',
+  'Get models': '获取模型',
+  'Fetching models...': '正在获取…',
+  'Refresh models': '刷新模型',
+  Retry: '重试',
+  'Show model options': '展开模型列表',
+  'Available models': '可用模型',
+  '{count} models available.': '已获取 {count} 个模型。',
+  'Select a fetched model or enter any supported model ID.':
+    '从获取的列表中选择，也可以手动输入模型 ID。',
+  'Fill in an API key and endpoint to get models, or enter a model ID manually.':
+    '填写密钥和接口地址后可获取模型，也可以手动输入模型 ID。',
+  'No matching models. You can enter a model ID manually.':
+    '没有匹配的模型，你可以手动输入模型 ID。',
+  'No models were returned. You can enter a model ID manually.':
+    '接口未返回模型，你可以手动输入模型 ID。',
+  'Unable to fetch models. Check the API key and endpoint, then try again.':
+    '获取模型失败，请检查密钥和接口地址后重试。',
+  'Sign in as an administrator to get models.':
+    '请以管理员身份登录后获取模型。',
+  'Too many requests. Wait a moment and try again.':
+    '请求过于频繁，请稍后重试。',
+  'API key and base URL are required.': '请先填写 API 密钥和接口地址。',
+  'Base URL must be HTTP(S) without credentials, query parameters or fragments.':
+    '请填写 HTTP 或 HTTPS 接口基础地址，不要包含账号密码、查询参数或锚点。',
+  'Model service rejected the API key.':
+    '模型服务拒绝了此密钥，请检查密钥是否有效。',
+  'Model service does not provide a models endpoint.':
+    '此服务不提供模型列表，请手动输入模型 ID。',
+  'Model service rate limit exceeded.': '模型服务请求限流，请稍后重试。',
+  'Model service request timed out.': '模型服务响应超时，请稍后重试。',
+  'Unable to connect to the model service.':
+    '无法连接模型服务，请检查接口地址。',
+  'Model service request failed.': '模型服务请求失败，请稍后重试。',
+  'Model service returned an invalid model list.':
+    '接口返回的模型列表格式不正确。',
+  'Enter the model ID from your provider': '输入服务商提供的模型 ID',
+  'Use a model ID supported by this service.': '填写此服务支持的模型 ID。',
+  'Supports reasoning': '支持推理参数',
+  'Enable only if the service supports reasoning parameters.':
+    '仅在此服务支持推理参数时开启。',
+  OpenAI: 'OpenAI',
+  'Configure OpenAI access. Leave the API key empty to disable this provider.':
+    '配置 OpenAI 服务，密钥留空即可停用。',
+  'Use legacy API': '使用旧版接口',
+  'Use Chat Completions for services that do not support the Responses API.':
+    '服务不支持 Responses API 时，开启后使用 Chat Completions 接口。',
+  Gemini: 'Gemini',
+  'Configure Gemini access. Leave the API key empty to disable this provider.':
+    '配置 Gemini 服务，密钥留空即可停用。',
+  Anthropic: 'Anthropic',
+  'Configure Claude access. Leave the API key empty to disable this provider.':
+    '配置 Claude 服务，密钥留空即可停用。',
+  FAL: 'FAL',
+  'Configure image generation with FAL.': '配置 FAL 图片生成服务。',
+  Unsplash: 'Unsplash',
+  'Allow AI to search for images on Unsplash.': '让 AI 从 Unsplash 搜索图片。',
+  Exa: 'Exa',
+  'Allow AI to search the web with Exa.': '让 AI 使用 Exa 搜索网页。',
+  'Show {name}': '显示{name}',
+  'Hide {name}': '隐藏{name}',
+  'Allow AI chat and writing assistance on this server.':
+    '启用此服务器的 AI 聊天与写作辅助功能。',
+  'AI file storage (advanced)': 'AI 文件存储（高级设置）',
+  'Choose where AI attachments are stored. Keep the defaults unless you need external storage.':
+    '设置 AI 附件的存储位置，无需外部存储时可保留默认配置。',
+  'Storage provider': '存储类型',
+  'Local filesystem': '本地文件系统',
+  'S3-compatible storage': 'S3 兼容存储',
+  'Cloudflare R2': 'Cloudflare R2',
+  'Asset pack': '资源包',
+  'Bucket name': '存储桶名称',
+  'Storage directory': '存储目录',
+  'Storage endpoint (optional)': '存储接口地址（可选）',
+  Region: '区域',
+  'Access key ID': '访问密钥 ID',
+  'Secret access key': '访问密钥',
+  'Session token (optional)': '会话令牌（可选）',
+  'Use path-style addressing': '使用路径式寻址',
+  'Request timeout (ms)': '请求超时（毫秒）',
+  'Default: 30000': '默认：30000',
+  'Multipart upload part size (bytes)': '分片上传大小（字节）',
+  'Presigned URL expiry (seconds)': '预签名链接有效期（秒）',
+  'Default: 60': '默认：60',
+  'Sign upload content type': '对上传内容类型签名',
+  'Cloudflare account ID': 'Cloudflare 账号 ID',
+  Jurisdiction: '管辖区域',
+  Default: '默认',
+  'European Union': '欧盟',
+  'Use presigned URLs': '使用预签名链接',
+  'Custom storage domain': '自定义存储域名',
+  'URL signing key': '链接签名密钥',
+
   // settings group names (KNOWN_CONFIG_GROUPS + upperFirst(module) fallbacks)
   Server: '服务器',
   Auth: '认证',

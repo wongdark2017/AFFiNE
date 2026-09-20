@@ -1,4 +1,6 @@
 import { OpenAIProvider } from './openai';
+import { fetchOpenAICompatibleModels } from './openai-compatible-models';
+import { openAICompatibleBaseURL } from './openai-compatible-url';
 import {
   checkProviderParams,
   type ResolvedProviderModel,
@@ -62,6 +64,14 @@ export class OpenAICompatibleProvider extends OpenAIProvider {
 
   protected override resolveModelBackendKind() {
     return 'openai_chat' as const;
+  }
+
+  protected override createNativeConfig(execution?: CopilotProviderExecution) {
+    const config = this.compatConfig(execution);
+    return {
+      ...super.createNativeConfig(execution),
+      base_url: openAICompatibleBaseURL(config.baseURL),
+    };
   }
 
   override configured(execution?: CopilotProviderExecution): boolean {
@@ -240,7 +250,7 @@ export class OpenAICompatibleProvider extends OpenAIProvider {
       })
       .catch(e => {
         this.logger.warn(
-          `Failed to fetch model list from ${config.baseURL}: ${e?.message ?? e}`
+          `Failed to fetch model list: ${e?.message ?? 'Unknown error'}`
         );
         // keep the previous list, but back off before retrying
         this.#modelListCache.set(key, {
@@ -261,19 +271,6 @@ export class OpenAICompatibleProvider extends OpenAIProvider {
   private async fetchModelList(
     config: OpenAICompatibleConfig
   ): Promise<Set<string>> {
-    const base = config.baseURL.replace(/\/+$/, '').replace(/\/v1$/, '');
-    const res = await globalThis.fetch(`${base}/v1/models`, {
-      headers: { Authorization: `Bearer ${config.apiKey}` },
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!res.ok) {
-      throw new Error(`GET /v1/models failed with HTTP ${res.status}`);
-    }
-    const body = (await res.json()) as { data?: Array<{ id?: string }> };
-    return new Set(
-      (body.data ?? [])
-        .map(model => model.id)
-        .filter((id): id is string => !!id)
-    );
+    return new Set(await fetchOpenAICompatibleModels(config));
   }
 }
