@@ -17,6 +17,7 @@ import {
   type AppConfig,
 } from './config';
 import { type ConfigInputProps, ConfigRow } from './config-input-row';
+import { CopilotSettings } from './copilot-settings';
 import { useAppConfig } from './use-app-config';
 
 export function SettingsPage() {
@@ -176,51 +177,64 @@ const AdminPanel = ({
                     className="flex flex-col gap-8"
                     key={`${module}-${version}`}
                   >
-                    {fields.map(field => {
-                      let props: ConfigInputProps;
-                      if (typeof field === 'string') {
-                        const descriptor =
-                          ALL_CONFIG_DESCRIPTORS[module][field];
-                        props = {
-                          field: `${module}/${field}`,
-                          desc: translateConfigDesc(
-                            `${module}/${field}`,
-                            descriptor.desc
-                          ),
-                          type: descriptor.type,
-                          options: [],
-                          defaultValue: get(sourceConfig, field),
-                          onChange: onUpdate,
-                        };
-                      } else {
-                        const descriptor =
-                          ALL_CONFIG_DESCRIPTORS[module][field.key];
-                        const fieldPath = `${module}/${field.key}${field.sub ? `/${field.sub}` : ''}`;
-                        props = {
-                          field: fieldPath,
-                          desc: translateConfigDesc(
-                            fieldPath,
-                            field.desc ?? descriptor.desc
-                          ),
-                          type: field.type ?? descriptor.type,
-                          // @ts-expect-error for enum type
-                          options: field.options,
-                          defaultValue: get(
-                            sourceConfig,
-                            field.key + (field.sub ? '.' + field.sub : '')
-                          ),
-                          onChange: onUpdate,
-                        };
-                      }
-
-                      return (
-                        <ConfigRow
-                          key={props.field}
-                          {...props}
-                          onErrorChange={onFieldErrorChange}
+                    {module === 'copilot' ? (
+                      <fieldset
+                        disabled={saving}
+                        aria-busy={saving}
+                        className="m-0 min-w-0 border-0 p-0"
+                      >
+                        <CopilotSettings
+                          config={sourceConfig ?? {}}
+                          onChange={onUpdate}
                         />
-                      );
-                    })}
+                      </fieldset>
+                    ) : (
+                      fields.map(field => {
+                        let props: ConfigInputProps;
+                        if (typeof field === 'string') {
+                          const descriptor =
+                            ALL_CONFIG_DESCRIPTORS[module][field];
+                          props = {
+                            field: `${module}/${field}`,
+                            desc: translateConfigDesc(
+                              `${module}/${field}`,
+                              descriptor.desc
+                            ),
+                            type: descriptor.type,
+                            options: [],
+                            defaultValue: get(sourceConfig, field),
+                            onChange: onUpdate,
+                          };
+                        } else {
+                          const descriptor =
+                            ALL_CONFIG_DESCRIPTORS[module][field.key];
+                          const fieldPath = `${module}/${field.key}${field.sub ? `/${field.sub}` : ''}`;
+                          props = {
+                            field: fieldPath,
+                            desc: translateConfigDesc(
+                              fieldPath,
+                              field.desc ?? descriptor.desc
+                            ),
+                            type: field.type ?? descriptor.type,
+                            // @ts-expect-error for enum type
+                            options: field.options,
+                            defaultValue: get(
+                              sourceConfig,
+                              field.key + (field.sub ? '.' + field.sub : '')
+                            ),
+                            onChange: onUpdate,
+                          };
+                        }
+
+                        return (
+                          <ConfigRow
+                            key={props.field}
+                            {...props}
+                            onErrorChange={onFieldErrorChange}
+                          />
+                        );
+                      })
+                    )}
 
                     {operations?.map(Operation => (
                       <Operation

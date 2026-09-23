@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/server/backend/auth-guidelines.md", "reason": "Verify administrator authorization"}
+{"file": ".trellis/spec/admin/frontend/form-guidelines.md", "reason": "Verify save, reset and asynchronous form behavior"}

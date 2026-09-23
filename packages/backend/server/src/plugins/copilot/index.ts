@@ -10,6 +10,7 @@ import { QuotaModule } from '../../core/quota';
 import { StorageModule } from '../../core/storage';
 import { WorkspaceModule } from '../../core/workspaces';
 import { IndexerModule } from '../indexer';
+import { CopilotAdminController } from './admin-controller';
 import { CopilotController } from './controller';
 import { WorkspaceMcpController } from './mcp/controller';
 import { McpCredentialService } from './mcp/credential';
@@ -78,6 +79,10 @@ export class CopilotApiModule {}
     CopilotApiModule,
   ],
   providers: [McpCredentialService, McpCredentialResolver],
-  controllers: [CopilotController, WorkspaceMcpController],
+  controllers: [
+    CopilotController,
+    CopilotAdminController,
+    WorkspaceMcpController,
+  ],
 })
 export class CopilotModule {}

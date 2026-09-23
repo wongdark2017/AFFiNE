@@ -7,7 +7,7 @@ import {
   type UpdateAppConfigInput,
   updateAppConfigMutation,
 } from '@affine/graphql';
-import { cloneDeep, get, merge, set } from 'lodash-es';
+import { cloneDeep, get, has, set } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 
 import { t } from '../../i18n';
@@ -42,6 +42,22 @@ const getSavedAppConfig = (response: SaveResponse): Partial<AppConfig> => {
     return (response.updateAppConfig as Partial<AppConfig>) ?? {};
   }
   return response;
+};
+
+const applySavedConfig = (
+  current: AppConfig,
+  saved: Partial<AppConfig>,
+  entries: Array<[string, { from: any; to: any }]>
+): AppConfig => {
+  const next = cloneDeep(current);
+  // The server returns complete values for each saved config item. Replace
+  // those objects so removed optional fields cannot survive in the cache.
+  for (const [key] of entries) {
+    if (has(saved, key)) {
+      set(next, key, cloneDeep(get(saved, key)));
+    }
+  }
+  return next;
 };
 
 export const useAppConfig = () => {
@@ -118,12 +134,18 @@ export const useAppConfig = () => {
 
       await mutate(prev => {
         return {
-          appConfig: merge({}, prev?.appConfig ?? {}, savedAppConfig),
+          appConfig: applySavedConfig(
+            prev?.appConfig ?? {},
+            savedAppConfig,
+            allEntries
+          ),
         };
       });
 
       setUpdates({});
-      setPatchedAppConfig(prev => merge({}, prev, savedAppConfig));
+      setPatchedAppConfig(prev =>
+        applySavedConfig(prev, savedAppConfig, allEntries)
+      );
       notify.success({
         title: t('Saved'),
         message: t('Settings have been saved successfully.'),
@@ -158,12 +180,18 @@ export const useAppConfig = () => {
 
         await mutate(prev => {
           return {
-            appConfig: merge({}, prev?.appConfig ?? {}, savedAppConfig),
+            appConfig: applySavedConfig(
+              prev?.appConfig ?? {},
+              savedAppConfig,
+              moduleEntries
+            ),
           };
         });
 
         clearModuleUpdates(module);
-        setPatchedAppConfig(prev => merge({}, prev, savedAppConfig));
+        setPatchedAppConfig(prev =>
+          applySavedConfig(prev, savedAppConfig, moduleEntries)
+        );
         bumpGroupVersion(module);
         notify.success({
           title: t('Saved'),
