@@ -1,94 +1,229 @@
-# Implementation plan: GitHub Markdown editor theme and CSS import
+# GitHub Markdown editor theme and CSS import implementation plan
 
-## Preconditions
+> **For AI implementation workers:** execute through the Trellis `trellis-implement` workflow. Follow the tasks in order, use test-first development, and do not commit from the worker session; the main session commits after independent `trellis-check` review.
 
-- Read `prd.md`, `design.md`, and both `research/*.md` files.
-- Run `trellis-before-dev` and load the `@affine/core` frontend specs plus shared guides.
-- Preserve unrelated working-tree changes.
-- Follow test-first implementation for parser/service behavior.
+**Goal:** Ship a GitHub-style default document-body theme in every build and add Canary-only, safe light/dark CSS imports to the existing visual theme editor.
 
-## Phase 1: CSS import contract and tests
+**Architecture:** Static PageEditor styles provide the built-in light/dark theme. A lazy PostCSS normalizer converts allowed AFFiNE/Typora rules into mode-scoped sanitized CSS, which `ThemeEditorService` stores locally and a feature-gated runtime style element applies. Existing visual variable overrides remain a final layer.
 
-- [ ] Add direct runtime dependencies required for lazy-loaded CSS parsing (`postcss`, selector parser, value parser) to `@affine/core`.
-- [ ] Define imported-theme state, report, error, mode, and version types without changing the existing `CustomTheme` contract.
-- [ ] Add representative test fixtures for AFFiNE selectors, Typora selectors, unsafe resources, unsafe geometry, invalid CSS, and a compact `typora_claude`-like sample.
-- [ ] Write failing unit tests for file/type/size validation, selector translation, declaration sanitization, font mapping, at-rule filtering, scoping, reports, and zero-supported-rule rejection.
-- [ ] Implement the parser/normalizer as a pure module and make the tests pass.
-- [ ] Confirm output is deterministic so persisted CSS and reports are stable across reloads.
+**Technical stack:** TypeScript, Lit CSS, React, `@toeverything/infra` LiveData/GlobalState, PostCSS selector/value parsers, Vitest, Playwright, vanilla-extract, bundled WOFF2 fonts.
 
-Rollback checkpoint: parser code and dependency changes are isolated and not wired into runtime.
+---
 
-## Phase 2: Bundled fonts and default body theme
+## File map
 
-- [ ] Add licensed Open Sans, Nunito Sans, Noto Sans SC, and Noto Serif SC WOFF2/variable/subset assets following the component font layout.
-- [ ] Add OFL notices and extend the existing font-face stylesheet.
-- [ ] Add the editor-body base theme module with explicit cascade layer and light/dark selectors.
-- [ ] Compose the base theme into `PageEditor` without touching `DocTitle` or `EdgelessEditor`.
-- [ ] Map paragraph headings, body text, links, lists, quotes, inline/code blocks, dividers, and normal table blocks.
-- [ ] Preserve editor width, user font-size scaling, responsive side padding, and interaction widgets.
-- [ ] Add targeted style/unit assertions where practical.
+### Create
 
-Rollback checkpoint: removing one PageEditor style composition restores the previous UI; fonts are otherwise inert.
+- `packages/frontend/core/src/blocksuite/editors/editor-markdown-theme.ts` — built-in scoped light/dark Lit CSS.
+- `packages/frontend/core/src/modules/theme-editor/css-import/constants.ts` — size, selector, property, at-rule, and font allowlists.
+- `packages/frontend/core/src/modules/theme-editor/css-import/errors.ts` — typed import failures.
+- `packages/frontend/core/src/modules/theme-editor/css-import/normalize.ts` — parse, detect, translate, sanitize, report, serialize.
+- `packages/frontend/core/src/modules/theme-editor/css-import/normalize.spec.ts` — importer contract tests.
+- `packages/frontend/core/src/desktop/pages/theme-editor/components/css-import-panel.tsx` — light/dark import screen.
+- `packages/frontend/core/src/desktop/pages/theme-editor/components/css-import-card.tsx` — one mode's actions/status/report.
+- `packages/frontend/core/src/desktop/pages/theme-editor/components/css-import.css.ts` — import panel layout.
+- `packages/frontend/component/src/fonts/open-sans/*` — licensed webfont assets and notice.
+- `packages/frontend/component/src/fonts/nunito-sans/*` — licensed webfont assets and notice.
+- `packages/frontend/component/src/fonts/noto-sans-sc/*` — licensed CJK webfont assets and notice.
+- `packages/frontend/component/src/fonts/noto-serif-sc/*` — licensed CJK webfont assets and notice.
 
-## Phase 3: Local persistence and runtime state
+### Modify
 
-- [ ] Add failing service tests for independent light/dark slots, atomic replace, enable/disable, clear, default empty state, and malformed persisted versions.
-- [ ] Extend `ThemeEditorService` with the separate `custom-editor-theme-css-v1` state and methods.
-- [ ] Store only sanitized CSS, metadata, and report; never persist unapplied source CSS.
-- [ ] Add a derived active-CSS stream gated by `enable_theme_editor`.
-- [ ] Add runtime style injection for sanitized CSS and final editor-scoped variable overrides.
-- [ ] Verify cross-window/tab propagation through existing GlobalState watch behavior.
+- `packages/frontend/core/package.json` and `yarn.lock` — direct lazy importer dependencies.
+- `packages/frontend/component/src/theme/fonts.css` — editor font faces.
+- `packages/frontend/core/src/blocksuite/editors/page-editor.ts` — compose built-in body theme.
+- `packages/frontend/core/src/modules/theme-editor/types.ts` — versioned import state/report types.
+- `packages/frontend/core/src/modules/theme-editor/services/theme-editor.ts` — local state and atomic lifecycle methods.
+- `packages/frontend/core/src/modules/theme-editor/index.ts` — public types/importer exports as required.
+- `packages/frontend/core/src/desktop/pages/root/custom-theme/index.tsx` — feature-gated runtime CSS and editor-scoped variable override layer.
+- `packages/frontend/core/src/desktop/pages/theme-editor/theme-editor.tsx` — add Imported CSS navigation without removing V1/V2.
+- `packages/frontend/i18n/src/resources/en.json` and `zh-Hans.json` — user-facing import text.
+- `packages/frontend/i18n/src/i18n.gen.ts` — regenerated keys.
+- `tests/affine-local/e2e/theme.spec.ts` — default theme and import lifecycle coverage.
 
-Rollback checkpoint: deleting the new storage key consumer leaves the old `custom-theme` path unchanged.
+## Task 1: Define the import data contract
 
-## Phase 4: Theme-editor UI
+**Files:**
 
-- [ ] Add localized strings for imported CSS, Light CSS, Dark CSS, Import, Replace, Enable, Disable, Clear, conversion summary, warnings, and error states.
-- [ ] Add an `Imported CSS` navigation destination while preserving the V1/V2 variable tree.
-- [ ] Build reusable light/dark import cards using existing AFFiNE components.
-- [ ] Restrict file selection to `.css`, read locally, invoke the lazy importer, and commit only successful conversions.
-- [ ] Display filename, size, timestamp, enabled state, report counts, and expandable warnings.
-- [ ] Add confirmation for Clear and notifications for failure/success.
-- [ ] Confirm the Web popup and Electron theme-editor window share state with the main app.
+- Modify: `packages/frontend/core/src/modules/theme-editor/types.ts`
+- Create: `packages/frontend/core/src/modules/theme-editor/css-import/errors.ts`
 
-Rollback checkpoint: the existing variable editor remains accessible even if the import panel is removed.
+- [ ] Add the versioned state and report types exactly once:
 
-## Phase 5: Integration and verification
+```ts
+export type EditorThemeMode = 'light' | 'dark';
 
-- [ ] Extend focused E2E coverage for default light/dark styles, switching, scoping, full-width behavior, and local font requests.
-- [ ] Add Canary-only import lifecycle E2E: light/dark independence, replace, disable, clear, reload persistence, and invalid-import atomicity.
-- [ ] Exercise representative editing operations after theme application.
-- [ ] Manually import `typora_claude/claude.css` and `claude-dark.css`; record applied/ignored/rejected counts and verify no requests for `claude-fonts/`.
-- [ ] Verify Stable/Beta behavior through a build-config test or targeted build: built-in theme present, import UI/runtime absent.
-- [ ] Build a Canary Web artifact and confirm the font files are emitted.
-- [ ] Deploy a Canary test image only after local checks pass; verify at `http://103.217.203.235:3010/`.
+export type CssImportReport = {
+  sourceKind: 'affine' | 'typora' | 'generic';
+  appliedRules: number;
+  translatedRules: number;
+  ignoredRules: number;
+  rejectedDeclarations: number;
+  warnings: string[];
+};
 
-## Validation commands
+export type ImportedEditorStylesheet = {
+  fileName: string;
+  byteLength: number;
+  importedAt: number;
+  enabled: boolean;
+  sanitizedCss: string;
+  report: CssImportReport;
+};
 
-Use the narrowest command that covers each change, then run the broader gates before completion:
-
-```bash
-yarn vitest --run packages/frontend/core/src/modules/theme-editor
-yarn lint:prettier
-yarn lint:eslint
-yarn typecheck
-yarn workspace @affine-test/affine-local e2e theme.spec.ts
-BUILD_TYPE=canary yarn affine @affine/web build
+export type ImportedEditorThemeState = {
+  version: 1;
+  light?: ImportedEditorStylesheet;
+  dark?: ImportedEditorStylesheet;
+};
 ```
 
-If the full repository lint/typecheck is too expensive during iteration, run it once at the final gate and use file/package-scoped checks between edits.
+- [ ] Define typed error codes for invalid extension, oversize, unreadable text, parse failure, zero supported rules, and persistence failure.
+- [ ] Run formatter/type checking for the touched files; expected result is no diagnostics.
 
-## Review gates
+## Task 2: Build the CSS normalizer test-first
 
-- [ ] Security review: no selector or resource escape from imported CSS.
-- [ ] Visual review: reference light/dark fidelity and `typora_claude` compatibility.
-- [ ] Regression review: title/app shell/edgeless and editor interactions unchanged.
-- [ ] Licensing review: all newly bundled fonts include appropriate notices.
-- [ ] Rollout review: imported CSS remains Canary-only while base theme is channel-independent.
+**Files:**
 
-## Final rollback plan
+- Modify: `packages/frontend/core/package.json`, `yarn.lock`
+- Create: `packages/frontend/core/src/modules/theme-editor/css-import/constants.ts`
+- Create: `packages/frontend/core/src/modules/theme-editor/css-import/normalize.ts`
+- Create: `packages/frontend/core/src/modules/theme-editor/css-import/normalize.spec.ts`
 
-- Disable imported CSS by removing/gating the runtime injector; persisted data remains inert.
-- Remove the import panel and service methods without touching existing `custom-theme` data.
-- Remove the PageEditor base-theme composition to restore the old body UI.
-- Remove only newly added font assets and notices after the theme no longer references them.
+- [ ] Add direct dependencies: `postcss`, `postcss-selector-parser`, and `postcss-value-parser`.
+- [ ] Write failing tests for:
+  - `512 * 1024` bytes accepted and one additional byte rejected;
+  - malformed CSS rejected;
+  - `:root`, `html`, `body`, `#write`, headings, paragraph, quote, list, code, table, link, divider, image, and math mappings;
+  - already-scoped AFFiNE selectors retained only when allowlisted;
+  - Typora chrome/CodeMirror selectors ignored;
+  - `@import`, `@font-face`, `url(...)`, fixed overlays, z-index escape, and `!important` stripped/reported;
+  - Open Sans/Nunito/Noto/Inter/code families retained and unknown leading families removed;
+  - light/dark output receives the matching editor prefix and import cascade layer;
+  - deterministic output and report counts;
+  - zero supported rules rejected.
+- [ ] Run the test and verify it fails because `normalizeEditorThemeCss` is missing.
+
+```bash
+node .yarn/releases/yarn-4.13.0.cjs vitest --run packages/frontend/core/src/modules/theme-editor/css-import/normalize.spec.ts
+```
+
+- [ ] Implement this public contract:
+
+```ts
+export const MAX_EDITOR_THEME_CSS_BYTES = 512 * 1024;
+
+export function normalizeEditorThemeCss(input: {
+  mode: EditorThemeMode;
+  fileName: string;
+  css: string;
+  byteLength: number;
+}): { sanitizedCss: string; report: CssImportReport };
+```
+
+- [ ] Use PostCSS AST walking; never execute source CSS. Use selector/value parsers for mappings and URL/font inspection.
+- [ ] Preserve safe `@media`/`@supports`; drop all other at-rules listed in the design.
+- [ ] Run the focused test until it passes.
+
+## Task 3: Add service persistence test-first
+
+**Files:**
+
+- Modify: `packages/frontend/core/src/modules/theme-editor/services/theme-editor.ts`
+- Create: `packages/frontend/core/src/modules/theme-editor/services/theme-editor.spec.ts`
+
+- [ ] Write a minimal in-memory `GlobalState` fake and failing tests for empty defaults, independent slots, replace-on-success, enable/disable, clear, malformed version fallback, and no mutation after failed normalization/storage.
+- [ ] Add a separate key:
+
+```ts
+private readonly _importedCssKey = 'custom-editor-theme-css-v1';
+```
+
+- [ ] Add `importedThemeCss$`, `activeImportedCss$`, `saveImportedCss`, `setImportedCssEnabled`, and `clearImportedCss`. Keep existing `customTheme$`, `setCustomTheme`, `updateCustomTheme`, and `reset` signatures unchanged.
+- [ ] Accept normalized data in the service; keep browser `File` handling and lazy parser loading in the UI layer.
+- [ ] Run service and normalizer tests together and expect all passing.
+
+## Task 4: Bundle fonts and implement the default theme
+
+**Files:**
+
+- Modify: `packages/frontend/component/src/theme/fonts.css`
+- Create: licensed font directories/notices listed in the file map
+- Create: `packages/frontend/core/src/blocksuite/editors/editor-markdown-theme.ts`
+- Modify: `packages/frontend/core/src/blocksuite/editors/page-editor.ts`
+
+- [ ] Add the smallest practical WOFF2 variable/subset files from authoritative OFL sources plus notices.
+- [ ] Register distinct internal family names, for example `AFFiNE Editor Open Sans`, to avoid colliding with host/system definitions.
+- [ ] Write the base Lit CSS in `@layer affine-editor-theme-base`, prefixed by `.page-editor-container[data-theme='light']` or dark.
+- [ ] Use `var(--affine-font-base)` for base scaling and preserve `var(--affine-editor-width)`.
+- [ ] Target only the content selectors specified in `design.md`; do not style root widgets or non-Markdown cards.
+- [ ] Compose styles after PageEditor's layout CSS:
+
+```ts
+static override styles = [pageEditorLayoutStyles, editorMarkdownTheme];
+```
+
+- [ ] Run formatting and TypeScript checks for component/core files.
+
+## Task 5: Inject imported CSS and final variable overrides
+
+**Files:**
+
+- Modify: `packages/frontend/core/src/desktop/pages/root/custom-theme/index.tsx`
+
+- [ ] Add a focused component that reads `enable_theme_editor`, `importedThemeCss$`, and `customTheme$`.
+- [ ] Render one `<style data-affine-editor-theme-import>` containing only enabled sanitized light/dark outputs.
+- [ ] Render editor-scoped custom-variable declarations in `@layer affine-editor-theme-overrides` after imports; retain the existing document-element variable application unchanged.
+- [ ] When the feature flag is false, emit neither imported CSS nor import overrides; built-in PageEditor CSS remains.
+- [ ] Add a DOM unit test or E2E assertion proving a malicious/global selector cannot affect an element outside `page-editor`.
+
+## Task 6: Add the minimal import UI
+
+**Files:**
+
+- Create: CSS import React files listed in the file map
+- Modify: `packages/frontend/core/src/desktop/pages/theme-editor/theme-editor.tsx`
+- Modify: `packages/frontend/i18n/src/resources/en.json`, `zh-Hans.json`, `i18n.gen.ts`
+
+- [ ] Add an `Imported CSS` navigation item alongside the existing V1/V2 variable browser.
+- [ ] Implement two reusable cards with file metadata, enabled switch, Import/Replace, Clear confirmation, report counts, and expandable warnings.
+- [ ] Use `<input type="file" accept=".css,text/css">`; read `arrayBuffer()` to compute byte length before `TextDecoder('utf-8', { fatal: true })`.
+- [ ] Dynamically import the normalizer only after a file is selected.
+- [ ] Do not call the service unless normalization succeeds; surface typed errors with existing notifications.
+- [ ] Clear only after confirmation; disabling retains metadata/CSS.
+- [ ] Regenerate i18n types and run relevant component tests.
+
+## Task 7: Integration and E2E verification
+
+**Files:**
+
+- Modify: `tests/affine-local/e2e/theme.spec.ts`
+
+- [ ] Add a representative document containing headings, paragraph, link, quote, list, inline/code block, divider, and table.
+- [ ] Assert built-in light and dark computed styles/fonts, live mode switching, unchanged document title, and unchanged edgeless/app-shell elements.
+- [ ] Add Canary import lifecycle coverage for independent slots, replace, disable, clear, reload persistence, invalid import atomicity, and no external requests.
+- [ ] Smoke-test input, selection, undo/redo, code/list/table editing after theme application.
+- [ ] Verify standard width, full width, readonly/shared, and narrow viewport behavior.
+- [ ] Manually import `typora_claude/claude.css` and `claude-dark.css`; record the conversion report and confirm no `claude-fonts/` request.
+- [ ] Run final gates:
+
+```bash
+node .yarn/releases/yarn-4.13.0.cjs vitest --run packages/frontend/core/src/modules/theme-editor
+node .yarn/releases/yarn-4.13.0.cjs lint:prettier
+node .yarn/releases/yarn-4.13.0.cjs lint:eslint
+node .yarn/releases/yarn-4.13.0.cjs typecheck
+node .yarn/releases/yarn-4.13.0.cjs workspace @affine-test/affine-local e2e theme.spec.ts
+BUILD_TYPE=canary node .yarn/releases/yarn-4.13.0.cjs affine @affine/web build
+```
+
+- [ ] Confirm emitted Web assets include the new fonts and make no third-party font requests.
+- [ ] Run Trellis independent check before any commit or deployment.
+
+## Final review and rollback
+
+- [ ] Security review: imported CSS cannot escape selector/resource/property controls.
+- [ ] Visual review: built-in references and `typora_claude` supported subset are credible.
+- [ ] Regression review: title, shell, edgeless, controls, and editing remain intact.
+- [ ] Licensing review: font notices and sources are complete.
+- [ ] Rollout review: built-in theme is channel-independent; imports are Canary-only.
+- [ ] If rollback is required, remove runtime import injection first, then UI/service/parser, then the base theme/fonts; existing `custom-theme` data is never migrated or deleted.
