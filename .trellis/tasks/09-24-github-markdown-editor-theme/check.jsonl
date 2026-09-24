@@ -1,0 +1,5 @@
+{"file":".trellis/spec/core/frontend/quality-guidelines.md","reason":"Verify unit and DOM tests use the required frontend test stack."}
+{"file":".trellis/spec/core/frontend/component-guidelines.md","reason":"Check that new UI follows existing component and styling patterns."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Check for duplicated storage, font, and style injection mechanisms."}
+{"file":".trellis/tasks/09-24-github-markdown-editor-theme/research/theme-references.md","reason":"Verify reference fidelity, font licensing, and editor-only boundaries."}
+{"file":".trellis/tasks/09-24-github-markdown-editor-theme/research/typora-claude-compatibility.md","reason":"Verify converter behavior against the concrete compatibility constraints."}
