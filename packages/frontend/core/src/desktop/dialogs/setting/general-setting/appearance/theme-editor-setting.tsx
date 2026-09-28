@@ -51,7 +51,7 @@ export const ThemeEditorSetting = () => {
             {t['com.affine.appearanceSettings.customize-theme.reset']()}
           </Button>
         ) : null}
-        <Button onClick={open}>
+        <Button data-testid="open-theme-editor-button" onClick={open}>
           {t['com.affine.appearanceSettings.customize-theme.open']()}
         </Button>
       </div>

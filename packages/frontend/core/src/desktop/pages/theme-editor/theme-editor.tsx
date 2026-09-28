@@ -1,20 +1,49 @@
 import { RadioGroup, Scrollable } from '@affine/component';
+import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import { ThemeEditorService } from '@affine/core/modules/theme-editor';
-import { useService } from '@toeverything/infra';
-import { useCallback, useEffect, useState } from 'react';
+import { useI18n } from '@affine/i18n';
+import { useLiveData, useServices } from '@toeverything/infra';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { CssImportPanel } from './components/css-import-panel';
 import { ThemeEmpty } from './components/empty';
 import { ThemeTreeNode } from './components/tree-node';
 import { VariableList } from './components/variable-list';
 import { affineThemes, type TreeNode } from './resource';
 import * as styles from './theme-editor.css';
 
+type ThemeEditorSection = 'v1' | 'v2' | 'imported-css';
+
 export const ThemeEditor = () => {
-  const themeEditor = useService(ThemeEditorService);
-  const [version, setVersion] = useState<'v1' | 'v2'>('v1');
+  const t = useI18n();
+  const { themeEditorService, featureFlagService } = useServices({
+    ThemeEditorService,
+    FeatureFlagService,
+  });
+  const enableThemeEditor = useLiveData(
+    featureFlagService.flags.enable_theme_editor.$
+  );
+  const [section, setSection] = useState<ThemeEditorSection>('v1');
   const [activeNode, setActiveNode] = useState<TreeNode | null>();
 
+  const version = section === 'v2' ? 'v2' : 'v1';
   const { nodeMap, variableMap, tree } = affineThemes[version];
+  const navigationItems = useMemo(
+    () => [
+      { value: 'v1', label: 'V1' },
+      { value: 'v2', label: 'V2' },
+      ...(enableThemeEditor
+        ? [
+            {
+              value: 'imported-css',
+              label: t['com.affine.themeEditor.importedCss.tab'](),
+              testId: 'theme-editor-imported-css-tab',
+            },
+          ]
+        : []),
+    ],
+    [enableThemeEditor, t]
+  );
 
   const [customizedNodeIds, setCustomizedNodeIds] = useState<Set<string>>(
     new Set()
@@ -22,7 +51,7 @@ export const ThemeEditor = () => {
 
   // workaround for the performance issue of using `useLiveData(themeEditor.customTheme$)` here
   useEffect(() => {
-    const sub = themeEditor.customTheme$.subscribe(customTheme => {
+    const sub = themeEditorService.customTheme$.subscribe(customTheme => {
       const ids = Array.from(
         new Set([
           ...Object.keys(customTheme?.light ?? {}),
@@ -43,10 +72,16 @@ export const ThemeEditor = () => {
       });
     });
     return () => sub.unsubscribe();
-  }, [themeEditor.customTheme$, variableMap]);
+  }, [themeEditorService.customTheme$, variableMap]);
 
-  const onToggleVersion = useCallback((v: 'v1' | 'v2') => {
-    setVersion(v);
+  useEffect(() => {
+    if (!enableThemeEditor && section === 'imported-css') {
+      setSection('v1');
+    }
+  }, [enableThemeEditor, section]);
+
+  const onToggleSection = useCallback((value: ThemeEditorSection) => {
+    setSection(value);
     setActiveNode(null);
   }, []);
 
@@ -74,28 +109,36 @@ export const ThemeEditor = () => {
         <header className={styles.sidebarHeader}>
           <RadioGroup
             width="100%"
-            value={version}
-            onChange={onToggleVersion}
-            items={['v1', 'v2']}
+            value={section}
+            onChange={onToggleSection}
+            items={navigationItems}
           />
         </header>
-        <Scrollable.Root className={styles.sidebarScrollable} key={version}>
-          <Scrollable.Viewport>
-            {tree.map(node => (
-              <ThemeTreeNode
-                key={node.id}
-                node={node}
-                checked={activeNode ?? undefined}
-                setActive={setActiveNode}
-                isActive={isActive}
-                isCustomized={isCustomized}
-              />
-            ))}
-          </Scrollable.Viewport>
-          <Scrollable.Scrollbar />
-        </Scrollable.Root>
+        {section !== 'imported-css' ? (
+          <Scrollable.Root className={styles.sidebarScrollable} key={version}>
+            <Scrollable.Viewport>
+              {tree.map(node => (
+                <ThemeTreeNode
+                  key={node.id}
+                  node={node}
+                  checked={activeNode ?? undefined}
+                  setActive={setActiveNode}
+                  isActive={isActive}
+                  isCustomized={isCustomized}
+                />
+              ))}
+            </Scrollable.Viewport>
+            <Scrollable.Scrollbar />
+          </Scrollable.Root>
+        ) : null}
       </div>
-      {activeNode ? <VariableList node={activeNode} /> : <ThemeEmpty />}
+      {section === 'imported-css' && enableThemeEditor ? (
+        <CssImportPanel />
+      ) : activeNode ? (
+        <VariableList node={activeNode} />
+      ) : (
+        <ThemeEmpty />
+      )}
     </div>
   );
 };
