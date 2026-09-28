@@ -93,13 +93,14 @@ export type ImportedEditorThemeState = {
 - [ ] Add direct dependencies: `postcss`, `postcss-selector-parser`, and `postcss-value-parser`.
 - [ ] Write failing tests for:
   - `512 * 1024` bytes accepted and one additional byte rejected;
+  - converted output capped at 1 MiB;
   - malformed CSS rejected;
   - `:root`, `html`, `body`, `#write`, headings, paragraph, quote, list, code, table, link, divider, image, and math mappings;
   - already-scoped AFFiNE selectors retained only when allowlisted;
   - Typora chrome/CodeMirror selectors ignored;
   - `@import`, `@font-face`, `url(...)`, fixed overlays, z-index escape, and `!important` stripped/reported;
   - Open Sans/Nunito/Noto/Inter/code families retained and unknown leading families removed;
-  - light/dark output receives the matching editor prefix and import cascade layer;
+  - light/dark output receives the matching editor prefix and remains unlayered so it can override existing unlayered BlockSuite rules;
   - deterministic output and report counts;
   - zero supported rules rejected.
 - [ ] Run the test and verify it fails because `normalizeEditorThemeCss` is missing.
@@ -113,12 +114,7 @@ node .yarn/releases/yarn-4.13.0.cjs vitest --run packages/frontend/core/src/modu
 ```ts
 export const MAX_EDITOR_THEME_CSS_BYTES = 512 * 1024;
 
-export function normalizeEditorThemeCss(input: {
-  mode: EditorThemeMode;
-  fileName: string;
-  css: string;
-  byteLength: number;
-}): { sanitizedCss: string; report: CssImportReport };
+export function normalizeEditorThemeCss(input: { mode: EditorThemeMode; fileName: string; css: string; byteLength: number }): { sanitizedCss: string; report: CssImportReport };
 ```
 
 - [ ] Use PostCSS AST walking; never execute source CSS. Use selector/value parsers for mappings and URL/font inspection.
@@ -140,6 +136,7 @@ private readonly _importedCssKey = 'custom-editor-theme-css-v1';
 ```
 
 - [ ] Add `importedThemeCss$`, `activeImportedCss$`, `saveImportedCss`, `setImportedCssEnabled`, and `clearImportedCss`. Keep existing `customTheme$`, `setCustomTheme`, `updateCustomTheme`, and `reset` signatures unchanged.
+- [ ] Implement clear with `GlobalState.set()` of the remaining versioned state; never use `del()`, so existing Web/Electron watchers receive the update.
 - [ ] Accept normalized data in the service; keep browser `File` handling and lazy parser loading in the UI layer.
 - [ ] Run service and normalizer tests together and expect all passing.
 
@@ -154,7 +151,7 @@ private readonly _importedCssKey = 'custom-editor-theme-css-v1';
 
 - [ ] Add the smallest practical WOFF2 variable/subset files from authoritative OFL sources plus notices.
 - [ ] Register distinct internal family names, for example `AFFiNE Editor Open Sans`, to avoid colliding with host/system definitions.
-- [ ] Write the base Lit CSS in `@layer affine-editor-theme-base`, prefixed by `.page-editor-container[data-theme='light']` or dark.
+- [ ] Write unlayered base Lit CSS prefixed by `.page-editor-container[data-theme='light']` or dark; named layers cannot override BlockSuite's existing unlayered rules.
 - [ ] Use `var(--affine-font-base)` for base scaling and preserve `var(--affine-editor-width)`.
 - [ ] Target only the content selectors specified in `design.md`; do not style root widgets or non-Markdown cards.
 - [ ] Compose styles after PageEditor's layout CSS:
@@ -172,8 +169,10 @@ static override styles = [pageEditorLayoutStyles, editorMarkdownTheme];
 - Modify: `packages/frontend/core/src/desktop/pages/root/custom-theme/index.tsx`
 
 - [ ] Add a focused component that reads `enable_theme_editor`, `importedThemeCss$`, and `customTheme$`.
+- [ ] Replace module-level `_provided` and manual imported/custom subscriptions with React `useLiveData` state.
+- [ ] Replace `document.documentElement.style.cssText = ''` with tracked per-key `removeProperty()` calls before applying the next visual-variable map.
 - [ ] Render one `<style data-affine-editor-theme-import>` containing only enabled sanitized light/dark outputs.
-- [ ] Render editor-scoped custom-variable declarations in `@layer affine-editor-theme-overrides` after imports; retain the existing document-element variable application unchanged.
+- [ ] Render unlayered editor-scoped custom-variable declarations after imports; retain the existing document-element variable application unchanged.
 - [ ] When the feature flag is false, emit neither imported CSS nor import overrides; built-in PageEditor CSS remains.
 - [ ] Add a DOM unit test or E2E assertion proving a malicious/global selector cannot affect an element outside `page-editor`.
 
@@ -186,11 +185,13 @@ static override styles = [pageEditorLayoutStyles, editorMarkdownTheme];
 - Modify: `packages/frontend/i18n/src/resources/en.json`, `zh-Hans.json`, `i18n.gen.ts`
 
 - [ ] Add an `Imported CSS` navigation item alongside the existing V1/V2 variable browser.
+- [ ] Gate the Imported CSS destination inside `/theme-editor` with `enable_theme_editor`; the route itself is not a Stable guard.
 - [ ] Implement two reusable cards with file metadata, enabled switch, Import/Replace, Clear confirmation, report counts, and expandable warnings.
 - [ ] Use `<input type="file" accept=".css,text/css">`; read `arrayBuffer()` to compute byte length before `TextDecoder('utf-8', { fatal: true })`.
 - [ ] Dynamically import the normalizer only after a file is selected.
 - [ ] Do not call the service unless normalization succeeds; surface typed errors with existing notifications.
 - [ ] Clear only after confirmation; disabling retains metadata/CSS.
+- [ ] Add stable test ids for the imported-css tab, both file inputs, both enable switches, both clear buttons, and both reports.
 - [ ] Regenerate i18n types and run relevant component tests.
 
 ## Task 7: Integration and E2E verification

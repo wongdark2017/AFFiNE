@@ -2,21 +2,20 @@
 
 ## 1. Architecture and boundaries
 
-The feature has three layers with explicit precedence:
+The feature has three logical layers with explicit precedence:
 
 1. **Built-in editor body theme** — static, shipped in every build, scoped to `page-editor`, with light and dark reference styles.
 2. **Imported CSS layer** — optional, sanitized and converted per mode, injected only when `enable_theme_editor` is enabled.
 3. **Existing visual-variable overrides** — the current `custom-theme` behavior remains; editor-scoped copies of configured variables are emitted after the imported layer where needed.
 
-Use CSS cascade layers to make precedence explicit:
-
-```css
-@layer affine-editor-theme-base,
-       affine-editor-theme-import,
-       affine-editor-theme-overrides;
-```
-
-Imported `!important` flags are removed during normalization so they cannot defeat the layer contract. The existing application-wide variable behavior is preserved for compatibility; new built-in/imported selectors remain editor-scoped.
+Keep these rules unlayered and order their style elements as base, import, then
+visual-variable overrides. BlockSuite's existing editor rules are unlayered, and
+normal unlayered declarations outrank every normal declaration in a named CSS
+cascade layer; using named layers here would make successfully converted Typora
+rules lose to the existing editor styles. Imported `!important` flags are still
+removed during normalization. The existing application-wide variable behavior
+is preserved for compatibility; new built-in/imported selectors remain
+editor-scoped.
 
 The document title, properties, backlinks, application chrome, and edgeless editor are outside the `page-editor` selector root and cannot be selected by emitted CSS.
 
@@ -71,7 +70,7 @@ File validation
   -> source-style detection (AFFiNE / Typora / generic Markdown)
   -> selector translation and allowlist filtering
   -> declaration/value sanitization and font mapping
-  -> mode prefixing and cascade-layer wrapping
+  -> mode prefixing and unlayered serialization
   -> conversion report
   -> atomic persistence
 ```
@@ -121,15 +120,19 @@ The service exposes live state and atomic methods:
 
 Local `GlobalState` storage matches current theme behavior, broadcasts changes across tabs/windows, and keeps themes device-global across workspaces.
 
+Clear operations always call `set()` with the remaining `{ version: 1, ...slots }` state. Do not call `GlobalState.del()`, because current Web/Electron delete paths do not reliably notify existing watchers. Cap sanitized output at 1 MiB in addition to the 512 KiB source limit.
+
 ### 2.5 Runtime style injection
 
-Extend the existing root-level custom-theme modifier or add a sibling runtime component.
+Extend the existing root-level custom-theme modifier.
 
 - Built-in theme CSS is always present through PageEditor static styles.
 - Sanitized imported CSS is rendered in a dedicated `<style data-affine-editor-theme-import>` only when the Canary feature flag is active.
 - Generate a final editor-scoped variable override block from the existing `customTheme$` maps after the import layer.
 - On feature disable, remove imported CSS immediately and fall back to the built-in theme.
 - Never mutate document content or editor model state.
+- Replace the current module-level `_provided`/manual subscription with `useLiveData` so StrictMode and multiple roots remain coherent.
+- Do not use `document.documentElement.style.cssText = ''`; track the keys written by the visual editor and remove only those keys before applying the next map so font-size and unrelated inline settings survive.
 
 ### 2.6 Theme-editor UI
 
@@ -248,12 +251,14 @@ User disables or clears one slot
 
 - input validation and 512 KiB boundary;
 - malformed CSS and atomic replacement behavior;
+- converted-output 1 MiB boundary;
 - Typora/AFFiNE/generic detection;
 - selector mappings for every supported semantic target;
 - rejection of global/UI selectors, URLs, unsafe at-rules/properties, and `!important`;
 - font-family whitelist/fallback mapping;
 - conversion report counts and warnings;
 - service enable/disable/clear transitions and malformed persisted state.
+- cross-window clear propagation through full-state `set()` semantics.
 
 ### E2E
 

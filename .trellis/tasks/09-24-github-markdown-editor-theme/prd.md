@@ -37,7 +37,7 @@ Make every AFFiNE document body use a locally bundled GitHub-style Markdown them
 - R12. When a slot has no enabled import, use that mode's built-in GitHub reference theme. An enabled valid import overrides the corresponding built-in editor-theme layer.
 - R13. Do not provide raw CSS source editing in the first version. Users modify an imported theme by replacing its file and by using the existing visual variable editor.
 - R14. Accept CSS text only. Do not import ZIP files, folders, fonts, images, or other companion assets.
-- R15. Limit each imported stylesheet to 512 KiB of UTF-8 CSS. Reject unreadable files, parse failures, and files with no supported document rules without replacing the previous valid import.
+- R15. Limit each imported stylesheet to 512 KiB of UTF-8 CSS and the converted output to 1 MiB. Reject unreadable files, parse failures, oversized output, and files with no supported document rules without replacing the previous valid import.
 - R16. Store the sanitized/converted CSS plus file metadata and a conversion report; do not execute or retain unsupported application-level rules.
 
 ### AFFiNE and Typora compatibility
@@ -53,6 +53,7 @@ Make every AFFiNE document body use a locally bundled GitHub-style Markdown them
 - R22. Sanitize selector and declaration values before persistence. Block selectors or geometry rules capable of escaping the editor boundary, including viewport-fixed overlays and unrestricted z-index positioning.
 - R23. Return a user-visible import report containing applied, translated, ignored, and rejected rule counts plus actionable warnings.
 - R24. Invalid CSS must leave the currently active imported stylesheet untouched.
+- R24a. Clearing a slot must write a complete versioned state rather than deleting the storage key, so Web and Electron watchers receive the update.
 
 ### Deployment-provided fonts
 
@@ -73,7 +74,7 @@ Make every AFFiNE document body use a locally bundled GitHub-style Markdown them
 - [ ] AC3 (R7-R8): The existing visual variable editor and reset flow still work; its configured variables remain available to the editor after importing CSS.
 - [ ] AC4 (R9-R13): Canary users can independently import, replace, enable/disable, and clear light and dark CSS; the state survives reload and is shared across local workspaces.
 - [ ] AC5 (R12): Disabling or clearing one imported slot immediately restores that mode's built-in theme without affecting the other slot.
-- [ ] AC6 (R15-R16, R24): Invalid, oversized, unreadable, or unsupported CSS produces a clear error/report and does not replace the previous valid stylesheet.
+- [ ] AC6 (R15-R16, R24-R24a): Invalid, oversized, unreadable, or unsupported CSS produces a clear error/report and does not replace the previous valid stylesheet; clear operations propagate to all open local windows.
 - [ ] AC7 (R17-R20): Supported AFFiNE and common Typora document selectors are converted into editor-scoped output; unsupported Typora UI rules are ignored and cannot style outside `page-editor`.
 - [ ] AC8 (R21-R23): Imported CSS cannot load external/local/data resources or create fixed overlays outside the editor, and the UI reports conversions and rejections.
 - [ ] AC9 (R25-R28): Bundled open fonts render without third-party requests across Web/self-hosted/Electron builds, include license notices, and use safe fallbacks for unknown theme fonts.
