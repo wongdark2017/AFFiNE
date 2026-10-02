@@ -11,41 +11,45 @@ import { css, html, nothing } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { guard } from 'lit/directives/guard.js';
 
+import { editorMarkdownTheme } from './editor-markdown-theme';
+
 noop(EditorHost);
+
+const pageEditorLayoutStyles = css`
+  page-editor {
+    font-family: var(--affine-font-family);
+    background: var(--affine-background-primary-color);
+  }
+
+  page-editor * {
+    box-sizing: border-box;
+  }
+
+  @media print {
+    page-editor {
+      height: auto;
+    }
+  }
+
+  .affine-page-viewport {
+    position: relative;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    container-name: viewport;
+    container-type: inline-size;
+  }
+
+  .page-editor-container {
+    display: block;
+    height: 100%;
+  }
+`;
 
 export class PageEditor extends SignalWatcher(
   WithDisposable(ShadowlessElement)
 ) {
-  static override styles = css`
-    page-editor {
-      font-family: var(--affine-font-family);
-      background: var(--affine-background-primary-color);
-    }
-
-    page-editor * {
-      box-sizing: border-box;
-    }
-
-    @media print {
-      page-editor {
-        height: auto;
-      }
-    }
-
-    .affine-page-viewport {
-      position: relative;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      container-name: viewport;
-      container-type: inline-size;
-    }
-
-    .page-editor-container {
-      display: block;
-      height: 100%;
-    }
-  `;
+  static override styles = [pageEditorLayoutStyles, editorMarkdownTheme];
 
   get host() {
     try {

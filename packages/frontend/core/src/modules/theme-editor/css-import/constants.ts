@@ -1,0 +1,208 @@
+export const MAX_EDITOR_THEME_CSS_BYTES = 512 * 1024;
+export const MAX_EDITOR_THEME_SANITIZED_CSS_BYTES = 1024 * 1024;
+
+export const EDITOR_THEME_SCOPE = {
+  light: ".page-editor-container[data-theme='light']",
+  dark: ".page-editor-container[data-theme='dark']",
+} as const;
+
+export const allowedNestedAtRules = new Set(['media', 'supports']);
+
+export const blockedAtRules = new Set([
+  'charset',
+  'container',
+  'counter-style',
+  'document',
+  'font-face',
+  'font-feature-values',
+  'font-palette-values',
+  'import',
+  'keyframes',
+  '-webkit-keyframes',
+  'namespace',
+  'page',
+  'property',
+  'scope',
+  'starting-style',
+]);
+
+export const blockedTyporaUiFragments = [
+  'codemirror',
+  'context-menu',
+  'footer-word-count',
+  'megamenu',
+  'md-notification',
+  'md-tooltip',
+  'preferences',
+  'quick-open',
+  'source-mode',
+  'spell-check',
+  'titlebar',
+  'typora-sidebar',
+  'window-title',
+];
+
+export const semanticTagMappings: Readonly<Record<string, string>> = {
+  a: 'affine-link a',
+  blockquote: 'affine-paragraph .quote',
+  code: 'code',
+  del: 'del',
+  em: 'em',
+  h1: 'affine-paragraph .h1',
+  h2: 'affine-paragraph .h2',
+  h3: 'affine-paragraph .h3',
+  h4: 'affine-paragraph .h4',
+  h5: 'affine-paragraph .h5',
+  h6: 'affine-paragraph .h6',
+  hr: 'affine-divider',
+  img: 'affine-image img',
+  li: 'affine-list',
+  mark: 'mark',
+  ol: 'affine-list',
+  p: 'affine-paragraph',
+  pre: 'affine-code .affine-code-block-container',
+  s: 's',
+  strong: 'strong',
+  table: 'affine-table table',
+  tbody: 'tbody',
+  td: 'affine-table-cell td',
+  th: 'affine-table-cell td',
+  thead: 'thead',
+  tr: 'tr',
+  tt: 'code',
+  u: 'u',
+  ul: 'affine-list',
+};
+
+export const semanticClassMappings: Readonly<Record<string, string>> = {
+  'md-fences': 'affine-code .affine-code-block-container',
+  'md-math-block': 'affine-latex',
+  'md-task-list-item': 'affine-list',
+  'task-list-item': 'affine-list',
+  write: '.affine-page-root-block-container',
+};
+
+export const allowedAffineTags = new Set([
+  'affine-code',
+  'affine-divider',
+  'affine-image',
+  'affine-inline-latex',
+  'affine-latex',
+  'affine-link',
+  'affine-list',
+  'affine-paragraph',
+  'affine-table',
+  'affine-table-cell',
+]);
+
+export const allowedAffineClasses = new Set([
+  'affine-code-block-container',
+  'affine-page-root-block-container',
+  'affine-table-row',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'katex',
+  'katex-display',
+  'page-editor-container',
+  'quote',
+]);
+
+export const allowedPseudoSelectors = new Set([
+  ':active',
+  ':after',
+  ':before',
+  ':checked',
+  ':disabled',
+  ':empty',
+  ':enabled',
+  ':first-child',
+  ':first-of-type',
+  ':focus',
+  ':focus-visible',
+  ':hover',
+  ':last-child',
+  ':last-of-type',
+  ':link',
+  ':nth-child',
+  ':nth-last-child',
+  ':nth-last-of-type',
+  ':nth-of-type',
+  ':only-child',
+  ':only-of-type',
+  ':visited',
+  '::after',
+  '::before',
+  '::first-letter',
+  '::first-line',
+  '::marker',
+  '::selection',
+]);
+
+export const allowedAttributeSelectors = new Set([
+  'checked',
+  'data-checked',
+  'data-task',
+  'data-theme',
+  'href',
+  'type',
+]);
+
+export const blockedProperties = new Set([
+  '-moz-binding',
+  '-webkit-user-select',
+  'behavior',
+  'pointer-events',
+  'touch-action',
+  'user-select',
+  'z-index',
+]);
+
+export const bundledFontFamilyMappings: Readonly<Record<string, string>> = {
+  'open sans': 'AFFiNE Editor Open Sans',
+  'nunito sans': 'AFFiNE Editor Nunito Sans',
+  'noto sans sc': 'AFFiNE Editor Noto Sans SC',
+  'noto sans cjk sc': 'AFFiNE Editor Noto Sans SC',
+  'noto serif sc': 'AFFiNE Editor Noto Serif SC',
+  'noto serif cjk sc': 'AFFiNE Editor Noto Serif SC',
+  'source han sans sc': 'AFFiNE Editor Noto Sans SC',
+  'source han serif sc': 'AFFiNE Editor Noto Serif SC',
+};
+
+export const allowedFontFamilies = new Set([
+  '-apple-system',
+  'apple color emoji',
+  'arial',
+  'blinkmacsystemfont',
+  'cantarell',
+  'courier new',
+  'droid sans',
+  'fira sans',
+  'georgia',
+  'helvetica',
+  'hiragino sans gb',
+  'ibm plex mono',
+  'inter',
+  'microsoft yahei',
+  'monospace',
+  'oxygen',
+  'pingfang sc',
+  'roboto',
+  'sans-serif',
+  'segoe ui',
+  'segoe ui emoji',
+  'segoe ui symbol',
+  'serif',
+  'sf mono',
+  'sfmono-regular',
+  'source code pro',
+  'system-ui',
+  'times new roman',
+  'ubuntu',
+  'ui-monospace',
+  'ui-sans-serif',
+  'ui-serif',
+]);

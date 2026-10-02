@@ -975,6 +975,122 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.appearanceSettings.customize-theme.open"](): string;
     /**
+      * `Imported CSS`
+      */
+    ["com.affine.themeEditor.importedCss.tab"](): string;
+    /**
+      * `Imported editor CSS`
+      */
+    ["com.affine.themeEditor.importedCss.title"](): string;
+    /**
+      * `Import separate light and dark CSS files. Supported document rules are converted and kept inside the page editor; fonts and other linked resources are not imported.`
+      */
+    ["com.affine.themeEditor.importedCss.description"](): string;
+    /**
+      * `Light CSS`
+      */
+    ["com.affine.themeEditor.importedCss.light.title"](): string;
+    /**
+      * `Dark CSS`
+      */
+    ["com.affine.themeEditor.importedCss.dark.title"](): string;
+    /**
+      * `Enabled`
+      */
+    ["com.affine.themeEditor.importedCss.enabled"](): string;
+    /**
+      * `No CSS file imported`
+      */
+    ["com.affine.themeEditor.importedCss.empty"](): string;
+    /**
+      * `Import CSS`
+      */
+    ["com.affine.themeEditor.importedCss.import"](): string;
+    /**
+      * `Replace CSS`
+      */
+    ["com.affine.themeEditor.importedCss.replace"](): string;
+    /**
+      * `Clear`
+      */
+    ["com.affine.themeEditor.importedCss.clear"](): string;
+    /**
+      * `Clear imported CSS?`
+      */
+    ["com.affine.themeEditor.importedCss.clear.confirm.title"](): string;
+    /**
+      * `This removes the imported CSS for this colour mode and restores the built-in editor theme.`
+      */
+    ["com.affine.themeEditor.importedCss.clear.confirm.description"](): string;
+    /**
+      * `CSS imported`
+      */
+    ["com.affine.themeEditor.importedCss.import.success.title"](): string;
+    /**
+      * `Supported document styles are now available in the editor.`
+      */
+    ["com.affine.themeEditor.importedCss.import.success.description"](): string;
+    /**
+      * `Could not import CSS`
+      */
+    ["com.affine.themeEditor.importedCss.import.error.title"](): string;
+    /**
+      * `Choose a file with a .css extension.`
+      */
+    ["com.affine.themeEditor.importedCss.error.invalidExtension"](): string;
+    /**
+      * `The CSS file or its converted output is too large. Source files are limited to 512 KiB.`
+      */
+    ["com.affine.themeEditor.importedCss.error.oversize"](): string;
+    /**
+      * `The file could not be read as UTF-8 CSS.`
+      */
+    ["com.affine.themeEditor.importedCss.error.unreadable"](): string;
+    /**
+      * `The file contains invalid CSS and could not be parsed.`
+      */
+    ["com.affine.themeEditor.importedCss.error.parse"](): string;
+    /**
+      * `The file does not contain supported document theme rules.`
+      */
+    ["com.affine.themeEditor.importedCss.error.noSupportedRules"](): string;
+    /**
+      * `The imported CSS could not be saved on this device.`
+      */
+    ["com.affine.themeEditor.importedCss.error.persistence"](): string;
+    /**
+      * `An unexpected error occurred while importing the CSS file.`
+      */
+    ["com.affine.themeEditor.importedCss.error.unknown"](): string;
+    /**
+      * `Conversion report`
+      */
+    ["com.affine.themeEditor.importedCss.report.title"](): string;
+    /**
+      * `Applied rules`
+      */
+    ["com.affine.themeEditor.importedCss.report.applied"](): string;
+    /**
+      * `Translated rules`
+      */
+    ["com.affine.themeEditor.importedCss.report.translated"](): string;
+    /**
+      * `Ignored rules`
+      */
+    ["com.affine.themeEditor.importedCss.report.ignored"](): string;
+    /**
+      * `Rejected declarations`
+      */
+    ["com.affine.themeEditor.importedCss.report.rejected"](): string;
+    /**
+      * `Warnings`
+      */
+    ["com.affine.themeEditor.importedCss.report.warnings"](): string;
+    /**
+      * `Import a CSS file to see its conversion report.`
+      */
+    ["com.affine.themeEditor.importedCss.report.empty"](): string;
+    /**
       * `Choose your font style`
       */
     ["com.affine.appearanceSettings.font.description"](): string;

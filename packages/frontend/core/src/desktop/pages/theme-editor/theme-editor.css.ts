@@ -29,7 +29,7 @@ export const content = style({
 });
 
 export const sidebarHeader = style({
-  padding: '8px 48px',
+  padding: '8px 16px',
   background: cssVarV2('layer/background/primary'),
   borderBottom: `1px solid ${cssVarV2('layer/insideBorder/border')}`,
 });

@@ -1,0 +1,8 @@
+{"file":".trellis/spec/core/frontend/index.md","reason":"Entry point for @affine/core frontend conventions."}
+{"file":".trellis/spec/core/frontend/directory-structure.md","reason":"Place editor integration, theme service, and UI changes in the established core structure."}
+{"file":".trellis/spec/core/frontend/component-guidelines.md","reason":"Use existing AFFiNE UI primitives and theme conventions for the import panel."}
+{"file":".trellis/spec/core/frontend/state-management.md","reason":"Extend ThemeEditorService and LiveData/GlobalState using project patterns."}
+{"file":".trellis/spec/core/frontend/quality-guidelines.md","reason":"Follow the repository's Vitest frontend testing conventions."}
+{"file":".trellis/spec/guides/code-reuse-thinking-guide.md","reason":"Reuse existing font, storage, and theme-editor mechanisms without duplicating abstractions."}
+{"file":".trellis/tasks/09-24-github-markdown-editor-theme/research/theme-references.md","reason":"Implement the selected light/dark visual references and repository integration boundaries."}
+{"file":".trellis/tasks/09-24-github-markdown-editor-theme/research/typora-claude-compatibility.md","reason":"Cover the concrete Typora compatibility sample and asset limitations."}

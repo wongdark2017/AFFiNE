@@ -188,3 +188,64 @@
   font-display: swap;
   src: url(../fonts/ibm-plex-mono/IBMPlexMono-BoldItalic.ttf);
 }
+
+/*
+ * Editor Markdown theme fonts
+ *
+ * Internal family names prevent imported themes or host pages from replacing
+ * the application-bundled faces with a same-named system font.
+ */
+@font-face {
+  font-family: 'AFFiNE Editor Open Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  font-stretch: 75% 100%;
+  font-display: swap;
+  src: url(../fonts/open-sans/OpenSans-Variable.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'AFFiNE Editor Open Sans';
+  font-style: italic;
+  font-weight: 300 800;
+  font-stretch: 75% 100%;
+  font-display: swap;
+  src: url(../fonts/open-sans/OpenSans-Italic-Variable.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'AFFiNE Editor Nunito Sans';
+  font-style: normal;
+  font-weight: 200 1000;
+  font-stretch: 75% 125%;
+  font-display: swap;
+  src: url(../fonts/nunito-sans/NunitoSans-Variable.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'AFFiNE Editor Nunito Sans';
+  font-style: italic;
+  font-weight: 200 1000;
+  font-stretch: 75% 125%;
+  font-display: swap;
+  src: url(../fonts/nunito-sans/NunitoSans-Italic-Variable.woff2)
+    format('woff2');
+}
+
+@font-face {
+  font-family: 'AFFiNE Editor Noto Sans SC';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../fonts/noto-sans-sc/NotoSansSC-GB2312-Variable.woff2)
+    format('woff2');
+}
+
+@font-face {
+  font-family: 'AFFiNE Editor Noto Serif SC';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url(../fonts/noto-serif-sc/NotoSerifSC-GB2312-Variable.woff2)
+    format('woff2');
+}
